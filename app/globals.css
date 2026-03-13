@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&display=swap');
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 220 15% 90%;
+    --card: 220 47% 15%;
+    --card-foreground: 220 15% 90%;
+    --popover: 220 47% 15%;
+    --popover-foreground: 220 15% 90%;
+    --primary: 38 84% 52%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 220 40% 20%;
+    --secondary-foreground: 220 15% 90%;
+    --muted: 220 40% 20%;
+    --muted-foreground: 215 20% 60%;
+    --accent: 220 40% 20%;
+    --accent-foreground: 220 15% 90%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 220 15% 90%;
+    --border: 220 30% 20%;
+    --input: 220 47% 18%;
+    --ring: 38 84% 52%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fraunces', serif;
+  }
+}
+
+/* GoJulito custom colors */
+:root {
+  --gj-bg: #0b1628;
+  --gj-card: #111f38;
+  --gj-input: #172645;
+  --gj-border: rgba(255, 255, 255, 0.07);
+  --gj-amber: #e8a020;
+  --gj-green: #22c97a;
+  --gj-red: #e85a5a;
+  --gj-blue: #4a9eff;
+  --gj-text: #e8e6e0;
+  --gj-text-secondary: #9ba8bb;
+}

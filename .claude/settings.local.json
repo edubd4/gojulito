@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npx create-next-app@14 . --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Read(//c/Users/edu_i/OneDrive/Documentos/Proyectos2026/**)",
+      "Bash(npx create-next-app@14 gojulito-tmp --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(cp -r gojulito-tmp/. gojulito/ --exclude=.git)",
+      "Bash(robocopy gojulito-tmp:*)",
+      "Bash(xcopy /E /Y /I gojulito-tmp gojulito /EXCLUDE:gojulito-tmp.git)",
+      "Bash(echo \"ExitCode: $?\")",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init --yes --defaults)",
+      "Bash(printf 'y\\\\ny\\\\n')",
+      "Bash(npx shadcn@latest init --defaults)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
