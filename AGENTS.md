@@ -71,6 +71,29 @@ Nunca exponer SERVICE_ROLE_KEY al browser.
 
 ---
 
+## Schema de base de datos
+
+### Tablas principales
+
+- `profiles` — usuarios del sistema (extiende auth.users). Campos: id, email, nombre, rol, activo
+- `grupos_familiares` — agrupa clientes de una misma familia. Campos: id, nombre, notas, created_at
+- `clientes` — una fila por persona. Campos: id, gj_id, nombre, telefono, email, dni, fecha_nac, canal, estado, observaciones, grupo_familiar_id (FK nullable), created_by, created_at, updated_at
+- `visas` — trámites de visa. Campos: id, visa_id, cliente_id (FK), ds160, email_portal, estado, orden_atencion, fecha_turno, fecha_aprobacion, fecha_vencimiento, notas
+- `credenciales` — contraseñas del portal consular. Solo admin. Campos: id, visa_id (FK), password_portal, notas
+- `pagos` — un registro por cobro. Campos: id, pago_id, cliente_id (FK), visa_id (FK nullable), tipo, monto, fecha_pago, estado, fecha_vencimiento_deuda, referencia_grupo, notas
+- `seminarios` — ediciones del seminario. Campos: id, sem_id, nombre, fecha, modalidad, notas
+- `seminario_asistentes` — vincula clientes con seminarios. Campos: id, seminario_id (FK), cliente_id (FK nullable), nombre, telefono, provincia, modalidad, estado_pago, monto, convirtio
+- `historial` — log inmutable de eventos. Campos: id, cliente_id, visa_id, tipo, descripcion, metadata (JSONB), origen, usuario_id, created_at
+
+### Vistas disponibles
+
+- `v_clientes_activos` — clientes ACTIVO/PROSPECTO con su visa activa y totales de pago
+- `v_deudas_proximas` — deudas con vencimiento en los próximos 30 días
+- `v_turnos_semana` — turnos de visa en los próximos 7 días
+- `v_metricas` — conteos de visas por estado (EN_PROCESO, TURNO_ASIGNADO, APROBADA, RECHAZADA, PAUSADA)
+
+---
+
 ## ENUMs — usar exactamente estos valores
 
 estado_cliente: PROSPECTO | ACTIVO | FINALIZADO | INACTIVO
@@ -81,12 +104,13 @@ tipo_servicio: VISA | SEMINARIO
 modalidad_sem: PRESENCIAL | VIRTUAL
 convirtio_visa: SI | NO | EN_SEGUIMIENTO
 tipo_evento: CAMBIO_ESTADO | PAGO | NOTA | TURNO_ASIGNADO | ALERTA | NUEVO_CLIENTE
+rol_usuario: admin | colaborador
 
 ---
 
 ## IDs legibles
 
-Clientes: GJ-0001 | Visas: VISA-0001 | Pagos: PAG-0001 | Seminarios: SEM-2026-01
+Clientes: GJ-0001 | Visas: VISA-0001 | Pagos: PAG-0001 | Seminarios: SEM-2026-01 | Grupos: sin ID legible (usar nombre)
 
 ---
 
@@ -96,6 +120,7 @@ Clientes: GJ-0001 | Visas: VISA-0001 | Pagos: PAG-0001 | Seminarios: SEM-2026-01
 2. Verificar rol en cada API route sensible
 3. SERVICE_ROLE_KEY solo en server, nunca en browser
 4. Eliminaciones: solo admin
+5. historial: nunca se edita ni borra, solo INSERT
 
 ---
 
@@ -108,7 +133,7 @@ Colores dark theme:
 
 Tipografías: Fraunces (títulos) + DM Sans (cuerpo)
 
-Badges: ACTIVO/PAGADO/APROBADA=verde | EN_PROCESO=amber | PAUSADA/DEUDA=rojo
+Badges: ACTIVO/PAGADO/APROBADA=verde | EN_PROCESO=amber | PAUSADA/DEUDA=rojo | RECHAZADA=rojo | TURNO_ASIGNADO=azul
 
 ---
 
@@ -125,3 +150,5 @@ Branch principal: main
 - async/await siempre, nunca .then()
 - Siempre insertar en historial después de cambios importantes
 - Un TASK.md por sesión, una sola feature por tarea
+- Server components para queries a Supabase, nunca desde el cliente
+- Usar lib/supabase/server.ts en server components y API routes
