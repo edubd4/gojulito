@@ -13,7 +13,8 @@
       "Bash(npx shadcn@latest init --yes --defaults)",
       "Bash(printf 'y\\\\ny\\\\n')",
       "Bash(npx shadcn@latest init --defaults)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

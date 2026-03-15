@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import type { Rol } from '@/lib/constants'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: '⊞' },
@@ -11,6 +12,11 @@ const navItems = [
   { href: '/calendario', label: 'Calendario', icon: '📅' },
   { href: '/configuracion', label: 'Configuración', icon: '⚙️' },
 ]
+
+interface Profile {
+  nombre: string
+  rol: Rol
+}
 
 export default async function DashboardLayout({
   children,
@@ -23,6 +29,15 @@ export default async function DashboardLayout({
   if (!user) {
     redirect('/login')
   }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('nombre, rol')
+    .eq('id', user.id)
+    .single<Profile>()
+
+  const displayName = profile?.nombre ?? user.email ?? ''
+  const rol = profile?.rol ?? null
 
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: '#0b1628' }}>
@@ -70,7 +85,24 @@ export default async function DashboardLayout({
           className="px-4 py-4"
           style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
         >
-          <p style={{ color: '#9ba8bb', fontSize: '0.75rem' }}>{user.email}</p>
+          <p
+            className="text-sm font-medium truncate"
+            style={{ color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}
+          >
+            {displayName}
+          </p>
+          {rol !== null && (
+            <span
+              className="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium"
+              style={{
+                backgroundColor: rol === 'admin' ? 'rgba(232,160,32,0.15)' : 'rgba(74,158,255,0.15)',
+                color: rol === 'admin' ? '#e8a020' : '#4a9eff',
+                fontFamily: 'DM Sans, sans-serif',
+              }}
+            >
+              {rol === 'admin' ? 'Admin' : 'Colaborador'}
+            </span>
+          )}
         </div>
       </aside>
 
