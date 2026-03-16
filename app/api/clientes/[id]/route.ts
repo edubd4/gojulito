@@ -1,5 +1,84 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
+import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
+
+interface PatchBody {
+  nombre?: string
+  telefono?: string | null
+  email?: string | null
+  dni?: string | null
+  fecha_nac?: string | null
+  canal?: CanalIngreso
+  estado?: EstadoCliente
+  grupo_familiar_id?: string | null
+  observaciones?: string | null
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const authClient = await createServerClient()
+  const { data: { user } } = await authClient.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  }
+
+  const { id } = params
+  const supabase = await createServiceRoleClient()
+
+  // Leer estado actual para detectar cambio
+  const { data: clienteActual, error: fetchError } = await supabase
+    .from('clientes')
+    .select('estado')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !clienteActual) {
+    return NextResponse.json({ error: 'Cliente no encontrado' }, { status: 404 })
+  }
+
+  const body = await req.json() as PatchBody
+
+  const updateData: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  }
+
+  if (body.nombre !== undefined) updateData.nombre = body.nombre
+  if (body.telefono !== undefined) updateData.telefono = body.telefono ?? null
+  if (body.email !== undefined) updateData.email = body.email ?? null
+  if (body.dni !== undefined) updateData.dni = body.dni ?? null
+  if (body.fecha_nac !== undefined) updateData.fecha_nac = body.fecha_nac ?? null
+  if (body.canal !== undefined) updateData.canal = body.canal
+  if (body.estado !== undefined) updateData.estado = body.estado
+  if ('grupo_familiar_id' in body) updateData.grupo_familiar_id = body.grupo_familiar_id ?? null
+  if (body.observaciones !== undefined) updateData.observaciones = body.observaciones ?? null
+
+  const { data: clienteActualizado, error: updateError } = await supabase
+    .from('clientes')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (updateError || !clienteActualizado) {
+    return NextResponse.json({ error: 'Error al actualizar el cliente' }, { status: 500 })
+  }
+
+  // Registrar en historial solo si cambió el estado
+  if (body.estado && body.estado !== clienteActual.estado) {
+    await supabase.from('historial').insert({
+      cliente_id: id,
+      tipo: 'CAMBIO_ESTADO',
+      descripcion: `Estado cambiado de ${clienteActual.estado} a ${body.estado}`,
+      origen: 'dashboard',
+      usuario_id: user.id,
+    })
+  }
+
+  return NextResponse.json({ success: true, cliente: clienteActualizado })
+}
 
 export async function GET(
   _req: NextRequest,

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { createServiceRoleClient, createServerClient } from '@/lib/supabase/server'
 import { formatPesos, formatFecha } from '@/lib/utils'
 import type { EstadoCliente, EstadoVisa, EstadoPago, TipoEvento, CanalIngreso } from '@/lib/constants'
+import EditarClienteModal from '@/components/clientes/EditarClienteModal'
+import type { GrupoFamiliarOption } from '@/components/clientes/EditarClienteModal'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -247,15 +249,19 @@ export default async function ClienteDetallePage({
 
   const cliente = rawCliente as ClienteDetalle
 
+  // Todos los grupos familiares (para el modal de edición)
+  const { data: rawGrupos } = await supabase
+    .from('grupos_familiares')
+    .select('id, nombre')
+    .order('nombre', { ascending: true })
+
+  const grupos = (rawGrupos ?? []) as GrupoFamiliarOption[]
+
   // Grupo familiar name
   let grupoNombre: string | null = null
   if (cliente.grupo_familiar_id) {
-    const { data: grupo } = await supabase
-      .from('grupos_familiares')
-      .select('nombre')
-      .eq('id', cliente.grupo_familiar_id)
-      .single()
-    grupoNombre = (grupo?.nombre as string | null) ?? null
+    const found = grupos.find((g) => g.id === cliente.grupo_familiar_id)
+    grupoNombre = found?.nombre ?? null
   }
 
   // Visa activa (not CANCELADA, most recent)
@@ -325,20 +331,37 @@ export default async function ClienteDetallePage({
           Volver a clientes
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          <h1
-            style={{
-              fontFamily: 'Fraunces, serif',
-              fontSize: 28,
-              fontWeight: 700,
-              color: '#e8e6e0',
-              margin: 0,
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+            <h1
+              style={{
+                fontFamily: 'Fraunces, serif',
+                fontSize: 28,
+                fontWeight: 700,
+                color: '#e8e6e0',
+                margin: 0,
+              }}
+            >
+              {cliente.nombre}
+            </h1>
+            <Badge {...estadoBadge} />
+            <span style={{ color: '#9ba8bb', fontSize: 13 }}>{cliente.gj_id}</span>
+          </div>
+          <EditarClienteModal
+            cliente={{
+              id: cliente.id,
+              nombre: cliente.nombre,
+              telefono: cliente.telefono,
+              email: cliente.email,
+              dni: cliente.dni,
+              fecha_nac: cliente.fecha_nac,
+              canal: cliente.canal,
+              estado: cliente.estado,
+              grupo_familiar_id: cliente.grupo_familiar_id,
+              observaciones: cliente.observaciones,
             }}
-          >
-            {cliente.nombre}
-          </h1>
-          <Badge {...estadoBadge} />
-          <span style={{ color: '#9ba8bb', fontSize: 13 }}>{cliente.gj_id}</span>
+            gruposFamiliares={grupos}
+          />
         </div>
       </div>
 

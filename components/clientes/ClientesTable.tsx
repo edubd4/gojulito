@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatFecha } from '@/lib/utils'
 import type { EstadoCliente, EstadoVisa, EstadoPago, CanalIngreso } from '@/lib/constants'
 import NuevoClienteModal, { type GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
+import EditarClienteModal, { type ClienteEditableData } from '@/components/clientes/EditarClienteModal'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -229,6 +230,25 @@ function ConfirmModal({
 export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFamiliares }: Props) {
   const router = useRouter()
   const [modalOpen, setModalOpen] = useState(false)
+
+  // Edición desde la tabla
+  const [editandoCliente, setEditandoCliente] = useState<ClienteEditableData | null>(null)
+  const [fetchingEdit, setFetchingEdit] = useState(false)
+
+  async function abrirEdicion(id: string) {
+    setFetchingEdit(true)
+    try {
+      const res = await fetch(`/api/clientes/${id}`)
+      const json = await res.json() as { cliente?: ClienteEditableData }
+      if (res.ok && json.cliente) {
+        setEditandoCliente(json.cliente)
+      }
+    } catch {
+      // silencio — el usuario puede intentar desde el detalle del cliente
+    } finally {
+      setFetchingEdit(false)
+    }
+  }
 
   // Filtros
   const [busqueda, setBusqueda] = useState('')
@@ -650,16 +670,25 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                             <circle cx="12" cy="12" r="3" />
                           </svg>
                         </Link>
-                        <Link
-                          href={`/clientes/${c.id}/editar`}
+                        <button
                           title="Editar"
-                          style={{ color: '#9ba8bb', textDecoration: 'none' }}
+                          onClick={() => abrirEdicion(c.id)}
+                          disabled={fetchingEdit}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: fetchingEdit ? 'wait' : 'pointer',
+                            color: '#4a9eff',
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                           </svg>
-                        </Link>
+                        </button>
                         {isAdmin && (
                           <button
                             title="Eliminar"
@@ -845,6 +874,18 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           onConfirm={executeAction}
           onCancel={() => setPendingAction(null)}
           loading={actionLoading}
+        />
+      )}
+
+      {/* Modal edición de cliente */}
+      {editandoCliente && (
+        <EditarClienteModal
+          cliente={editandoCliente}
+          gruposFamiliares={gruposFamiliares}
+          open={true}
+          onOpenChange={(val) => {
+            if (!val) setEditandoCliente(null)
+          }}
         />
       )}
 
