@@ -50,7 +50,12 @@ No test suite configured. Verify with `npm run build` before considering a task 
 
 ### Database schema (Supabase/PostgreSQL)
 
-Main tables: `profiles`, `clientes`, `visas`, `credenciales`, `pagos`, `grupos_familiares`, `seminarios`, `seminario_asistentes`, `historial`
+Main tables: `profiles`, `clientes`, `visas`, `credenciales`, `pagos`, `grupos_familiares`, `seminarios`, `seminario_asistentes`, `historial`, `configuracion`
+
+Schema additions (applied via migration):
+- `clientes` — added `provincia text`
+- `seminarios` — added `precio integer default 0`
+- `configuracion` — key-value store: `id`, `clave` (unique), `valor` (text), `descripcion`, `updated_at`. Current keys: `precio_visa`, `precio_seminario`
 
 Available views: `v_clientes_activos`, `v_deudas_proximas`, `v_turnos_semana`, `v_metricas`
 

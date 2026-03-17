@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { formatFecha } from '@/lib/utils'
 import type { EstadoVisa } from '@/lib/constants'
@@ -44,12 +44,40 @@ const inputStyle: React.CSSProperties = {
   outline: 'none',
 }
 
+function Spinner() {
+  return (
+    <span
+      className="animate-spin"
+      style={{
+        display: 'inline-block',
+        width: 16,
+        height: 16,
+        border: '2px solid rgba(255,255,255,0.1)',
+        borderTopColor: '#4a9eff',
+        borderRadius: '50%',
+        flexShrink: 0,
+      }}
+    />
+  )
+}
+
 export default function TramitesTable({ tramites }: Props) {
+  const [rows, setRows] = useState<TramiteRow[]>(tramites)
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoVisa | ''>('')
   const [busqueda, setBusqueda] = useState('')
+  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (errorMsg) {
+      const t = setTimeout(() => setErrorMsg(null), 4000)
+      return () => clearTimeout(t)
+    }
+  }, [errorMsg])
 
   const filtrados = useMemo(() => {
-    return tramites.filter((t) => {
+    return rows.filter((t) => {
       if (estadoFiltro && t.estado !== estadoFiltro) return false
       if (busqueda.trim()) {
         const q = busqueda.trim().toLowerCase()
@@ -61,10 +89,72 @@ export default function TramitesTable({ tramites }: Props) {
       }
       return true
     })
-  }, [tramites, estadoFiltro, busqueda])
+  }, [rows, estadoFiltro, busqueda])
+
+  async function handleCambiarEstado(visaId: string, nuevoEstado: EstadoVisa) {
+    setLoadingId(visaId)
+    setOpenDropdownId(null)
+    setErrorMsg(null)
+    try {
+      const res = await fetch(`/api/visas/${visaId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      })
+      const json = await res.json() as {
+        success?: boolean
+        error?: string
+        visa?: {
+          estado: EstadoVisa
+          fecha_aprobacion: string | null
+          fecha_turno: string | null
+          fecha_vencimiento: string | null
+        }
+      }
+      if (!res.ok || !json.success) {
+        setErrorMsg(json.error ?? 'Error al actualizar')
+        return
+      }
+      setRows((prev) =>
+        prev.map((r) =>
+          r.id === visaId
+            ? {
+                ...r,
+                estado: nuevoEstado,
+                fecha_aprobacion: json.visa?.fecha_aprobacion ?? r.fecha_aprobacion,
+                fecha_turno: json.visa?.fecha_turno ?? null,
+                fecha_vencimiento: json.visa?.fecha_vencimiento ?? r.fecha_vencimiento,
+              }
+            : r
+        )
+      )
+    } catch {
+      setErrorMsg('Error de conexión')
+    } finally {
+      setLoadingId(null)
+    }
+  }
 
   return (
     <div>
+      {/* Error banner */}
+      {errorMsg && (
+        <div
+          style={{
+            backgroundColor: 'rgba(232,90,90,0.12)',
+            border: '1px solid rgba(232,90,90,0.3)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            color: '#e85a5a',
+            fontSize: 13,
+            marginBottom: 12,
+            fontFamily: 'DM Sans, sans-serif',
+          }}
+        >
+          {errorMsg}
+        </div>
+      )}
+
       {/* Filtros */}
       <div
         style={{
@@ -149,21 +239,16 @@ export default function TramitesTable({ tramites }: Props) {
                   return (
                     <tr
                       key={t.id}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                       onMouseEnter={(e) => {
-                        const row = e.currentTarget
-                        row.style.backgroundColor = 'rgba(255,255,255,0.03)'
+                        e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'
                       }}
                       onMouseLeave={(e) => {
-                        const row = e.currentTarget
-                        row.style.backgroundColor = 'transparent'
+                        e.currentTarget.style.backgroundColor = 'transparent'
                       }}
                     >
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link
-                          href={`/clientes/${t.cliente_id}`}
-                          style={{ textDecoration: 'none', display: 'block' }}
-                        >
+                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', display: 'block' }}>
                           <span style={{ fontSize: 13, color: '#9ba8bb' }}>{t.visa_id}</span>
                         </Link>
                       </td>
@@ -173,23 +258,111 @@ export default function TramitesTable({ tramites }: Props) {
                           <div style={{ fontSize: 12, color: '#9ba8bb' }}>{t.cliente_gj_id}</div>
                         </Link>
                       </td>
+
+                      {/* Estado — dropdown inline */}
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
-                          <span
-                            style={{
-                              display: 'inline-block',
-                              padding: '3px 10px',
-                              borderRadius: 6,
-                              fontSize: 12,
-                              fontWeight: 600,
-                              color: badge.color,
-                              backgroundColor: badge.bg,
-                            }}
-                          >
-                            {badge.label}
-                          </span>
-                        </Link>
+                        {loadingId === t.id ? (
+                          <Spinner />
+                        ) : (
+                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setOpenDropdownId(openDropdownId === t.id ? null : t.id)
+                              }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '3px 10px',
+                                  borderRadius: 6,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  color: badge.color,
+                                  backgroundColor: badge.bg,
+                                }}
+                              >
+                                {badge.label}
+                              </span>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9" />
+                              </svg>
+                            </button>
+                            {openDropdownId === t.id && (
+                              <>
+                                <div
+                                  style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                                  onClick={() => setOpenDropdownId(null)}
+                                />
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    top: 'calc(100% + 4px)',
+                                    left: 0,
+                                    zIndex: 50,
+                                    backgroundColor: '#111f38',
+                                    border: '1px solid rgba(255,255,255,0.12)',
+                                    borderRadius: 8,
+                                    padding: 4,
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+                                    minWidth: 145,
+                                  }}
+                                >
+                                  {ESTADOS.filter((e) => e !== t.estado).map((opt) => {
+                                    const optBadge = BADGE_VISA[opt]
+                                    return (
+                                      <button
+                                        key={opt}
+                                        onClick={() => handleCambiarEstado(t.id, opt)}
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          width: '100%',
+                                          background: 'none',
+                                          border: 'none',
+                                          padding: '6px 10px',
+                                          cursor: 'pointer',
+                                          borderRadius: 6,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.06)'
+                                        }}
+                                        onMouseLeave={(e) => {
+                                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            display: 'inline-block',
+                                            padding: '3px 10px',
+                                            borderRadius: 6,
+                                            fontSize: 12,
+                                            fontWeight: 600,
+                                            color: optBadge.color,
+                                            backgroundColor: optBadge.bg,
+                                          }}
+                                        >
+                                          {optBadge.label}
+                                        </span>
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </td>
+
                       <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
                         <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                           {t.ds160 ?? '—'}

@@ -48,7 +48,7 @@ export default function RegistrarPagoModal({ clienteId, visaId }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<FormState>({
-    tipo: '',
+    tipo: visaId ? 'VISA' : 'SEMINARIO',
     monto: '',
     fecha_pago: todayISO(),
     estado: 'PAGADO',
@@ -63,7 +63,7 @@ export default function RegistrarPagoModal({ clienteId, visaId }: Props) {
   useEffect(() => {
     if (open) {
       setForm({
-        tipo: '',
+        tipo: visaId ? 'VISA' : 'SEMINARIO',
         monto: '',
         fecha_pago: todayISO(),
         estado: 'PAGADO',
@@ -74,7 +74,7 @@ export default function RegistrarPagoModal({ clienteId, visaId }: Props) {
       setServerError('')
       setSaved(false)
     }
-  }, [open])
+  }, [open, visaId])
 
   function setField<K extends keyof FormState>(field: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -84,6 +84,7 @@ export default function RegistrarPagoModal({ clienteId, visaId }: Props) {
   function validate(): boolean {
     const next: Partial<Record<keyof FormState, string>> = {}
     if (!form.tipo) next.tipo = 'El tipo es requerido'
+    if (form.tipo === 'VISA' && !visaId) next.tipo = 'Este cliente no tiene un trámite de visa activo para asociar este pago'
     if (!form.monto || isNaN(Number(form.monto)) || Number(form.monto) <= 0) {
       next.monto = 'El monto debe ser un número positivo'
     }

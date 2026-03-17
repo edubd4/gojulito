@@ -13,10 +13,12 @@ export function formatPesos(amount: number): string {
   }).format(amount)
 }
 
-export function formatFecha(date: string | Date): string {
+export function formatFecha(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—'
+  const safe = dateStr.length === 10 ? dateStr + 'T12:00:00' : dateStr
   return new Intl.DateTimeFormat('es-AR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-  }).format(new Date(date))
+  }).format(new Date(safe))
 }

@@ -5,8 +5,8 @@ import { formatFecha, formatPesos } from '@/lib/utils'
 import AgregarAsistenteModal from '@/components/seminarios/AgregarAsistenteModal'
 import type { ClienteOption } from '@/components/seminarios/AgregarAsistenteModal'
 import EditarSeminarioModal from '@/components/seminarios/EditarSeminarioModal'
-import EditarAsistenteModal from '@/components/seminarios/EditarAsistenteModal'
-import type { AsistenteEditableData } from '@/components/seminarios/EditarAsistenteModal'
+import AsistentesTable from '@/components/seminarios/AsistentesTable'
+import type { AsistenteRow } from '@/components/seminarios/AsistentesTable'
 
 interface Seminario {
   id: string
@@ -18,18 +18,7 @@ interface Seminario {
   notas: string | null
 }
 
-interface Asistente {
-  id: string
-  nombre: string
-  telefono: string | null
-  provincia: string | null
-  modalidad: string
-  estado_pago: 'PAGADO' | 'DEUDA' | 'PENDIENTE'
-  monto: number
-  convirtio: 'SI' | 'NO' | 'EN_SEGUIMIENTO'
-  cliente_id: string | null
-  clientes: { id: string; gj_id: string; nombre: string } | null
-}
+type Asistente = AsistenteRow
 
 // ─── Badge configs ─────────────────────────────────────────────────────────
 
@@ -39,17 +28,6 @@ const BADGE_MODALIDAD: Record<string, { label: string; color: string; bg: string
   AMBAS:      { label: 'Presencial + Virtual', color: '#22c97a', bg: 'rgba(34,201,122,0.15)' },
 }
 
-const BADGE_PAGO = {
-  PAGADO:    { label: 'Pagado',    color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  DEUDA:     { label: 'Deuda',     color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PENDIENTE: { label: 'Pendiente', color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-}
-
-const BADGE_CONVIRTIO = {
-  SI:             { label: 'Sí',             color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  NO:             { label: 'No',             color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  EN_SEGUIMIENTO: { label: 'En seguimiento', color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-}
 
 function SmallBadge({ color, bg, label }: { color: string; bg: string; label: string }) {
   return (
@@ -141,59 +119,11 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
       </div>
 
       {/* Tabla */}
-      <div style={{ backgroundColor: '#111f38', borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-        {asistentes.length === 0 ? (
-          <div style={{ padding: '48px 28px', textAlign: 'center', color: '#9ba8bb', fontSize: 14 }}>
-            Sin asistentes registrados
-          </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif' }}>
-              <thead>
-                <tr>
-                  {['Nombre', 'Teléfono', 'Provincia', 'Modalidad', 'Estado pago', 'Monto', 'Convirtió', 'Cliente', ''].map((col) => (
-                    <th key={col} style={{ textAlign: 'left', padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid rgba(255,255,255,0.08)', whiteSpace: 'nowrap', backgroundColor: '#111f38' }}>
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {asistentes.map((a) => {
-                  const badgeMod = BADGE_MODALIDAD[a.modalidad]
-                  const badgePago = BADGE_PAGO[a.estado_pago]
-                  const badgeConv = BADGE_CONVIRTIO[a.convirtio]
-                  return (
-                    <tr key={a.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      <td style={{ padding: '11px 16px', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>{a.nombre}</td>
-                      <td style={{ padding: '11px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>{a.telefono ?? '—'}</td>
-                      <td style={{ padding: '11px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>{a.provincia ?? '—'}</td>
-                      <td style={{ padding: '11px 16px', whiteSpace: 'nowrap' }}><SmallBadge {...badgeMod} /></td>
-                      <td style={{ padding: '11px 16px', whiteSpace: 'nowrap' }}><SmallBadge {...badgePago} /></td>
-                      <td style={{ padding: '11px 16px', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>{formatPesos(a.monto)}</td>
-                      <td style={{ padding: '11px 16px', whiteSpace: 'nowrap' }}><SmallBadge {...badgeConv} /></td>
-                      <td style={{ padding: '11px 16px', whiteSpace: 'nowrap' }}>
-                        {a.cliente_id && a.clientes ? (
-                          <Link href={`/clientes/${a.cliente_id}`} style={{ textDecoration: 'none' }}>
-                            <span style={{ fontSize: 12, color: '#4a9eff', fontWeight: 500 }}>{a.clientes.gj_id}</span>
-                          </Link>
-                        ) : '—'}
-                      </td>
-                      <td style={{ padding: '11px 16px', whiteSpace: 'nowrap' }}>
-                        <EditarAsistenteModal
-                          asistente={a as AsistenteEditableData}
-                          seminarioId={sem.id}
-                          seminarioModalidad={sem.modalidad}
-                        />
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <AsistentesTable
+        initialAsistentes={asistentes}
+        seminarioId={sem.id}
+        seminarioModalidad={sem.modalidad}
+      />
 
       {/* Notas del seminario */}
       {sem.notas && (

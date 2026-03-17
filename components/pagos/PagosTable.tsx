@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { formatFecha, formatPesos } from '@/lib/utils'
 import type { EstadoPago } from '@/lib/constants'
+import FechaVencimientoDialog from '@/components/pagos/FechaVencimientoDialog'
 
 export interface PagoRow {
   id: string
@@ -64,13 +65,50 @@ function SmallBadge({ color, bg, label }: { color: string; bg: string; label: st
   )
 }
 
+function Spinner() {
+  return (
+    <span
+      className="animate-spin"
+      style={{
+        display: 'inline-block',
+        width: 16,
+        height: 16,
+        border: '2px solid rgba(255,255,255,0.1)',
+        borderTopColor: '#e8a020',
+        borderRadius: '50%',
+        flexShrink: 0,
+      }}
+    />
+  )
+}
+
+function getOpciones(estado: EstadoPago): EstadoPago[] {
+  return estado === 'PAGADO' ? ['DEUDA', 'PENDIENTE'] : ['PAGADO']
+}
+
 export default function PagosTable({ pagos }: Props) {
+  const [rows, setRows] = useState<PagoRow[]>(pagos)
   const [busqueda, setBusqueda] = useState('')
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoPago | ''>('')
   const [tipoFiltro, setTipoFiltro] = useState<'VISA' | 'SEMINARIO' | ''>('')
+  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [pendingDeuda, setPendingDeuda] = useState<{ id: string } | null>(null)
+
+  useEffect(() => {
+    setRows(pagos)
+  }, [pagos])
+
+  useEffect(() => {
+    if (errorMsg) {
+      const t = setTimeout(() => setErrorMsg(null), 4000)
+      return () => clearTimeout(t)
+    }
+  }, [errorMsg])
 
   const filtrados = useMemo(() => {
-    return pagos.filter((p) => {
+    return rows.filter((p) => {
       if (estadoFiltro && p.estado !== estadoFiltro) return false
       if (tipoFiltro && p.tipo !== tipoFiltro) return false
       if (busqueda.trim()) {
@@ -83,7 +121,7 @@ export default function PagosTable({ pagos }: Props) {
       }
       return true
     })
-  }, [pagos, estadoFiltro, tipoFiltro, busqueda])
+  }, [rows, estadoFiltro, tipoFiltro, busqueda])
 
   const totalCobrado = useMemo(
     () => filtrados.filter((p) => p.estado === 'PAGADO').reduce((sum, p) => sum + p.monto, 0),
@@ -95,8 +133,85 @@ export default function PagosTable({ pagos }: Props) {
     [filtrados]
   )
 
+  async function applyChange(pagoId: string, nuevoEstado: EstadoPago, fecha_vencimiento_deuda?: string | null) {
+    setLoadingId(pagoId)
+    setErrorMsg(null)
+    try {
+      const body: Record<string, unknown> = { estado: nuevoEstado }
+      if (fecha_vencimiento_deuda !== undefined) body.fecha_vencimiento_deuda = fecha_vencimiento_deuda
+      const res = await fetch(`/api/pagos/${pagoId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const json = await res.json() as {
+        success?: boolean
+        error?: string
+        pago?: { estado: EstadoPago; fecha_pago: string | null; fecha_vencimiento_deuda: string | null }
+      }
+      if (!res.ok || !json.success) {
+        setErrorMsg(json.error ?? 'Error al actualizar')
+        return
+      }
+      setRows((prev) =>
+        prev.map((r) =>
+          r.id === pagoId
+            ? {
+                ...r,
+                estado: nuevoEstado,
+                fecha_pago: json.pago?.fecha_pago ?? r.fecha_pago,
+                fecha_vencimiento_deuda: json.pago?.fecha_vencimiento_deuda ?? r.fecha_vencimiento_deuda,
+              }
+            : r
+        )
+      )
+    } catch {
+      setErrorMsg('Error de conexión')
+    } finally {
+      setLoadingId(null)
+    }
+  }
+
+  function handleCambiarEstado(pagoId: string, nuevoEstado: EstadoPago) {
+    setOpenDropdownId(null)
+    if (nuevoEstado === 'DEUDA') {
+      setPendingDeuda({ id: pagoId })
+      return
+    }
+    void applyChange(pagoId, nuevoEstado)
+  }
+
   return (
     <div>
+      <FechaVencimientoDialog
+        open={pendingDeuda !== null}
+        onConfirm={(fecha) => {
+          if (!pendingDeuda) return
+          const { id } = pendingDeuda
+          setPendingDeuda(null)
+          void applyChange(id, 'DEUDA', fecha)
+        }}
+        onCancel={() => setPendingDeuda(null)}
+      />
+
+      {/* Error banner */}
+      {errorMsg && (
+        <div
+          style={{
+            backgroundColor: 'rgba(232,90,90,0.12)',
+            border: '1px solid rgba(232,90,90,0.3)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            color: '#e85a5a',
+            fontSize: 13,
+            marginBottom: 12,
+            fontFamily: 'DM Sans, sans-serif',
+          }}
+        >
+          {errorMsg}
+        </div>
+      )}
+
       {/* Filtros */}
       <div
         style={{
@@ -191,7 +306,7 @@ export default function PagosTable({ pagos }: Props) {
                   return (
                     <tr
                       key={p.id}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                     >
@@ -221,11 +336,84 @@ export default function PagosTable({ pagos }: Props) {
                           {p.fecha_pago ? formatFecha(p.fecha_pago) : '—'}
                         </Link>
                       </td>
+
+                      {/* Estado — dropdown inline */}
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none' }}>
-                          <SmallBadge {...badgeEstado} />
-                        </Link>
+                        {loadingId === p.id ? (
+                          <Spinner />
+                        ) : (
+                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setOpenDropdownId(openDropdownId === p.id ? null : p.id)
+                              }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                              }}
+                            >
+                              <SmallBadge {...badgeEstado} />
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9" />
+                              </svg>
+                            </button>
+                            {openDropdownId === p.id && (
+                              <>
+                                <div
+                                  style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                                  onClick={() => setOpenDropdownId(null)}
+                                />
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    top: 'calc(100% + 4px)',
+                                    left: 0,
+                                    zIndex: 50,
+                                    backgroundColor: '#111f38',
+                                    border: '1px solid rgba(255,255,255,0.12)',
+                                    borderRadius: 8,
+                                    padding: 4,
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+                                    minWidth: 110,
+                                  }}
+                                >
+                                  {getOpciones(p.estado).map((opt) => (
+                                    <button
+                                      key={opt}
+                                      onClick={() => handleCambiarEstado(p.id, opt)}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        width: '100%',
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: '6px 10px',
+                                        cursor: 'pointer',
+                                        borderRadius: 6,
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.06)'
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
+                                      }}
+                                    >
+                                      <SmallBadge {...BADGE_ESTADO[opt]} />
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </td>
+
                       <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
                         <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                           {p.estado === 'DEUDA' && p.fecha_vencimiento_deuda

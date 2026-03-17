@@ -3,12 +3,14 @@ export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServiceRoleClient, createServerClient } from '@/lib/supabase/server'
-import { formatPesos, formatFecha } from '@/lib/utils'
-import type { EstadoCliente, EstadoVisa, EstadoPago, TipoEvento, CanalIngreso } from '@/lib/constants'
+import { formatFecha } from '@/lib/utils'
+import type { EstadoCliente, EstadoVisa, TipoEvento, CanalIngreso } from '@/lib/constants'
 import EditarClienteModal from '@/components/clientes/EditarClienteModal'
 import type { GrupoFamiliarOption } from '@/components/clientes/EditarClienteModal'
 import AgregarNotaModal from '@/components/clientes/AgregarNotaModal'
 import RegistrarPagoModal from '@/components/clientes/RegistrarPagoModal'
+import ClientePagosTable from '@/components/clientes/ClientePagosTable'
+import type { ClientePagoRow } from '@/components/clientes/ClientePagosTable'
 import IniciarVisaModal from '@/components/visas/IniciarVisaModal'
 import EditarVisaModal from '@/components/visas/EditarVisaModal'
 
@@ -45,15 +47,7 @@ interface VisaDetalle {
   notas: string | null
 }
 
-interface PagoDetalle {
-  id: string
-  pago_id: string
-  tipo: string
-  monto: number
-  fecha_pago: string | null
-  estado: EstadoPago
-  notas: string | null
-}
+type PagoDetalle = ClientePagoRow
 
 interface HistorialEvento {
   id: string
@@ -78,12 +72,6 @@ const BADGE_VISA: Record<EstadoVisa, { label: string; color: string; bg: string 
   RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
   PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
   CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
-}
-
-const BADGE_PAGO: Record<EstadoPago, { label: string; color: string; bg: string }> = {
-  PAGADO:    { label: 'Pagado',    color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  DEUDA:     { label: 'Deuda',     color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PENDIENTE: { label: 'Pendiente', color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -282,6 +270,8 @@ export default async function ClienteDetallePage({
     .maybeSingle()
 
   const visa = rawVisa as VisaDetalle | null
+  const puedeIniciarNueva = visa !== null &&
+    (visa.estado === 'APROBADA' || visa.estado === 'RECHAZADA' || visa.estado === 'PAUSADA')
 
   // Pagos
   const { data: rawPagos } = await supabase
@@ -300,11 +290,6 @@ export default async function ClienteDetallePage({
     .order('created_at', { ascending: false })
 
   const historial = (rawHistorial ?? []) as HistorialEvento[]
-
-  // Total cobrado
-  const totalCobrado = pagos
-    .filter((p) => p.estado === 'PAGADO')
-    .reduce((sum, p) => sum + (p.monto ?? 0), 0)
 
   const estadoBadge = BADGE_CLIENTE[cliente.estado]
 
@@ -482,6 +467,11 @@ export default async function ClienteDetallePage({
                   </p>
                 </div>
               )}
+              {puedeIniciarNueva && (
+                <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <IniciarVisaModal clienteId={cliente.id} />
+                </div>
+              )}
             </>
           )}
         </Card>
@@ -489,81 +479,7 @@ export default async function ClienteDetallePage({
         {/* ── Bloque 3: Pagos ── */}
         <Card>
           <CardTitle>Pagos</CardTitle>
-          {pagos.length === 0 ? (
-            <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>Sin pagos registrados</p>
-          ) : (
-            <>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif' }}>
-                  <thead>
-                    <tr>
-                      {['ID pago', 'Tipo', 'Monto', 'Fecha', 'Estado', 'Notas'].map((col) => (
-                        <th
-                          key={col}
-                          style={{
-                            textAlign: 'left',
-                            padding: '6px 12px',
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: '#9ba8bb',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            borderBottom: '1px solid rgba(255,255,255,0.08)',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {col}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pagos.map((pago) => (
-                      <tr key={pago.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                        <td style={{ padding: '10px 12px', fontSize: 12, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                          {pago.pago_id}
-                        </td>
-                        <td style={{ padding: '10px 12px', fontSize: 14, color: '#e8e6e0', whiteSpace: 'nowrap' }}>
-                          {pago.tipo.charAt(0) + pago.tipo.slice(1).toLowerCase()}
-                        </td>
-                        <td style={{ padding: '10px 12px', fontSize: 14, color: '#e8e6e0', whiteSpace: 'nowrap' }}>
-                          {formatPesos(pago.monto)}
-                        </td>
-                        <td style={{ padding: '10px 12px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                          {pago.fecha_pago ? formatFecha(pago.fecha_pago) : '—'}
-                        </td>
-                        <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
-                          <Badge {...BADGE_PAGO[pago.estado]} />
-                        </td>
-                        <td style={{ padding: '10px 12px', fontSize: 13, color: '#9ba8bb', maxWidth: 200 }}>
-                          {pago.notas ?? '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {totalCobrado > 0 && (
-                <div
-                  style={{
-                    marginTop: 16,
-                    paddingTop: 16,
-                    borderTop: '1px solid rgba(255,255,255,0.08)',
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    gap: 10,
-                  }}
-                >
-                  <span style={{ fontSize: 13, color: '#9ba8bb' }}>Total cobrado</span>
-                  <span style={{ fontSize: 16, fontWeight: 700, color: '#22c97a' }}>
-                    {formatPesos(totalCobrado)}
-                  </span>
-                </div>
-              )}
-            </>
-          )}
+          <ClientePagosTable initialPagos={pagos} />
         </Card>
 
         {/* ── Bloque 4: Historial ── */}

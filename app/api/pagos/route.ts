@@ -33,6 +33,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
   }
 
+  if (body.tipo === 'VISA' && !body.visa_id) {
+    return NextResponse.json({ error: 'Se requiere visa activa para registrar un pago de tipo VISA' }, { status: 422 })
+  }
+
   const supabase = await createServiceRoleClient()
 
   // Generate next pago_id
