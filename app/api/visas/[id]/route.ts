@@ -106,6 +106,34 @@ export async function PATCH(
         usuario_id: user.id,
       })
     }
+
+    // Cascada: visa terminal → cliente FINALIZADO si no quedan visas activas
+    const ESTADOS_TERMINALES = ['APROBADA', 'RECHAZADA', 'CANCELADA']
+    if (ESTADOS_TERMINALES.includes(body.estado)) {
+      const { data: visasActivas } = await supabase
+        .from('visas')
+        .select('id')
+        .eq('cliente_id', visaActual.cliente_id)
+        .neq('id', id)
+        .not('estado', 'in', `(${ESTADOS_TERMINALES.join(',')})`)
+        .limit(1)
+
+      if (!visasActivas || visasActivas.length === 0) {
+        await supabase
+          .from('clientes')
+          .update({ estado: 'FINALIZADO', updated_at: new Date().toISOString() })
+          .eq('id', visaActual.cliente_id)
+
+        await supabase.from('historial').insert({
+          cliente_id: visaActual.cliente_id,
+          visa_id: id,
+          tipo: 'CAMBIO_ESTADO',
+          descripcion: 'Cliente marcado como FINALIZADO (todas las visas en estado terminal)',
+          origen: 'sistema',
+          usuario_id: null,
+        })
+      }
+    }
   }
 
   return NextResponse.json({ success: true, visa: visaActualizada })

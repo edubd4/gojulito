@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Dialog,
   DialogContent,
@@ -8,6 +9,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
+
+interface ClienteDuplicado {
+  id: string
+  gj_id: string
+  nombre: string
+  estado: string
+  telefono: string
+  dni: string | null
+}
 
 export interface GrupoFamiliarOption {
   id: string
@@ -86,10 +96,13 @@ export default function NuevoClienteModal({
   gruposFamiliares,
   onSuccess,
 }: Props) {
+  const router = useRouter()
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [clienteDuplicado, setClienteDuplicado] = useState<ClienteDuplicado | null>(null)
+  const [duplicadoMsg, setDuplicadoMsg] = useState('')
 
   // Reset form when modal opens
   useEffect(() => {
@@ -97,6 +110,8 @@ export default function NuevoClienteModal({
       setForm(EMPTY_FORM)
       setErrors({})
       setServerError('')
+      setClienteDuplicado(null)
+      setDuplicadoMsg('')
     }
   }, [open])
 
@@ -141,7 +156,18 @@ export default function NuevoClienteModal({
         body: JSON.stringify(body),
       })
 
-      const json = await res.json() as { success?: boolean; error?: string }
+      const json = await res.json() as {
+        success?: boolean
+        error?: string
+        message?: string
+        cliente_existente?: ClienteDuplicado
+      }
+
+      if (res.status === 409 && json.error === 'DUPLICATE_CLIENT' && json.cliente_existente) {
+        setClienteDuplicado(json.cliente_existente)
+        setDuplicadoMsg(json.message ?? 'Ya existe un cliente activo con ese dato')
+        return
+      }
 
       if (!res.ok || !json.success) {
         setServerError(json.error ?? 'Error al crear el cliente')
@@ -204,6 +230,64 @@ export default function NuevoClienteModal({
                 }}
               >
                 {serverError}
+              </div>
+            )}
+
+            {clienteDuplicado && (
+              <div
+                style={{
+                  backgroundColor: 'rgba(232,160,32,0.1)',
+                  border: '1px solid rgba(232,160,32,0.35)',
+                  borderRadius: 8,
+                  padding: '12px 14px',
+                  marginBottom: 16,
+                }}
+              >
+                <p style={{ color: '#e8a020', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
+                  Cliente duplicado detectado
+                </p>
+                <p style={{ color: '#e8e6e0', fontSize: 13, marginBottom: 12 }}>
+                  {duplicadoMsg}. ¿Querés ir a la ficha de{' '}
+                  <strong>{clienteDuplicado.nombre}</strong> ({clienteDuplicado.gj_id}) en lugar de crear uno nuevo?
+                </p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenChange(false)
+                      router.push(`/clientes/${clienteDuplicado.id}`)
+                    }}
+                    style={{
+                      padding: '7px 16px',
+                      borderRadius: 7,
+                      border: 'none',
+                      backgroundColor: '#e8a020',
+                      color: '#0b1628',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontFamily: 'DM Sans, sans-serif',
+                    }}
+                  >
+                    Ver cliente existente
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpenChange(false)}
+                    style={{
+                      padding: '7px 16px',
+                      borderRadius: 7,
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      backgroundColor: 'transparent',
+                      color: '#9ba8bb',
+                      fontSize: 13,
+                      cursor: 'pointer',
+                      fontFamily: 'DM Sans, sans-serif',
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
             )}
 

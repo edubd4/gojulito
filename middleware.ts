@@ -2,6 +2,11 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
+  // Rutas webhook: autenticación por API Key, no por sesión
+  if (request.nextUrl.pathname.startsWith('/api/webhook/')) {
+    return NextResponse.next()
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(

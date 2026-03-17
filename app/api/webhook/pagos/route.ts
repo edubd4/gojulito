@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
+import { validateApiKey } from '@/lib/auth-m2m'
 import type { EstadoPago } from '@/lib/constants'
 
-interface CreatePagoBody {
+interface WebhookPagoBody {
   cliente_id: string
   visa_id?: string | null
   tipo: 'VISA' | 'SEMINARIO'
@@ -10,21 +11,17 @@ interface CreatePagoBody {
   fecha_pago: string
   estado: EstadoPago
   fecha_vencimiento_deuda?: string | null
-  referencia_grupo?: string | null
   notas?: string | null
 }
 
 export async function POST(req: NextRequest) {
-  const authClient = await createServerClient()
-  const { data: { user } } = await authClient.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  if (!validateApiKey(req)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
-  let body: CreatePagoBody
+  let body: WebhookPagoBody
   try {
-    body = await req.json() as CreatePagoBody
+    body = await req.json() as WebhookPagoBody
   } catch {
     return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
   }
@@ -34,12 +31,11 @@ export async function POST(req: NextRequest) {
   }
 
   if (body.tipo === 'VISA' && !body.visa_id) {
-    return NextResponse.json({ error: 'Se requiere visa activa para registrar un pago de tipo VISA' }, { status: 422 })
+    return NextResponse.json({ error: 'Se requiere visa_id para pago tipo VISA' }, { status: 422 })
   }
 
   const supabase = await createServiceRoleClient()
 
-  // Generate next pago_id via atomic RPC function (no race condition)
   const { data: newId, error: idError } = await supabase.rpc('generate_readable_id', {
     prefix: 'PAG',
     table_name: 'pagos',
@@ -63,7 +59,6 @@ export async function POST(req: NextRequest) {
   if (body.estado === 'DEUDA' && body.fecha_vencimiento_deuda) {
     insert.fecha_vencimiento_deuda = body.fecha_vencimiento_deuda
   }
-  if (body.referencia_grupo) insert.referencia_grupo = body.referencia_grupo
   if (body.notas?.trim()) insert.notas = body.notas.trim()
 
   const { data: pago, error } = await supabase
@@ -72,16 +67,14 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   await supabase.from('historial').insert({
     cliente_id: body.cliente_id,
     tipo: 'PAGO',
-    descripcion: `Pago registrado: $${body.monto} - ${body.estado}`,
-    origen: 'dashboard',
-    usuario_id: user.id,
+    descripcion: `Pago registrado vía Telegram: $${body.monto} - ${body.estado}`,
+    origen: 'telegram',
+    usuario_id: null,
   })
 
   return NextResponse.json({ success: true, pago })

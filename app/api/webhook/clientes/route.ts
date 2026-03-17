@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
+import { validateApiKey } from '@/lib/auth-m2m'
 import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
 
-interface CreateClienteBody {
+interface WebhookClienteBody {
   nombre: string
   telefono: string
   email?: string
@@ -15,32 +16,46 @@ interface CreateClienteBody {
   observaciones?: string
 }
 
-interface ClienteInsert {
-  gj_id: string
-  nombre: string
-  telefono: string
-  canal: CanalIngreso
-  estado: EstadoCliente
-  created_by: string
-  email?: string
-  dni?: string
-  fecha_nac?: string
-  provincia?: string
-  grupo_familiar_id?: string
-  observaciones?: string
+export async function GET(req: NextRequest) {
+  if (!validateApiKey(req)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  const { searchParams } = req.nextUrl
+  const telefono = searchParams.get('telefono')
+  const gj_id = searchParams.get('gj_id')
+  const nombre = searchParams.get('nombre')
+
+  if (!telefono && !gj_id && !nombre) {
+    return NextResponse.json({ error: 'Se requiere al menos un parámetro: telefono, gj_id o nombre' }, { status: 400 })
+  }
+
+  const supabase = await createServiceRoleClient()
+
+  let query = supabase
+    .from('clientes')
+    .select('*, visas(id, visa_id, estado, fecha_turno), pagos(id, pago_id, monto, estado, fecha_pago, tipo)')
+    .order('created_at', { ascending: false })
+
+  if (telefono) query = query.eq('telefono', telefono)
+  if (gj_id) query = query.eq('gj_id', gj_id)
+  if (nombre) query = query.ilike('nombre', `%${nombre}%`)
+
+  const { data, error } = await query
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  return NextResponse.json({ clientes: data ?? [] })
 }
 
 export async function POST(req: NextRequest) {
-  const authClient = await createServerClient()
-  const { data: { user } } = await authClient.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  if (!validateApiKey(req)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
-  let body: CreateClienteBody
+  let body: WebhookClienteBody
   try {
-    body = await req.json() as CreateClienteBody
+    body = await req.json() as WebhookClienteBody
   } catch {
     return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
   }
@@ -75,7 +90,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Generate next gj_id via atomic RPC function (no race condition)
   const { data: newId, error: idError } = await supabase.rpc('generate_readable_id', {
     prefix: 'GJ',
     table_name: 'clientes',
@@ -86,13 +100,12 @@ export async function POST(req: NextRequest) {
   }
   const gj_id = newId as string
 
-  const insert: ClienteInsert = {
+  const insert: Record<string, unknown> = {
     gj_id,
     nombre: body.nombre.trim(),
     telefono: body.telefono.trim(),
     canal: body.canal,
     estado: body.estado,
-    created_by: user.id,
   }
 
   if (body.email?.trim()) insert.email = body.email.trim()
@@ -108,16 +121,14 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   await supabase.from('historial').insert({
     cliente_id: (cliente as { id: string }).id,
     tipo: 'NUEVO_CLIENTE',
-    descripcion: 'Cliente creado',
-    origen: 'dashboard',
-    usuario_id: user.id,
+    descripcion: 'Cliente creado vía Telegram',
+    origen: 'telegram',
+    usuario_id: null,
   })
 
   return NextResponse.json({ success: true, cliente })

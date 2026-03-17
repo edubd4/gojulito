@@ -36,23 +36,18 @@ export async function POST(req: NextRequest) {
 
   const supabase = await createServiceRoleClient()
 
-  // Generar sem_id: SEM-YYYY-NN (secuencial dentro del año de la fecha)
+  // Generar sem_id: SEM-YYYY-NN via atomic RPC function (year-scoped, 2-digit padding)
   const anio = body.fecha.slice(0, 4)
-
-  const { data: maxRow } = await supabase
-    .from('seminarios')
-    .select('sem_id')
-    .like('sem_id', `SEM-${anio}-%`)
-    .order('sem_id', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  let nextNum = 1
-  if (maxRow?.sem_id) {
-    const match = (maxRow.sem_id as string).match(/^SEM-\d{4}-(\d+)$/)
-    if (match) nextNum = parseInt(match[1], 10) + 1
+  const { data: newId, error: idError } = await supabase.rpc('generate_readable_id', {
+    prefix: `SEM-${anio}`,
+    table_name: 'seminarios',
+    id_column: 'sem_id',
+    pad_length: 2,
+  })
+  if (idError || !newId) {
+    return NextResponse.json({ error: 'Error generando ID' }, { status: 500 })
   }
-  const sem_id = `SEM-${anio}-${String(nextNum).padStart(2, '0')}`
+  const sem_id = newId as string
 
   const insert: Record<string, unknown> = {
     sem_id,

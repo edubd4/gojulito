@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatFecha } from '@/lib/utils'
 import type { EstadoVisa } from '@/lib/constants'
+import AccionLoteGrupoModal from '@/components/grupos/AccionLoteGrupoModal'
 
 export interface TramiteRow {
   id: string
@@ -16,10 +18,13 @@ export interface TramiteRow {
   cliente_id: string
   cliente_nombre: string
   cliente_gj_id: string
+  grupo_familiar_id: string | null
+  grupo_familiar_nombre: string | null
 }
 
 interface Props {
   tramites: TramiteRow[]
+  grupos: { id: string; nombre: string }[]
 }
 
 const BADGE_VISA: Record<EstadoVisa, { label: string; color: string; bg: string }> = {
@@ -61,13 +66,16 @@ function Spinner() {
   )
 }
 
-export default function TramitesTable({ tramites }: Props) {
+export default function TramitesTable({ tramites, grupos }: Props) {
+  const router = useRouter()
   const [rows, setRows] = useState<TramiteRow[]>(tramites)
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoVisa | ''>('')
+  const [grupoFiltro, setGrupoFiltro] = useState('')
   const [busqueda, setBusqueda] = useState('')
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [loteModalOpen, setLoteModalOpen] = useState(false)
 
   useEffect(() => {
     if (errorMsg) {
@@ -79,6 +87,7 @@ export default function TramitesTable({ tramites }: Props) {
   const filtrados = useMemo(() => {
     return rows.filter((t) => {
       if (estadoFiltro && t.estado !== estadoFiltro) return false
+      if (grupoFiltro && t.grupo_familiar_id !== grupoFiltro) return false
       if (busqueda.trim()) {
         const q = busqueda.trim().toLowerCase()
         return (
@@ -89,7 +98,9 @@ export default function TramitesTable({ tramites }: Props) {
       }
       return true
     })
-  }, [rows, estadoFiltro, busqueda])
+  }, [rows, estadoFiltro, grupoFiltro, busqueda])
+
+  const grupoSeleccionado = grupoFiltro ? grupos.find((g) => g.id === grupoFiltro) ?? null : null
 
   async function handleCambiarEstado(visaId: string, nuevoEstado: EstadoVisa) {
     setLoadingId(visaId)
@@ -181,6 +192,37 @@ export default function TramitesTable({ tramites }: Props) {
             <option key={e} value={e}>{BADGE_VISA[e].label}</option>
           ))}
         </select>
+        {grupos.length > 0 && (
+          <select
+            style={{ ...inputStyle, cursor: 'pointer' }}
+            value={grupoFiltro}
+            onChange={(e) => setGrupoFiltro(e.target.value)}
+          >
+            <option value="">Todos los grupos</option>
+            {grupos.map((g) => (
+              <option key={g.id} value={g.id}>{g.nombre}</option>
+            ))}
+          </select>
+        )}
+        {grupoSeleccionado && (
+          <button
+            onClick={() => setLoteModalOpen(true)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: 8,
+              border: 'none',
+              backgroundColor: '#e8a020',
+              color: '#0b1628',
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Actualizar todas las visas del grupo
+          </button>
+        )}
         <span style={{ color: '#9ba8bb', fontSize: 13, fontFamily: 'DM Sans, sans-serif', marginLeft: 4 }}>
           {filtrados.length} trámite{filtrados.length !== 1 ? 's' : ''}
         </span>
@@ -255,7 +297,12 @@ export default function TramitesTable({ tramites }: Props) {
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
                         <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
                           <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{t.cliente_nombre}</div>
-                          <div style={{ fontSize: 12, color: '#9ba8bb' }}>{t.cliente_gj_id}</div>
+                          <div style={{ fontSize: 12, color: '#9ba8bb' }}>
+                            {t.cliente_gj_id}
+                            {t.grupo_familiar_nombre && (
+                              <span style={{ marginLeft: 6, color: '#4a9eff' }}>· {t.grupo_familiar_nombre}</span>
+                            )}
+                          </div>
                         </Link>
                       </td>
 
@@ -391,6 +438,17 @@ export default function TramitesTable({ tramites }: Props) {
           </div>
         )}
       </div>
+
+      {/* Modal de acción en lote */}
+      {grupoSeleccionado && (
+        <AccionLoteGrupoModal
+          open={loteModalOpen}
+          onOpenChange={setLoteModalOpen}
+          grupoId={grupoSeleccionado.id}
+          grupoNombre={grupoSeleccionado.nombre}
+          onSuccess={() => router.refresh()}
+        />
+      )}
     </div>
   )
 }
