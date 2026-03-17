@@ -49,6 +49,7 @@ export type TipoServicio = typeof TIPO_SERVICIO[keyof typeof TIPO_SERVICIO]
 export const MODALIDAD_SEM = {
   PRESENCIAL: 'PRESENCIAL',
   VIRTUAL: 'VIRTUAL',
+  AMBAS: 'AMBAS',
 } as const
 
 export type ModalidadSem = typeof MODALIDAD_SEM[keyof typeof MODALIDAD_SEM]

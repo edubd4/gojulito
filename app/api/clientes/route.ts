@@ -8,6 +8,7 @@ interface CreateClienteBody {
   email?: string
   dni?: string
   fecha_nac?: string
+  provincia?: string
   canal: CanalIngreso
   estado: EstadoCliente
   grupo_familiar_id?: string
@@ -24,6 +25,7 @@ interface ClienteInsert {
   email?: string
   dni?: string
   fecha_nac?: string
+  provincia?: string
   grupo_familiar_id?: string
   observaciones?: string
 }
@@ -79,6 +81,7 @@ export async function POST(req: NextRequest) {
   if (body.email?.trim()) insert.email = body.email.trim()
   if (body.dni?.trim()) insert.dni = body.dni.trim()
   if (body.fecha_nac) insert.fecha_nac = body.fecha_nac
+  if (body.provincia?.trim()) insert.provincia = body.provincia.trim()
   if (body.grupo_familiar_id) insert.grupo_familiar_id = body.grupo_familiar_id
   if (body.observaciones?.trim()) insert.observaciones = body.observaciones.trim()
 

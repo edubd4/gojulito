@@ -19,6 +19,7 @@ export interface ClienteEditableData {
   email: string | null
   dni: string | null
   fecha_nac: string | null
+  provincia: string | null
   canal: CanalIngreso
   estado: EstadoCliente
   grupo_familiar_id: string | null
@@ -41,6 +42,7 @@ interface FormState {
   email: string
   dni: string
   fecha_nac: string
+  provincia: string
   canal: CanalIngreso | ''
   estado: EstadoCliente
   grupo_familiar_id: string
@@ -54,6 +56,7 @@ function buildInitialForm(c: ClienteEditableData): FormState {
     email: c.email ?? '',
     dni: c.dni ?? '',
     fecha_nac: c.fecha_nac ?? '',
+    provincia: c.provincia ?? '',
     canal: c.canal,
     estado: c.estado,
     grupo_familiar_id: c.grupo_familiar_id ?? '',
@@ -162,6 +165,7 @@ export default function EditarClienteModal({
         email: form.email.trim() || null,
         dni: form.dni.trim() || null,
         fecha_nac: form.fecha_nac || null,
+        provincia: form.provincia.trim() || null,
         canal: form.canal as CanalIngreso,
         estado: form.estado,
         grupo_familiar_id: form.grupo_familiar_id || null,
@@ -440,6 +444,17 @@ export default function EditarClienteModal({
                     style={inputStyle}
                     value={form.dni}
                     onChange={(e) => setField('dni', e.target.value)}
+                  />
+                </div>
+
+                {/* Provincia */}
+                <div>
+                  <label style={labelStyle}>Provincia</label>
+                  <input
+                    style={inputStyle}
+                    value={form.provincia}
+                    onChange={(e) => setField('provincia', e.target.value)}
+                    placeholder="Buenos Aires"
                   />
                 </div>
 

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServiceRoleClient, createServerClient } from '@/lib/supabase/server'
@@ -5,6 +7,10 @@ import { formatPesos, formatFecha } from '@/lib/utils'
 import type { EstadoCliente, EstadoVisa, EstadoPago, TipoEvento, CanalIngreso } from '@/lib/constants'
 import EditarClienteModal from '@/components/clientes/EditarClienteModal'
 import type { GrupoFamiliarOption } from '@/components/clientes/EditarClienteModal'
+import AgregarNotaModal from '@/components/clientes/AgregarNotaModal'
+import RegistrarPagoModal from '@/components/clientes/RegistrarPagoModal'
+import IniciarVisaModal from '@/components/visas/IniciarVisaModal'
+import EditarVisaModal from '@/components/visas/EditarVisaModal'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -16,6 +22,7 @@ interface ClienteDetalle {
   email: string | null
   dni: string | null
   fecha_nac: string | null
+  provincia: string | null
   canal: CanalIngreso
   estado: EstadoCliente
   observaciones: string | null
@@ -347,21 +354,26 @@ export default async function ClienteDetallePage({
             <Badge {...estadoBadge} />
             <span style={{ color: '#9ba8bb', fontSize: 13 }}>{cliente.gj_id}</span>
           </div>
-          <EditarClienteModal
-            cliente={{
-              id: cliente.id,
-              nombre: cliente.nombre,
-              telefono: cliente.telefono,
-              email: cliente.email,
-              dni: cliente.dni,
-              fecha_nac: cliente.fecha_nac,
-              canal: cliente.canal,
-              estado: cliente.estado,
-              grupo_familiar_id: cliente.grupo_familiar_id,
-              observaciones: cliente.observaciones,
-            }}
-            gruposFamiliares={grupos}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <AgregarNotaModal clienteId={cliente.id} />
+            <RegistrarPagoModal clienteId={cliente.id} visaId={visa?.id} />
+            <EditarClienteModal
+              cliente={{
+                id: cliente.id,
+                nombre: cliente.nombre,
+                telefono: cliente.telefono,
+                email: cliente.email,
+                dni: cliente.dni,
+                fecha_nac: cliente.fecha_nac,
+                provincia: cliente.provincia,
+                canal: cliente.canal,
+                estado: cliente.estado,
+                grupo_familiar_id: cliente.grupo_familiar_id,
+                observaciones: cliente.observaciones,
+              }}
+              gruposFamiliares={grupos}
+            />
+          </div>
         </div>
       </div>
 
@@ -381,6 +393,7 @@ export default async function ClienteDetallePage({
             <GridField label="Teléfono" value={cliente.telefono} />
             <GridField label="Email" value={cliente.email} />
             <GridField label="DNI" value={cliente.dni} />
+            <GridField label="Provincia" value={cliente.provincia} />
             <GridField
               label="Fecha de nacimiento"
               value={cliente.fecha_nac ? formatFecha(cliente.fecha_nac) : null}
@@ -409,16 +422,35 @@ export default async function ClienteDetallePage({
         <Card>
           <CardTitle>Visa activa</CardTitle>
           {!visa ? (
-            <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
-              Sin trámite de visa registrado
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 14 }}>
+              <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
+                Este cliente no tiene un trámite de visa activo.
+              </p>
+              <IniciarVisaModal clienteId={cliente.id} />
+            </div>
           ) : (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, color: '#e8e6e0' }}>
-                  {visa.visa_id}
-                </span>
-                <Badge {...BADGE_VISA[visa.estado]} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 12, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, color: '#e8e6e0' }}>
+                    {visa.visa_id}
+                  </span>
+                  <Badge {...BADGE_VISA[visa.estado]} />
+                </div>
+                <EditarVisaModal
+                  visa={{
+                    id: visa.id,
+                    visa_id: visa.visa_id,
+                    estado: visa.estado,
+                    ds160: visa.ds160,
+                    email_portal: visa.email_portal,
+                    orden_atencion: visa.orden_atencion,
+                    fecha_turno: visa.fecha_turno,
+                    fecha_aprobacion: visa.fecha_aprobacion,
+                    fecha_vencimiento: visa.fecha_vencimiento,
+                    notas: visa.notas,
+                  }}
+                />
               </div>
               <div
                 style={{

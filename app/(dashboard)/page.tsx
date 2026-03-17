@@ -1,247 +1,497 @@
-import { createServiceRoleClient } from '@/lib/supabase/server'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { formatPesos, formatFecha } from '@/lib/utils'
+import type { TipoEvento } from '@/lib/constants'
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Metrica {
   estado: string
   total: number
 }
 
-interface DeudaProxima {
-  nombre_cliente: string
-  monto: number
-  fecha_vencimiento_deuda: string
-}
-
 interface TurnoSemana {
+  cliente_id: string
+  gj_id: string
   nombre_cliente: string
   fecha_turno: string
   estado_visa: string
 }
 
-function diasRestantes(fechaStr: string): number {
-  const hoy = new Date()
-  hoy.setHours(0, 0, 0, 0)
-  const fecha = new Date(fechaStr)
-  fecha.setHours(0, 0, 0, 0)
-  return Math.round((fecha.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24))
+interface DeudaProxima {
+  cliente_id: string
+  gj_id: string
+  nombre_cliente: string
+  monto: number
+  fecha_vencimiento_deuda: string
 }
 
-const METRIC_CARDS = [
-  { estado: 'EN_PROCESO',      label: 'En proceso',      color: '#e8a020', bg: 'rgba(232,160,32,0.12)' },
-  { estado: 'TURNO_ASIGNADO',  label: 'Turno asignado',  color: '#4a9eff', bg: 'rgba(74,158,255,0.12)' },
-  { estado: 'APROBADA',        label: 'Aprobadas',        color: '#22c97a', bg: 'rgba(34,201,122,0.12)' },
-  { estado: 'PAUSADA',         label: 'Pausadas',         color: '#e85a5a', bg: 'rgba(232,90,90,0.12)'  },
-]
+interface HistorialEvento {
+  id: string
+  tipo: TipoEvento
+  descripcion: string
+  created_at: string
+  cliente_id: string | null
+  clientes: { nombre: string; gj_id: string } | null
+}
 
-export default async function DashboardPage() {
-  const supabase = await createServiceRoleClient()
+// ─── Badge configs ────────────────────────────────────────────────────────────
 
-  const [
-    { data: metricas },
-    { data: deudas },
-    { data: turnos },
-  ] = await Promise.all([
-    supabase.from('v_metricas').select('estado, total').returns<Metrica[]>(),
-    supabase.from('v_deudas_proximas').select('nombre_cliente, monto, fecha_vencimiento_deuda').order('fecha_vencimiento_deuda', { ascending: true }).returns<DeudaProxima[]>(),
-    supabase.from('v_turnos_semana').select('nombre_cliente, fecha_turno, estado_visa').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
-  ])
+const BADGE_VISA: Record<string, { label: string; color: string; bg: string }> = {
+  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
+  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
+  APROBADA:       { label: 'Aprobada',       color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
+  RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
+  PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
+  CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+}
 
-  const metricaMap = new Map<string, number>(
-    (metricas ?? []).map((m) => [m.estado, m.total])
-  )
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
+function Badge({ estado }: { estado: string }) {
+  const b = BADGE_VISA[estado] ?? { label: estado, color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' }
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif' }}>
-      {/* Título */}
-      <h1
-        className="text-2xl font-bold mb-6"
-        style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0' }}
-      >
-        Dashboard
-      </h1>
+    <span
+      style={{
+        display: 'inline-block',
+        padding: '2px 9px',
+        borderRadius: 6,
+        fontSize: 11,
+        fontWeight: 600,
+        color: b.color,
+        backgroundColor: b.bg,
+        fontFamily: 'DM Sans, sans-serif',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {b.label}
+    </span>
+  )
+}
 
-      {/* Sección 1 — Métricas */}
-      <div className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-4">
-        {METRIC_CARDS.map(({ estado, label, color, bg }) => (
-          <div
-            key={estado}
-            className="rounded-xl p-5"
-            style={{ backgroundColor: '#111f38', border: `1px solid ${color}30` }}
-          >
-            <p
-              className="text-sm font-medium mb-2"
-              style={{ color: '#9ba8bb' }}
-            >
-              {label}
-            </p>
-            <p
-              className="text-4xl font-bold"
-              style={{ color, fontFamily: 'Fraunces, serif' }}
-            >
-              {metricaMap.get(estado) ?? 0}
-            </p>
-            <div
-              className="mt-3 h-1 rounded-full"
-              style={{ backgroundColor: bg, minHeight: 4 }}
-            />
-          </div>
-        ))}
-      </div>
+function formatFechaHora(dateStr: string): string {
+  return new Intl.DateTimeFormat('es-AR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  }).format(new Date(dateStr))
+}
 
-      {/* Sección 2 — Deudas próximas */}
+function formatFechaHoy(): string {
+  return new Intl.DateTimeFormat('es-AR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  }).format(new Date())
+}
+
+function diasRestantes(fechaStr: string): number {
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+  const fecha = new Date(fechaStr); fecha.setHours(0, 0, 0, 0)
+  return Math.round((fecha.getTime() - hoy.getTime()) / 86_400_000)
+}
+
+function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
+  const s = { width: 15, height: 15, flexShrink: 0 } as React.CSSProperties
+  switch (tipo) {
+    case 'CAMBIO_ESTADO':
+      return <svg style={s} viewBox="0 0 24 24" fill="none" stroke="#e8a020" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+    case 'PAGO':
+      return <svg style={s} viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    case 'NOTA':
+      return <svg style={s} viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    case 'TURNO_ASIGNADO':
+      return <svg style={s} viewBox="0 0 24 24" fill="none" stroke="#4a9eff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    case 'NUEVO_CLIENTE':
+      return <svg style={s} viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+    case 'ALERTA':
+      return <svg style={s} viewBox="0 0 24 24" fill="none" stroke="#e85a5a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  }
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        backgroundColor: '#111f38',
+        borderRadius: 12,
+        border: '1px solid rgba(255,255,255,0.06)',
+        overflow: 'hidden',
+      }}
+    >
       <div
-        className="rounded-xl p-5 mb-6"
-        style={{ backgroundColor: '#111f38' }}
+        style={{
+          padding: '18px 24px',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}
       >
         <h2
-          className="text-base font-semibold mb-4"
-          style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0' }}
+          style={{
+            fontFamily: 'DM Sans, sans-serif',
+            fontSize: 13,
+            fontWeight: 600,
+            color: '#9ba8bb',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            margin: 0,
+          }}
         >
-          Deudas próximas
+          {title}
         </h2>
-
-        {!deudas || deudas.length === 0 ? (
-          <p className="text-sm" style={{ color: '#9ba8bb' }}>
-            Sin deudas próximas
-          </p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                <th
-                  className="text-left pb-2 font-medium"
-                  style={{ color: '#9ba8bb' }}
-                >
-                  Cliente
-                </th>
-                <th
-                  className="text-right pb-2 font-medium"
-                  style={{ color: '#9ba8bb' }}
-                >
-                  Monto
-                </th>
-                <th
-                  className="text-right pb-2 font-medium"
-                  style={{ color: '#9ba8bb' }}
-                >
-                  Vence en
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {deudas.map((deuda, i) => {
-                const dias = diasRestantes(deuda.fecha_vencimiento_deuda)
-                return (
-                  <tr
-                    key={i}
-                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                  >
-                    <td className="py-2.5" style={{ color: '#e8e6e0' }}>
-                      {deuda.nombre_cliente}
-                    </td>
-                    <td className="py-2.5 text-right" style={{ color: '#e8e6e0' }}>
-                      {formatPesos(deuda.monto)}
-                    </td>
-                    <td className="py-2.5 text-right">
-                      <span
-                        style={{
-                          color: dias <= 7 ? '#e85a5a' : dias <= 15 ? '#e8a020' : '#9ba8bb',
-                        }}
-                      >
-                        {dias === 0 ? 'Hoy' : dias === 1 ? '1 día' : `${dias} días`}
-                      </span>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        )}
       </div>
-
-      {/* Sección 3 — Turnos de la semana */}
-      <div
-        className="rounded-xl p-5"
-        style={{ backgroundColor: '#111f38' }}
-      >
-        <h2
-          className="text-base font-semibold mb-4"
-          style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0' }}
-        >
-          Turnos esta semana
-        </h2>
-
-        {!turnos || turnos.length === 0 ? (
-          <p className="text-sm" style={{ color: '#9ba8bb' }}>
-            Sin turnos esta semana
-          </p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                <th
-                  className="text-left pb-2 font-medium"
-                  style={{ color: '#9ba8bb' }}
-                >
-                  Cliente
-                </th>
-                <th
-                  className="text-left pb-2 font-medium"
-                  style={{ color: '#9ba8bb' }}
-                >
-                  Fecha
-                </th>
-                <th
-                  className="text-left pb-2 font-medium"
-                  style={{ color: '#9ba8bb' }}
-                >
-                  Estado visa
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {turnos.map((turno, i) => (
-                <tr
-                  key={i}
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                >
-                  <td className="py-2.5" style={{ color: '#e8e6e0' }}>
-                    {turno.nombre_cliente}
-                  </td>
-                  <td className="py-2.5" style={{ color: '#e8e6e0' }}>
-                    {formatFecha(turno.fecha_turno)}
-                  </td>
-                  <td className="py-2.5">
-                    <EstadoVisaBadge estado={turno.estado_visa} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <div style={{ padding: '0 24px 20px' }}>{children}</div>
     </div>
   )
 }
 
-function EstadoVisaBadge({ estado }: { estado: string }) {
-  const map: Record<string, { label: string; color: string; bg: string }> = {
-    EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)' },
-    TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)' },
-    APROBADA:       { label: 'Aprobada',        color: '#22c97a', bg: 'rgba(34,201,122,0.15)' },
-    RECHAZADA:      { label: 'Rechazada',       color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'  },
-    PAUSADA:        { label: 'Pausada',         color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'  },
-    CANCELADA:      { label: 'Cancelada',       color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
-  }
+function EmptyRow({ message }: { message: string }) {
+  return (
+    <p style={{ color: '#9ba8bb', fontSize: 14, margin: '20px 0 0', fontFamily: 'DM Sans, sans-serif' }}>
+      {message}
+    </p>
+  )
+}
 
-  const style = map[estado] ?? { label: estado, color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' }
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default async function DashboardPage() {
+  const authClient = await createServerClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  if (!user) notFound()
+
+  const supabase = await createServiceRoleClient()
+
+  const [
+    { data: rawMetricas },
+    { data: rawTurnos },
+    { data: rawDeudas },
+    { data: rawHistorial },
+    { count: clientesActivos },
+  ] = await Promise.all([
+    supabase.from('v_metricas').select('estado, total').returns<Metrica[]>(),
+    supabase.from('v_turnos_semana').select('*').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
+    supabase.from('v_deudas_proximas').select('*').order('fecha_vencimiento_deuda', { ascending: true }).returns<DeudaProxima[]>(),
+    supabase.from('historial').select('id, tipo, descripcion, created_at, cliente_id, clientes(nombre, gj_id)').order('created_at', { ascending: false }).limit(10),
+    supabase.from('v_clientes_activos').select('*', { count: 'exact', head: true }),
+  ])
+
+  const metricas = rawMetricas ?? []
+  const turnos = rawTurnos ?? []
+  const deudas = rawDeudas ?? []
+  const historial = (rawHistorial ?? []) as unknown as HistorialEvento[]
+
+  const metricaMap = new Map<string, number>(metricas.map((m) => [m.estado, m.total]))
+  const visasEnProceso = (metricaMap.get('EN_PROCESO') ?? 0) + (metricaMap.get('TURNO_ASIGNADO') ?? 0)
+
+  const METRIC_CARDS = [
+    {
+      label: 'Clientes activos',
+      value: clientesActivos ?? 0,
+      color: '#22c97a',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Visas en proceso',
+      value: visasEnProceso,
+      color: '#e8a020',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Turnos esta semana',
+      value: turnos.length,
+      color: '#4a9eff',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Deudas próximas',
+      value: deudas.length,
+      color: '#e85a5a',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      ),
+    },
+  ]
 
   return (
-    <span
-      className="inline-block px-2 py-0.5 rounded text-xs font-medium"
-      style={{ color: style.color, backgroundColor: style.bg }}
+    <div
+      style={{
+        backgroundColor: '#0b1628',
+        minHeight: '100%',
+        padding: '28px 32px',
+        fontFamily: 'DM Sans, sans-serif',
+      }}
     >
-      {style.label}
-    </span>
+      {/* Header */}
+      <div style={{ marginBottom: 28 }}>
+        <h1
+          style={{
+            fontFamily: 'Fraunces, serif',
+            fontSize: 28,
+            fontWeight: 700,
+            color: '#e8e6e0',
+            margin: '0 0 4px',
+          }}
+        >
+          Dashboard
+        </h1>
+        <p style={{ fontSize: 13, color: '#9ba8bb', margin: 0, textTransform: 'capitalize' }}>
+          {formatFechaHoy()}
+        </p>
+      </div>
+
+      {/* ── Métricas ── */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        {METRIC_CARDS.map(({ label, value, color, icon }) => (
+          <div
+            key={label}
+            style={{
+              backgroundColor: '#111f38',
+              borderRadius: 12,
+              padding: '20px 24px',
+              border: `1px solid ${color}28`,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {label}
+              </span>
+              <span style={{ color, opacity: 0.8 }}>{icon}</span>
+            </div>
+            <p
+              style={{
+                fontFamily: 'Fraunces, serif',
+                fontSize: 36,
+                fontWeight: 700,
+                color,
+                margin: 0,
+                lineHeight: 1,
+              }}
+            >
+              {value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Cuerpo — dos columnas ── */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 340px',
+          gap: 20,
+          alignItems: 'start',
+        }}
+      >
+        {/* Columna izquierda */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+          {/* Turnos de la semana */}
+          <SectionCard title="Turnos esta semana">
+            {turnos.length === 0 ? (
+              <EmptyRow message="Sin turnos esta semana" />
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', marginTop: 12 }}>
+                <thead>
+                  <tr>
+                    {['Cliente', 'Fecha', 'Estado'].map((col) => (
+                      <th
+                        key={col}
+                        style={{
+                          textAlign: 'left',
+                          padding: '0 0 10px',
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: '#9ba8bb',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          borderBottom: '1px solid rgba(255,255,255,0.07)',
+                        }}
+                      >
+                        {col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {turnos.map((t, i) => (
+                    <tr
+                      key={i}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                    >
+                      <td style={{ padding: '11px 0' }}>
+                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
+                          <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{t.nombre_cliente}</div>
+                          <div style={{ fontSize: 11, color: '#9ba8bb' }}>{t.gj_id}</div>
+                        </Link>
+                      </td>
+                      <td style={{ padding: '11px 16px 11px 0', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
+                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                          {formatFecha(t.fecha_turno)}
+                        </Link>
+                      </td>
+                      <td style={{ padding: '11px 0' }}>
+                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
+                          <Badge estado={t.estado_visa} />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </SectionCard>
+
+          {/* Deudas próximas */}
+          <SectionCard title="Deudas próximas (30 días)">
+            {deudas.length === 0 ? (
+              <EmptyRow message="Sin deudas próximas" />
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', marginTop: 12 }}>
+                <thead>
+                  <tr>
+                    {['Cliente', 'Monto', 'Vence'].map((col) => (
+                      <th
+                        key={col}
+                        style={{
+                          textAlign: 'left',
+                          padding: '0 0 10px',
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: '#9ba8bb',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          borderBottom: '1px solid rgba(255,255,255,0.07)',
+                        }}
+                      >
+                        {col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {deudas.map((d, i) => {
+                    const dias = diasRestantes(d.fecha_vencimiento_deuda)
+                    const urgColor = dias <= 7 ? '#e85a5a' : dias <= 15 ? '#e8a020' : '#9ba8bb'
+                    return (
+                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                        <td style={{ padding: '11px 0' }}>
+                          <Link href={`/clientes/${d.cliente_id}`} style={{ textDecoration: 'none' }}>
+                            <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{d.nombre_cliente}</div>
+                            <div style={{ fontSize: 11, color: '#9ba8bb' }}>{d.gj_id}</div>
+                          </Link>
+                        </td>
+                        <td style={{ padding: '11px 20px 11px 0', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                          <Link href={`/clientes/${d.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            {formatPesos(d.monto)}
+                          </Link>
+                        </td>
+                        <td style={{ padding: '11px 0', whiteSpace: 'nowrap' }}>
+                          <Link href={`/clientes/${d.cliente_id}`} style={{ textDecoration: 'none' }}>
+                            <div style={{ fontSize: 13, color: urgColor, fontWeight: 600 }}>
+                              {dias === 0 ? 'Hoy' : dias === 1 ? '1 día' : `${dias} días`}
+                            </div>
+                            <div style={{ fontSize: 11, color: '#9ba8bb' }}>{formatFecha(d.fecha_vencimiento_deuda)}</div>
+                          </Link>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
+          </SectionCard>
+
+        </div>
+
+        {/* Columna derecha — Actividad reciente */}
+        <SectionCard title="Actividad reciente">
+          {historial.length === 0 ? (
+            <EmptyRow message="Sin actividad reciente" />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 4 }}>
+              {historial.map((evento, idx) => {
+                const clienteNombre = evento.clientes?.nombre ?? null
+                const clienteGjId = evento.clientes?.gj_id ?? null
+                return (
+                  <div
+                    key={evento.id}
+                    style={{
+                      display: 'flex',
+                      gap: 12,
+                      paddingTop: 14,
+                      paddingBottom: idx < historial.length - 1 ? 14 : 0,
+                      borderBottom: idx < historial.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 7,
+                        backgroundColor: '#172645',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginTop: 1,
+                      }}
+                    >
+                      <HistorialIcon tipo={evento.tipo} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      {clienteNombre && evento.cliente_id && (
+                        <Link
+                          href={`/clientes/${evento.cliente_id}`}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <span style={{ fontSize: 12, fontWeight: 600, color: '#4a9eff', display: 'block', marginBottom: 1 }}>
+                            {clienteNombre}
+                            {clienteGjId && (
+                              <span style={{ fontWeight: 400, color: '#9ba8bb', marginLeft: 6 }}>{clienteGjId}</span>
+                            )}
+                          </span>
+                        </Link>
+                      )}
+                      <p style={{ margin: 0, fontSize: 12, color: '#e8e6e0', lineHeight: 1.45 }}>
+                        {evento.descripcion}
+                      </p>
+                      <p style={{ margin: '3px 0 0', fontSize: 11, color: '#9ba8bb' }}>
+                        {formatFechaHora(evento.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </SectionCard>
+
+      </div>
+    </div>
   )
 }

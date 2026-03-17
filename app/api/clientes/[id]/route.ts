@@ -8,6 +8,7 @@ interface PatchBody {
   email?: string | null
   dni?: string | null
   fecha_nac?: string | null
+  provincia?: string | null
   canal?: CanalIngreso
   estado?: EstadoCliente
   grupo_familiar_id?: string | null
@@ -50,6 +51,7 @@ export async function PATCH(
   if (body.email !== undefined) updateData.email = body.email ?? null
   if (body.dni !== undefined) updateData.dni = body.dni ?? null
   if (body.fecha_nac !== undefined) updateData.fecha_nac = body.fecha_nac ?? null
+  if (body.provincia !== undefined) updateData.provincia = body.provincia ?? null
   if (body.canal !== undefined) updateData.canal = body.canal
   if (body.estado !== undefined) updateData.estado = body.estado
   if ('grupo_familiar_id' in body) updateData.grupo_familiar_id = body.grupo_familiar_id ?? null

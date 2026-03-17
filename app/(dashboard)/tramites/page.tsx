@@ -1,15 +1,67 @@
-export default function TramitesPage() {
+import { notFound } from 'next/navigation'
+import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
+import TramitesTable, { type TramiteRow } from '@/components/tramites/TramitesTable'
+import type { EstadoVisa } from '@/lib/constants'
+
+export default async function TramitesPage() {
+  const authClient = await createServerClient()
+  const { data: { user } } = await authClient.auth.getUser()
+
+  if (!user) notFound()
+
+  const supabase = await createServiceRoleClient()
+
+  const { data: rawVisas } = await supabase
+    .from('visas')
+    .select('id, visa_id, estado, ds160, fecha_turno, fecha_aprobacion, fecha_vencimiento, cliente_id, clientes(id, nombre, gj_id)')
+    .order('created_at', { ascending: false })
+
+  const tramites: TramiteRow[] = (rawVisas ?? []).map((row) => {
+    const cliente = Array.isArray(row.clientes)
+      ? (row.clientes[0] as { id: string; nombre: string; gj_id: string } | undefined)
+      : (row.clientes as { id: string; nombre: string; gj_id: string } | null)
+
+    return {
+      id: row.id as string,
+      visa_id: row.visa_id as string,
+      estado: row.estado as EstadoVisa,
+      ds160: (row.ds160 as string | null) ?? null,
+      fecha_turno: (row.fecha_turno as string | null) ?? null,
+      fecha_aprobacion: (row.fecha_aprobacion as string | null) ?? null,
+      fecha_vencimiento: (row.fecha_vencimiento as string | null) ?? null,
+      cliente_id: row.cliente_id as string,
+      cliente_nombre: cliente?.nombre ?? '—',
+      cliente_gj_id: cliente?.gj_id ?? '—',
+    }
+  })
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <h1
-        className="text-2xl font-bold mb-2"
-        style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0' }}
-      >
-        Trámites
-      </h1>
-      <p style={{ color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
-        En construcción.
-      </p>
+    <div
+      style={{
+        backgroundColor: '#0b1628',
+        minHeight: '100%',
+        padding: '28px 32px',
+        fontFamily: 'DM Sans, sans-serif',
+      }}
+    >
+      <div style={{ marginBottom: 24 }}>
+        <h1
+          style={{
+            fontFamily: 'Fraunces, serif',
+            fontSize: 28,
+            fontWeight: 700,
+            color: '#e8e6e0',
+            margin: '0 0 4px',
+          }}
+        >
+          Trámites
+        </h1>
+        <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
+          {tramites.length} trámite{tramites.length !== 1 ? 's' : ''} en total
+        </p>
+      </div>
+
+      <TramitesTable tramites={tramites} />
     </div>
   )
 }

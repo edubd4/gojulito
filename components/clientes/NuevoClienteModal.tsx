@@ -27,6 +27,7 @@ interface FormState {
   email: string
   dni: string
   fecha_nac: string
+  provincia: string
   canal: CanalIngreso | ''
   estado: EstadoCliente
   grupo_familiar_id: string
@@ -46,6 +47,7 @@ const EMPTY_FORM: FormState = {
   email: '',
   dni: '',
   fecha_nac: '',
+  provincia: '',
   canal: '',
   estado: 'PROSPECTO',
   grupo_familiar_id: '',
@@ -129,6 +131,7 @@ export default function NuevoClienteModal({
       if (form.email.trim()) body.email = form.email.trim()
       if (form.dni.trim()) body.dni = form.dni.trim()
       if (form.fecha_nac) body.fecha_nac = form.fecha_nac
+      if (form.provincia.trim()) body.provincia = form.provincia.trim()
       if (form.grupo_familiar_id) body.grupo_familiar_id = form.grupo_familiar_id
       if (form.observaciones.trim()) body.observaciones = form.observaciones.trim()
 
@@ -268,6 +271,17 @@ export default function NuevoClienteModal({
                   value={form.dni}
                   onChange={(e) => set('dni', e.target.value)}
                   placeholder="12.345.678"
+                />
+              </div>
+
+              {/* Provincia */}
+              <div>
+                <label style={labelStyle}>Provincia</label>
+                <input
+                  style={inputStyle}
+                  value={form.provincia}
+                  onChange={(e) => set('provincia', e.target.value)}
+                  placeholder="Buenos Aires"
                 />
               </div>
 
