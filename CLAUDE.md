@@ -47,6 +47,7 @@ No test suite configured. Verify with `npm run build` before considering a task 
 | `lib/supabase/types.ts` | Auto-generated Supabase Database types |
 | `lib/constants.ts` | All business ENUMs as TypeScript const objects |
 | `lib/utils.ts` | `cn()`, `formatPesos()` (ARS), `formatFecha()` (DD/MM/YYYY) |
+| `lib/auth-m2m.ts` | `validateApiKey(request)` — validates `x-api-key` header for webhook routes |
 
 ### Database schema (Supabase/PostgreSQL)
 
@@ -99,8 +100,9 @@ Badge colors: ACTIVO/PAGADO/APROBADA → green | EN_PROCESO → amber | DEUDA/PA
 1. `credenciales` table: only `rol=admin` can read it
 2. Check user role in every sensitive API route
 3. `SUPABASE_SERVICE_ROLE_KEY` only on server-side — never in browser or client components
-4. Deletions: admin only
-5. `historial`: INSERT only, never UPDATE or DELETE
+4. `N8N_API_KEY` only on server-side — validate with `validateApiKey()` in every webhook route
+5. Deletions: admin only
+6. `historial`: INSERT only, never UPDATE or DELETE
 
 ## Coding rules
 
