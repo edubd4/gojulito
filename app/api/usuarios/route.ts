@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
+import type { Rol } from '@/lib/constants'
 
 async function verificarAdmin() {
   const authClient = await createServerClient()
@@ -66,4 +67,61 @@ export async function PATCH(req: NextRequest) {
   }
 
   return NextResponse.json({ success: true, usuario })
+}
+
+export async function POST(req: NextRequest) {
+  const { supabase, error } = await verificarAdmin()
+  if (error) return error
+
+  let body: { email: string; nombre: string; password: string; rol: Rol }
+  try {
+    body = await req.json() as { email: string; nombre: string; password: string; rol: Rol }
+  } catch {
+    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+  }
+
+  if (!body.email?.trim() || !body.nombre?.trim() || !body.password || !body.rol) {
+    return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
+  }
+
+  if (body.password.length < 8) {
+    return NextResponse.json({ error: 'La contraseña debe tener al menos 8 caracteres' }, { status: 400 })
+  }
+
+  if (body.rol !== 'admin' && body.rol !== 'colaborador') {
+    return NextResponse.json({ error: 'Rol inválido' }, { status: 400 })
+  }
+
+  const { data: authData, error: createError } = await supabase!.auth.admin.createUser({
+    email: body.email.trim(),
+    password: body.password,
+    email_confirm: true,
+  })
+
+  if (createError) {
+    if (createError.message.toLowerCase().includes('already') || createError.message.toLowerCase().includes('duplicate')) {
+      return NextResponse.json({ error: 'EMAIL_EN_USO' }, { status: 409 })
+    }
+    return NextResponse.json({ error: createError.message }, { status: 500 })
+  }
+
+  const newUser = authData.user
+
+  const { data: perfil, error: insertError } = await supabase!
+    .from('profiles')
+    .insert({
+      id: newUser.id,
+      email: body.email.trim(),
+      nombre: body.nombre.trim(),
+      rol: body.rol,
+      activo: true,
+    })
+    .select('id, email, nombre, rol, activo, created_at')
+    .single()
+
+  if (insertError) {
+    return NextResponse.json({ error: 'Usuario creado en Auth pero falló inserción en profiles' }, { status: 500 })
+  }
+
+  return NextResponse.json({ success: true, usuario: perfil }, { status: 201 })
 }

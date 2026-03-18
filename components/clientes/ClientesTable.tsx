@@ -417,52 +417,31 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
   // ─── Shared styles ────────────────────────────────────────────────────────
 
-  const selectStyle: React.CSSProperties = {
-    backgroundColor: '#172645',
-    color: '#e8e6e0',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    padding: '6px 10px',
-    fontSize: 13,
-    fontFamily: 'DM Sans, sans-serif',
-    outline: 'none',
-    cursor: 'pointer',
-  }
-
   const selectedCount = selectedIds.size
   const showActionBar = selectedCount > 0
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', paddingBottom: showActionBar ? 80 : 0 }}>
+    <div className={`font-sans${showActionBar ? ' pb-20' : ''}`}>
       {/* Barra superior */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          <h1
-            className="text-2xl font-bold"
-            style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0' }}
-          >
+          <h1 className="text-2xl font-bold font-display text-gj-text">
             Clientes
           </h1>
-          <span className="text-sm" style={{ color: '#9ba8bb' }}>
+          <span className="text-sm text-gj-secondary">
             {clientesFiltrados.length} {clientesFiltrados.length === 1 ? 'cliente' : 'clientes'}
           </span>
           {selectedCount > 0 && (
-            <span className="text-sm font-medium" style={{ color: '#e8a020' }}>
+            <span className="text-sm font-medium text-gj-amber">
               · {selectedCount} {selectedCount === 1 ? 'seleccionado' : 'seleccionados'}
             </span>
           )}
         </div>
         <button
           onClick={() => setModalOpen(true)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{
-            backgroundColor: '#e8a020',
-            color: '#0b1628',
-            fontFamily: 'DM Sans, sans-serif',
-            cursor: 'pointer',
-          }}
+          className="px-4 py-2 rounded-lg text-sm font-medium bg-gj-amber text-gj-bg cursor-pointer"
         >
           + Nuevo cliente
         </button>
@@ -475,13 +454,13 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           placeholder="Buscar por nombre, teléfono o ID..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          style={{ ...selectStyle, minWidth: 240, padding: '6px 12px' }}
+          className="bg-gj-input text-gj-text placeholder:text-gj-secondary border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none focus:border-white/20 min-w-[240px]"
         />
 
         <select
           value={filtroEstadoCliente}
           onChange={(e) => setFiltroEstadoCliente(e.target.value as FiltroEstadoCliente)}
-          style={selectStyle}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado cliente</option>
           <option value="PROSPECTO">Prospecto</option>
@@ -493,7 +472,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         <select
           value={filtroEstadoVisa}
           onChange={(e) => setFiltroEstadoVisa(e.target.value as FiltroEstadoVisa)}
-          style={selectStyle}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado visa</option>
           <option value="EN_PROCESO">En proceso</option>
@@ -507,7 +486,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         <select
           value={filtroEstadoPago}
           onChange={(e) => setFiltroEstadoPago(e.target.value as FiltroEstadoPago)}
-          style={selectStyle}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado pago</option>
           <option value="PAGADO">Pagado</option>
@@ -518,7 +497,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         <select
           value={filtroCanal}
           onChange={(e) => setFiltroCanal(e.target.value as FiltroCanal)}
-          style={selectStyle}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Canal</option>
           <option value="SEMINARIO">Seminario</option>
@@ -532,14 +511,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         {hayFiltros && (
           <button
             onClick={limpiarFiltros}
-            className="px-3 py-1.5 rounded-lg text-sm"
-            style={{
-              color: '#9ba8bb',
-              border: '1px solid rgba(255,255,255,0.1)',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="px-3 py-1.5 rounded-lg text-sm font-sans text-gj-secondary border border-white/10 bg-transparent cursor-pointer hover:text-gj-text transition-colors"
           >
             Limpiar filtros
           </button>
@@ -762,11 +734,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             setPendingAction({ type: 'cambiar-estado', valor: val, label: labels[val] })
             e.target.value = ''
           }}
-          style={{
-            ...selectStyle,
-            backgroundColor: '#1c3154',
-            fontSize: 12,
-          }}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Cambiar estado cliente</option>
           <option value="PROSPECTO">Prospecto</option>
@@ -789,11 +757,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             setPendingAction({ type: 'cambiar-pago', valor: val, label: labels[val] })
             e.target.value = ''
           }}
-          style={{
-            ...selectStyle,
-            backgroundColor: '#1c3154',
-            fontSize: 12,
-          }}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Cambiar estado pago</option>
           <option value="PAGADO">Pagado</option>
@@ -812,11 +776,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             setPendingAction({ type: 'agregar-seminario', valor: val, label: sem.nombre })
             e.target.value = ''
           }}
-          style={{
-            ...selectStyle,
-            backgroundColor: '#1c3154',
-            fontSize: 12,
-          }}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Agregar a seminario</option>
           {seminarios.map((s) => (

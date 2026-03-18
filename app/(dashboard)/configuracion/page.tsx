@@ -4,6 +4,8 @@ import EditarNombreForm from '@/components/configuracion/EditarNombreForm'
 import ToggleUsuario from '@/components/configuracion/ToggleUsuario'
 import PreciosForm from '@/components/configuracion/PreciosForm'
 import GruposFamiliaresCard from '@/components/configuracion/GruposFamiliaresCard'
+import CambiarPasswordForm from '@/components/configuracion/CambiarPasswordForm'
+import NuevoUsuarioTrigger from '@/components/configuracion/NuevoUsuarioTrigger'
 
 interface Perfil {
   id: string
@@ -135,6 +137,8 @@ export default async function ConfiguracionPage() {
             </span>
           </div>
         </div>
+
+        <CambiarPasswordForm />
       </div>
 
       {/* Grupos familiares — todos los usuarios */}
@@ -147,13 +151,17 @@ export default async function ConfiguracionPage() {
           border: '1px solid rgba(255,255,255,0.07)',
           padding: '24px 28px', marginBottom: 28,
         }}>
-          <h2 style={{
-            fontSize: 15, fontWeight: 600, color: '#9ba8bb',
-            fontFamily: 'DM Sans, sans-serif', marginBottom: 24,
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-          }}>
-            Usuarios del sistema
-          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+            <h2 style={{
+              fontSize: 15, fontWeight: 600, color: '#9ba8bb',
+              fontFamily: 'DM Sans, sans-serif',
+              textTransform: 'uppercase', letterSpacing: '0.06em',
+              margin: 0,
+            }}>
+              Usuarios del sistema
+            </h2>
+            <NuevoUsuarioTrigger />
+          </div>
 
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
