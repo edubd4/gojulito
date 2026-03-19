@@ -110,8 +110,9 @@ export async function POST(req: NextRequest) {
   const now = new Date().toISOString()
 
   // upsert maneja tanto el caso donde no existe el profile como cuando
-  // el trigger de Supabase ya lo creó automáticamente (conflicto en id)
-  const { data: perfil, error: upsertError } = await supabase!
+  // el trigger de Supabase ya lo creó automáticamente (conflicto en id).
+  // Select separado porque upsert+select no devuelve datos en el caso UPDATE (conflicto).
+  const { error: upsertError } = await supabase!
     .from('profiles')
     .upsert({
       id: newUser.id,
@@ -122,13 +123,17 @@ export async function POST(req: NextRequest) {
       created_at: now,
       updated_at: now,
     }, { onConflict: 'id' })
-    .select('id, email, nombre, rol, activo, created_at')
-    .single()
 
-  if (upsertError || !perfil) {
+  if (upsertError) {
     await supabase!.auth.admin.deleteUser(newUser.id)
     return NextResponse.json({ error: 'Error al crear el perfil del usuario' }, { status: 500 })
   }
+
+  const { data: perfil } = await supabase!
+    .from('profiles')
+    .select('id, email, nombre, rol, activo, created_at')
+    .eq('id', newUser.id)
+    .single()
 
   return NextResponse.json({ success: true, usuario: perfil }, { status: 201 })
 }
