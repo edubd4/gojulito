@@ -85,6 +85,135 @@ function buildCells(mes: number, anio: number): Array<{ date: Date; inMonth: boo
   return cells
 }
 
+// ─── TurnoPopup ──────────────────────────────────────────────────────────────
+
+function TurnoPopup({ turno, onClose }: { turno: TurnoItem; onClose: () => void }) {
+  const badge = BADGE[turno.estado] ?? BADGE.EN_PROCESO
+
+  return (
+    <>
+      {/* Overlay */}
+      <div
+        style={{ position: 'fixed', inset: 0, zIndex: 60 }}
+        onClick={onClose}
+      />
+      {/* Card */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 70,
+          backgroundColor: '#111f38',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderRadius: 14,
+          padding: '22px 24px',
+          width: 320,
+          boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          fontFamily: 'DM Sans, sans-serif',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#e8e6e0', marginBottom: 2 }}>
+              {turno.nombre}
+            </div>
+            <div style={{ fontSize: 12, color: '#9ba8bb' }}>{turno.gj_id}</div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#9ba8bb',
+              padding: 4,
+              lineHeight: 1,
+            }}
+            aria-label="Cerrar"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Detalles */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span style={{ fontSize: 13, color: '#e8e6e0' }}>
+              {formatFecha(turno.fecha_turno + 'T12:00:00')}
+            </span>
+          </div>
+
+          {turno.telefono && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.41 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 5.55 5.55l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span style={{ fontSize: 13, color: '#e8e6e0' }}>{turno.telefono}</span>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span
+              style={{
+                display: 'inline-block',
+                padding: '2px 8px',
+                borderRadius: 5,
+                fontSize: 11,
+                fontWeight: 600,
+                color: badge.color,
+                backgroundColor: badge.bg,
+              }}
+            >
+              {badge.label}
+            </span>
+          </div>
+        </div>
+
+        {/* Link al cliente */}
+        <Link
+          href={`/clientes/${turno.cliente_id}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            width: '100%',
+            padding: '9px 0',
+            backgroundColor: 'rgba(74,158,255,0.12)',
+            border: '1px solid rgba(74,158,255,0.25)',
+            borderRadius: 8,
+            color: '#4a9eff',
+            fontSize: 13,
+            fontWeight: 600,
+            textDecoration: 'none',
+            fontFamily: 'DM Sans, sans-serif',
+          }}
+          onClick={onClose}
+        >
+          Ver ficha del cliente
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </Link>
+      </div>
+    </>
+  )
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function CalendarioView({
@@ -97,6 +226,7 @@ export default function CalendarioView({
   const [mes, setMes] = useState(initialMes)
   const [anio, setAnio] = useState(initialAnio)
   const [loading, setLoading] = useState(false)
+  const [selectedTurno, setSelectedTurno] = useState<TurnoItem | null>(null)
 
   const todayKey = dateKey(new Date())
 
@@ -162,6 +292,11 @@ export default function CalendarioView({
 
   return (
     <div style={{ padding: '28px 32px', fontFamily: 'DM Sans, sans-serif', minHeight: '100%' }}>
+      {/* Popup turno */}
+      {selectedTurno && (
+        <TurnoPopup turno={selectedTurno} onClose={() => setSelectedTurno(null)} />
+      )}
+
       {/* Page title */}
       <h1 style={{
         fontSize: 26, fontWeight: 700, color: '#e8e6e0',
@@ -175,7 +310,7 @@ export default function CalendarioView({
 
         {/* ── Esta semana (mobile: top) ── */}
         <div className="lg:hidden">
-          <EstaSemana turnos={turnosSemana} />
+          <EstaSemana turnos={turnosSemana} onSelect={setSelectedTurno} />
         </div>
 
         {/* ── Calendario principal ── */}
@@ -300,18 +435,21 @@ export default function CalendarioView({
                           const lastName = t.nombre.split(' ')[1]
                           const label = lastName ? `${firstName} ${lastName[0]}.` : firstName
                           return (
-                            <Link
+                            <button
                               key={t.visa_id}
-                              href={`/clientes/${t.cliente_id}`}
+                              onClick={() => setSelectedTurno(t)}
                               style={{
                                 display: 'block',
+                                width: '100%',
+                                textAlign: 'left',
                                 backgroundColor: chip.bg,
                                 color: chip.text,
                                 padding: '2px 5px',
                                 borderRadius: 4,
                                 fontSize: 11,
                                 fontWeight: 600,
-                                textDecoration: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
@@ -321,7 +459,7 @@ export default function CalendarioView({
                               title={`${t.nombre} — ${BADGE[t.estado]?.label ?? t.estado}`}
                             >
                               {label}
-                            </Link>
+                            </button>
                           )
                         })}
                         {overflow > 0 && (
@@ -353,7 +491,7 @@ export default function CalendarioView({
 
         {/* ── Esta semana (desktop sidebar) ── */}
         <div className="hidden lg:block" style={{ width: 260, flexShrink: 0 }}>
-          <EstaSemana turnos={turnosSemana} />
+          <EstaSemana turnos={turnosSemana} onSelect={setSelectedTurno} />
         </div>
       </div>
     </div>
@@ -362,7 +500,7 @@ export default function CalendarioView({
 
 // ─── Esta semana panel ───────────────────────────────────────────────────────
 
-function EstaSemana({ turnos }: { turnos: TurnoItem[] }) {
+function EstaSemana({ turnos, onSelect }: { turnos: TurnoItem[]; onSelect: (t: TurnoItem) => void }) {
   return (
     <div
       style={{
@@ -404,10 +542,18 @@ function EstaSemana({ turnos }: { turnos: TurnoItem[] }) {
           {turnos.map((t, i) => {
             const badge = BADGE[t.estado] ?? BADGE.EN_PROCESO
             return (
-              <Link
+              <button
                 key={`${t.visa_id}-${i}`}
-                href={`/clientes/${t.cliente_id}`}
-                style={{ textDecoration: 'none', display: 'block' }}
+                onClick={() => onSelect(t)}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  display: 'block',
+                }}
               >
                 <div
                   style={{
@@ -455,7 +601,7 @@ function EstaSemana({ turnos }: { turnos: TurnoItem[] }) {
                     {formatFecha(t.fecha_turno + 'T12:00:00')}
                   </div>
                 </div>
-              </Link>
+              </button>
             )
           })}
         </div>

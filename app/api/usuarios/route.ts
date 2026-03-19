@@ -107,6 +107,7 @@ export async function POST(req: NextRequest) {
 
   const newUser = authData.user
 
+  const now = new Date().toISOString()
   const { data: perfil, error: insertError } = await supabase!
     .from('profiles')
     .insert({
@@ -115,12 +116,16 @@ export async function POST(req: NextRequest) {
       nombre: body.nombre.trim(),
       rol: body.rol,
       activo: true,
+      created_at: now,
+      updated_at: now,
     })
     .select('id, email, nombre, rol, activo, created_at')
     .single()
 
   if (insertError) {
-    return NextResponse.json({ error: 'Usuario creado en Auth pero falló inserción en profiles' }, { status: 500 })
+    // Rollback: eliminar el usuario de Auth para evitar usuarios huérfanos
+    await supabase!.auth.admin.deleteUser(newUser.id)
+    return NextResponse.json({ error: 'Error al crear el perfil del usuario' }, { status: 500 })
   }
 
   return NextResponse.json({ success: true, usuario: perfil }, { status: 201 })

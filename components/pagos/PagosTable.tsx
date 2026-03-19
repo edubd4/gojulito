@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import Link from 'next/link'
 import { formatFecha, formatPesos } from '@/lib/utils'
 import type { EstadoPago } from '@/lib/constants'
 import FechaVencimientoDialog from '@/components/pagos/FechaVencimientoDialog'
+import DetallePagoModal from '@/components/pagos/DetallePagoModal'
 
 export interface PagoRow {
   id: string
@@ -95,6 +95,7 @@ export default function PagosTable({ pagos }: Props) {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [pendingDeuda, setPendingDeuda] = useState<{ id: string } | null>(null)
+  const [selectedPago, setSelectedPago] = useState<PagoRow | null>(null)
 
   useEffect(() => {
     setRows(pagos)
@@ -183,6 +184,17 @@ export default function PagosTable({ pagos }: Props) {
 
   return (
     <div>
+      {selectedPago && (
+        <DetallePagoModal
+          pago={selectedPago}
+          onClose={() => setSelectedPago(null)}
+          onUpdated={(updated) => {
+            setRows((prev) => prev.map((r) => r.id === updated.id ? updated : r))
+            setSelectedPago(updated)
+          }}
+        />
+      )}
+
       <FechaVencimientoDialog
         open={pendingDeuda !== null}
         onConfirm={(fecha) => {
@@ -306,39 +318,30 @@ export default function PagosTable({ pagos }: Props) {
                   return (
                     <tr
                       key={p.id}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)' }}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                      onClick={() => setSelectedPago(p)}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                     >
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none' }}>
-                          <span style={{ fontSize: 12, color: '#9ba8bb' }}>{p.pago_id}</span>
-                        </Link>
+                        <span style={{ fontSize: 12, color: '#9ba8bb' }}>{p.pago_id}</span>
                       </td>
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none' }}>
-                          <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{p.cliente_nombre}</div>
-                          <div style={{ fontSize: 12, color: '#9ba8bb' }}>{p.cliente_gj_id}</div>
-                        </Link>
+                        <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{p.cliente_nombre}</div>
+                        <div style={{ fontSize: 12, color: '#9ba8bb' }}>{p.cliente_gj_id}</div>
                       </td>
                       <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none' }}>
-                          <SmallBadge {...badgeTipo} />
-                        </Link>
+                        <SmallBadge {...badgeTipo} />
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          {formatPesos(p.monto)}
-                        </Link>
+                        {formatPesos(p.monto)}
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          {p.fecha_pago ? formatFecha(p.fecha_pago) : '—'}
-                        </Link>
+                        {p.fecha_pago ? formatFecha(p.fecha_pago) : '—'}
                       </td>
 
                       {/* Estado — dropdown inline */}
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
                         {loadingId === p.id ? (
                           <Spinner />
                         ) : (
@@ -415,11 +418,9 @@ export default function PagosTable({ pagos }: Props) {
                       </td>
 
                       <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${p.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          {p.estado === 'DEUDA' && p.fecha_vencimiento_deuda
-                            ? formatFecha(p.fecha_vencimiento_deuda)
-                            : '—'}
-                        </Link>
+                        {p.estado === 'DEUDA' && p.fecha_vencimiento_deuda
+                          ? formatFecha(p.fecha_vencimiento_deuda)
+                          : '—'}
                       </td>
                     </tr>
                   )

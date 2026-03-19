@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
+import { PROVINCIAS_ARGENTINA } from '@/lib/provincias'
 
 interface ClienteDuplicado {
   id: string
@@ -103,6 +104,7 @@ export default function NuevoClienteModal({
   const [loading, setLoading] = useState(false)
   const [clienteDuplicado, setClienteDuplicado] = useState<ClienteDuplicado | null>(null)
   const [duplicadoMsg, setDuplicadoMsg] = useState('')
+  const [provinciaSelect, setProvinciaSelect] = useState('')
 
   // Reset form when modal opens
   useEffect(() => {
@@ -112,6 +114,7 @@ export default function NuevoClienteModal({
       setServerError('')
       setClienteDuplicado(null)
       setDuplicadoMsg('')
+      setProvinciaSelect('')
     }
   }, [open])
 
@@ -360,13 +363,31 @@ export default function NuevoClienteModal({
 
               {/* Provincia */}
               <div>
-                <label style={labelStyle}>Provincia</label>
-                <input
-                  style={inputStyle}
-                  value={form.provincia}
-                  onChange={(e) => set('provincia', e.target.value)}
-                  placeholder="Buenos Aires"
-                />
+                <label style={labelStyle}>Provincia / País</label>
+                <select
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                  value={provinciaSelect}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setProvinciaSelect(val)
+                    if (val !== '__otro__') set('provincia', val)
+                    else set('provincia', '')
+                  }}
+                >
+                  <option value="">— Seleccionar —</option>
+                  {PROVINCIAS_ARGENTINA.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                  <option value="__otro__">Otro (país extranjero)</option>
+                </select>
+                {provinciaSelect === '__otro__' && (
+                  <input
+                    style={{ ...inputStyle, marginTop: 6 }}
+                    value={form.provincia}
+                    onChange={(e) => set('provincia', e.target.value)}
+                    placeholder="Ej: Chile, Uruguay..."
+                  />
+                )}
               </div>
 
               {/* Fecha de nacimiento */}

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { formatPesos, formatFecha } from '@/lib/utils'
 import type { TipoEvento } from '@/lib/constants'
+import AccionesRapidas from '@/components/dashboard/AccionesRapidas'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -167,18 +168,21 @@ export default async function DashboardPage() {
     { data: rawDeudas },
     { data: rawHistorial },
     { count: clientesActivos },
+    { data: rawGrupos },
   ] = await Promise.all([
     supabase.from('v_metricas').select('estado, total').returns<Metrica[]>(),
     supabase.from('v_turnos_semana').select('*').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
     supabase.from('v_deudas_proximas').select('*').order('fecha_vencimiento_deuda', { ascending: true }).returns<DeudaProxima[]>(),
     supabase.from('historial').select('id, tipo, descripcion, created_at, cliente_id, clientes(nombre, gj_id)').order('created_at', { ascending: false }).limit(10),
     supabase.from('v_clientes_activos').select('*', { count: 'exact', head: true }),
+    supabase.from('grupos_familiares').select('id, nombre').order('nombre', { ascending: true }),
   ])
 
   const metricas = rawMetricas ?? []
   const turnos = rawTurnos ?? []
   const deudas = rawDeudas ?? []
   const historial = (rawHistorial ?? []) as unknown as HistorialEvento[]
+  const gruposFamiliares = (rawGrupos ?? []).map((g) => ({ id: g.id as string, nombre: g.nombre as string }))
 
   const metricaMap = new Map<string, number>(metricas.map((m) => [m.estado, m.total]))
   const visasEnProceso = (metricaMap.get('EN_PROCESO') ?? 0) + (metricaMap.get('TURNO_ASIGNADO') ?? 0)
@@ -255,6 +259,9 @@ export default async function DashboardPage() {
           {formatFechaHoy()}
         </p>
       </div>
+
+      {/* ── Acciones rápidas ── */}
+      <AccionesRapidas gruposFamiliares={gruposFamiliares} />
 
       {/* ── Métricas ── */}
       <div

@@ -8,6 +8,7 @@ import {
   FileText,
   CreditCard,
   GraduationCap,
+  Calendar,
   Settings,
   X,
 } from 'lucide-react'
@@ -18,6 +19,7 @@ const navItems = [
   { href: '/tramites', label: 'Trámites', icon: FileText, exact: false },
   { href: '/pagos', label: 'Pagos', icon: CreditCard, exact: false },
   { href: '/seminarios', label: 'Seminarios', icon: GraduationCap, exact: false },
+  { href: '/calendario', label: 'Calendario', icon: Calendar, exact: false },
   { href: '/configuracion', label: 'Configuración', icon: Settings, exact: false },
 ]
 
