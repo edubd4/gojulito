@@ -108,9 +108,14 @@ export async function POST(req: NextRequest) {
   const newUser = authData.user
 
   const now = new Date().toISOString()
-  const { data: perfil, error: insertError } = await supabase!
+
+  // Intentamos insert. Si el trigger de Supabase ya creó el profile (unique violation),
+  // hacemos update explícito en su lugar.
+  let perfil: { id: string; email: string; nombre: string; rol: string; activo: boolean; created_at: string } | null = null
+
+  const { data: inserted, error: insertError } = await supabase!
     .from('profiles')
-    .upsert({
+    .insert({
       id: newUser.id,
       email: body.email.trim(),
       nombre: body.nombre.trim(),
@@ -118,14 +123,31 @@ export async function POST(req: NextRequest) {
       activo: true,
       created_at: now,
       updated_at: now,
-    }, { onConflict: 'id' })
+    })
     .select('id, email, nombre, rol, activo, created_at')
     .single()
 
   if (insertError) {
-    // Rollback: eliminar el usuario de Auth para evitar usuarios huérfanos
-    await supabase!.auth.admin.deleteUser(newUser.id)
-    return NextResponse.json({ error: 'Error al crear el perfil del usuario' }, { status: 500 })
+    if (insertError.code === '23505') {
+      // El trigger ya creó el row — lo actualizamos con los datos correctos
+      const { data: updated, error: updateError } = await supabase!
+        .from('profiles')
+        .update({ nombre: body.nombre.trim(), rol: body.rol, activo: true, updated_at: now })
+        .eq('id', newUser.id)
+        .select('id, email, nombre, rol, activo, created_at')
+        .single()
+
+      if (updateError || !updated) {
+        await supabase!.auth.admin.deleteUser(newUser.id)
+        return NextResponse.json({ error: 'Error al crear el perfil del usuario' }, { status: 500 })
+      }
+      perfil = updated
+    } else {
+      await supabase!.auth.admin.deleteUser(newUser.id)
+      return NextResponse.json({ error: 'Error al crear el perfil del usuario' }, { status: 500 })
+    }
+  } else {
+    perfil = inserted
   }
 
   return NextResponse.json({ success: true, usuario: perfil }, { status: 201 })

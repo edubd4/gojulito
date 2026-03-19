@@ -22,13 +22,22 @@ export async function GET(req: NextRequest) {
 
   const supabase = await createServiceRoleClient()
 
-  const { data, error } = await supabase
-    .from('visas')
-    .select('visa_id, cliente_id, fecha_turno, estado, clientes(id, nombre, gj_id, telefono)')
-    .gte('fecha_turno', inicio)
-    .lte('fecha_turno', fin)
-    .neq('estado', 'CANCELADA')
-    .order('fecha_turno', { ascending: true })
+  const [{ data, error }, { data: rawPagos }] = await Promise.all([
+    supabase
+      .from('visas')
+      .select('visa_id, cliente_id, fecha_turno, estado, clientes(id, nombre, gj_id, telefono)')
+      .gte('fecha_turno', inicio)
+      .lte('fecha_turno', fin)
+      .neq('estado', 'CANCELADA')
+      .order('fecha_turno', { ascending: true }),
+    supabase
+      .from('pagos')
+      .select('id, pago_id, cliente_id, monto, estado, fecha_pago, fecha_vencimiento_deuda, clientes(nombre, gj_id)')
+      .or(
+        `and(fecha_pago.gte.${inicio},fecha_pago.lte.${fin}),and(estado.eq.DEUDA,fecha_vencimiento_deuda.gte.${inicio},fecha_vencimiento_deuda.lte.${fin})`
+      )
+      .order('fecha_pago', { ascending: true }),
+  ])
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
@@ -45,5 +54,22 @@ export async function GET(req: NextRequest) {
     }
   })
 
-  return NextResponse.json({ turnos })
+  const pagos = (rawPagos ?? []).map((p) => {
+    const cliente = p.clientes as unknown as { nombre: string; gj_id: string } | null
+    const fechaCalendario = p.estado === 'DEUDA' && p.fecha_vencimiento_deuda
+      ? p.fecha_vencimiento_deuda as string
+      : p.fecha_pago as string | null
+    return {
+      id: p.id as string,
+      pago_id: p.pago_id as string,
+      cliente_id: p.cliente_id as string,
+      cliente_nombre: cliente?.nombre ?? '—',
+      cliente_gj_id: cliente?.gj_id ?? '—',
+      monto: p.monto as number,
+      estado: p.estado as 'PAGADO' | 'DEUDA' | 'PENDIENTE',
+      fecha: fechaCalendario,
+    }
+  }).filter((p) => !!p.fecha)
+
+  return NextResponse.json({ turnos, pagos })
 }

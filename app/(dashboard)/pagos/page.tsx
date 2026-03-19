@@ -12,7 +12,7 @@ export default async function PagosPage() {
 
   const { data: rawPagos } = await supabase
     .from('pagos')
-    .select('id, pago_id, cliente_id, tipo, monto, fecha_pago, estado, fecha_vencimiento_deuda, clientes(nombre, gj_id)')
+    .select('id, pago_id, cliente_id, visa_id, tipo, monto, fecha_pago, estado, fecha_vencimiento_deuda, clientes(nombre, gj_id)')
     .order('fecha_pago', { ascending: false })
 
   const pagos: PagoRow[] = (rawPagos ?? []).map((row) => {
@@ -24,6 +24,7 @@ export default async function PagosPage() {
       id: row.id as string,
       pago_id: row.pago_id as string,
       cliente_id: row.cliente_id as string,
+      visa_id: (row.visa_id as string | null) ?? null,
       cliente_nombre: cliente?.nombre ?? '—',
       cliente_gj_id: cliente?.gj_id ?? '—',
       tipo: row.tipo as 'VISA' | 'SEMINARIO',

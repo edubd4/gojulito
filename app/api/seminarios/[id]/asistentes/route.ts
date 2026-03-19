@@ -35,6 +35,50 @@ export async function POST(
 
   const supabase = await createServiceRoleClient()
 
+  // Si no hay cliente_id, crear el cliente automáticamente como ACTIVO con canal SEMINARIO
+  if (!body.cliente_id) {
+    const { data: maxClienteRow } = await supabase
+      .from('clientes')
+      .select('gj_id')
+      .order('gj_id', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    let nextNum = 1
+    if (maxClienteRow?.gj_id) {
+      const match = (maxClienteRow.gj_id as string).match(/^GJ-(\d+)$/)
+      if (match) nextNum = parseInt(match[1], 10) + 1
+    }
+    const gj_id = `GJ-${String(nextNum).padStart(4, '0')}`
+
+    const { data: nuevoCliente, error: clienteError } = await supabase
+      .from('clientes')
+      .insert({
+        gj_id,
+        nombre: body.nombre.trim(),
+        telefono: body.telefono?.trim() || null,
+        provincia: body.provincia?.trim() || null,
+        estado: 'ACTIVO',
+        canal_ingreso: 'SEMINARIO',
+      })
+      .select('id')
+      .single()
+
+    if (clienteError || !nuevoCliente) {
+      return NextResponse.json({ error: 'Error al crear el cliente' }, { status: 500 })
+    }
+
+    body.cliente_id = nuevoCliente.id as string
+
+    await supabase.from('historial').insert({
+      cliente_id: nuevoCliente.id,
+      tipo: 'NUEVO_CLIENTE',
+      descripcion: `Cliente creado automáticamente desde seminario`,
+      origen: 'dashboard',
+      usuario_id: user.id,
+    })
+  }
+
   // Verificar duplicado por cliente_id en este seminario
   if (body.cliente_id) {
     const { data: existente } = await supabase

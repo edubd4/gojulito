@@ -62,7 +62,7 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
   ] = await Promise.all([
     supabase.from('seminarios').select('*').eq('id', params.id).single(),
     supabase.from('seminario_asistentes').select('*, clientes(id, gj_id, nombre)').eq('seminario_id', params.id).order('created_at', { ascending: true }),
-    supabase.from('clientes').select('id, gj_id, nombre, telefono, grupo_familiar_id').order('nombre', { ascending: true }),
+    supabase.from('clientes').select('id, gj_id, nombre, telefono, provincia, grupo_familiar_id').order('nombre', { ascending: true }),
   ])
 
   if (semError || !rawSem) notFound()

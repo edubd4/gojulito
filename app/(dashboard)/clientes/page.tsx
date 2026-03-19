@@ -1,6 +1,7 @@
 import { createServiceRoleClient, createServerClient } from '@/lib/supabase/server'
 import ClientesTable, { type ClienteRow, type SeminarioOption } from '@/components/clientes/ClientesTable'
 import type { GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
+import GruposFamiliaresCard from '@/components/configuracion/GruposFamiliaresCard'
 
 export default async function ClientesPage() {
   const supabase = await createServiceRoleClient()
@@ -40,7 +41,7 @@ export default async function ClientesPage() {
 
   const { data: gruposData } = await supabase
     .from('grupos_familiares')
-    .select('id, nombre')
+    .select('id, nombre, notas, clientes(count)')
     .order('nombre', { ascending: true })
 
   const clientes: ClienteRow[] = (data ?? []).map((row) => {
@@ -76,12 +77,27 @@ export default async function ClientesPage() {
     nombre: g.nombre as string,
   }))
 
+  const gruposCard = (gruposData ?? []).map((g) => ({
+    id: g.id as string,
+    nombre: g.nombre as string,
+    notas: (g.notas as string | null) ?? null,
+    cliente_count:
+      Array.isArray(g.clientes) && g.clientes.length > 0
+        ? (g.clientes[0] as { count: number }).count
+        : 0,
+  }))
+
   return (
-    <ClientesTable
-      clientes={clientes}
-      isAdmin={isAdmin}
-      seminarios={seminarios}
-      gruposFamiliares={gruposFamiliares}
-    />
+    <div style={{ backgroundColor: '#0b1628', minHeight: '100%', padding: '28px 32px', fontFamily: 'DM Sans, sans-serif' }}>
+      <ClientesTable
+        clientes={clientes}
+        isAdmin={isAdmin}
+        seminarios={seminarios}
+        gruposFamiliares={gruposFamiliares}
+      />
+      <div style={{ marginTop: 32 }}>
+        <GruposFamiliaresCard grupos={gruposCard} />
+      </div>
+    </div>
   )
 }

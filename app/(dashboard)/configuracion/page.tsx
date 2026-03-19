@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import EditarNombreForm from '@/components/configuracion/EditarNombreForm'
 import ToggleUsuario from '@/components/configuracion/ToggleUsuario'
 import PreciosForm from '@/components/configuracion/PreciosForm'
-import GruposFamiliaresCard from '@/components/configuracion/GruposFamiliaresCard'
 import CambiarPasswordForm from '@/components/configuracion/CambiarPasswordForm'
 import NuevoUsuarioTrigger from '@/components/configuracion/NuevoUsuarioTrigger'
 
@@ -36,21 +35,6 @@ export default async function ConfiguracionPage() {
   let usuarios: Perfil[] = []
   let precioVisa = 0
   let precioSeminario = 0
-
-  const { data: gruposData } = await supabase
-    .from('grupos_familiares')
-    .select('id, nombre, notas, clientes(count)')
-    .order('nombre', { ascending: true })
-
-  const grupos = (gruposData ?? []).map((g) => ({
-    id: g.id as string,
-    nombre: g.nombre as string,
-    notas: (g.notas as string | null) ?? null,
-    cliente_count:
-      Array.isArray(g.clientes) && g.clientes.length > 0
-        ? (g.clientes[0] as { count: number }).count
-        : 0,
-  }))
 
   if (esAdmin) {
     const [{ data: usuariosData }, { data: configData }] = await Promise.all([
@@ -140,9 +124,6 @@ export default async function ConfiguracionPage() {
 
         <CambiarPasswordForm />
       </div>
-
-      {/* Grupos familiares — todos los usuarios */}
-      <GruposFamiliaresCard grupos={grupos} />
 
       {/* Usuarios del sistema — solo admin */}
       {esAdmin && (

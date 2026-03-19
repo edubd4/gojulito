@@ -17,11 +17,23 @@ export interface TurnoItem {
   estado: EstadoVisa
 }
 
+export interface PagoCalItem {
+  id: string
+  pago_id: string
+  cliente_id: string
+  cliente_nombre: string
+  cliente_gj_id: string
+  monto: number
+  estado: 'PAGADO' | 'DEUDA' | 'PENDIENTE'
+  fecha: string
+}
+
 interface Props {
   initialTurnos: TurnoItem[]
   initialMes: number
   initialAnio: number
   turnosSemana: TurnoItem[]
+  initialPagos: PagoCalItem[]
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -221,12 +233,15 @@ export default function CalendarioView({
   initialMes,
   initialAnio,
   turnosSemana,
+  initialPagos,
 }: Props) {
   const [turnos, setTurnos] = useState<TurnoItem[]>(initialTurnos)
+  const [pagos, setPagos] = useState<PagoCalItem[]>(initialPagos)
   const [mes, setMes] = useState(initialMes)
   const [anio, setAnio] = useState(initialAnio)
   const [loading, setLoading] = useState(false)
   const [selectedTurno, setSelectedTurno] = useState<TurnoItem | null>(null)
+  const [selectedPago, setSelectedPago] = useState<PagoCalItem | null>(null)
 
   const todayKey = dateKey(new Date())
 
@@ -247,12 +262,23 @@ export default function CalendarioView({
     return map
   }, [turnos])
 
+  const pagosByDate = useMemo(() => {
+    const map = new Map<string, PagoCalItem[]>()
+    for (const p of pagos) {
+      const key = p.fecha.slice(0, 10)
+      if (!map.has(key)) map.set(key, [])
+      map.get(key)!.push(p)
+    }
+    return map
+  }, [pagos])
+
   async function navigateTo(newMes: number, newAnio: number) {
     setLoading(true)
     try {
       const res = await fetch(`/api/turnos?mes=${newMes}&anio=${newAnio}`)
-      const json = await res.json() as { turnos?: TurnoItem[] }
+      const json = await res.json() as { turnos?: TurnoItem[]; pagos?: PagoCalItem[] }
       setTurnos(json.turnos ?? [])
+      setPagos(json.pagos ?? [])
       setMes(newMes)
       setAnio(newAnio)
     } catch {
@@ -295,6 +321,46 @@ export default function CalendarioView({
       {/* Popup turno */}
       {selectedTurno && (
         <TurnoPopup turno={selectedTurno} onClose={() => setSelectedTurno(null)} />
+      )}
+
+      {/* Popup pago */}
+      {selectedPago && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 60 }} onClick={() => setSelectedPago(null)} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+            zIndex: 70, backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 14, padding: '22px 24px', width: 300,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6)', fontFamily: 'DM Sans, sans-serif',
+          }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#e8e6e0' }}>{selectedPago.cliente_nombre}</div>
+                <div style={{ fontSize: 12, color: '#9ba8bb' }}>{selectedPago.cliente_gj_id}</div>
+              </div>
+              <button onClick={() => setSelectedPago(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ba8bb', padding: 4 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 13, color: '#e8e6e0' }}>
+                <span style={{ color: '#9ba8bb' }}>Monto: </span>
+                ${selectedPago.monto.toLocaleString('es-AR')}
+              </div>
+              <div style={{ fontSize: 13 }}>
+                <span style={{ color: '#9ba8bb' }}>Estado: </span>
+                <span style={{ color: selectedPago.estado === 'DEUDA' ? '#e85a5a' : selectedPago.estado === 'PAGADO' ? '#22c97a' : '#e8a020', fontWeight: 600 }}>
+                  {selectedPago.estado}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: '#9ba8bb' }}>
+                {selectedPago.estado === 'DEUDA' ? 'Vence: ' : 'Fecha: '}
+                {formatFecha(selectedPago.fecha + 'T12:00:00')}
+              </div>
+              <div style={{ fontSize: 12, color: '#9ba8bb' }}>{selectedPago.pago_id}</div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Page title */}
@@ -397,6 +463,7 @@ export default function CalendarioView({
                   const key = dateKey(cell.date)
                   const isToday = key === todayKey
                   const cellTurnos = turnosByDate.get(key) ?? []
+                  const cellPagos = pagosByDate.get(key) ?? []
                   const visible = cellTurnos.slice(0, 3)
                   const overflow = cellTurnos.length - 3
 
@@ -472,6 +539,40 @@ export default function CalendarioView({
                             +{overflow} más
                           </span>
                         )}
+                        {/* Pagos del día */}
+                        {cellPagos.map((p) => (
+                          <button
+                            key={p.id}
+                            onClick={() => setSelectedPago(p)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              width: '100%',
+                              textAlign: 'left',
+                              backgroundColor: p.estado === 'DEUDA'
+                                ? 'rgba(232,90,90,0.18)'
+                                : 'rgba(34,201,122,0.18)',
+                              color: p.estado === 'DEUDA' ? '#e85a5a' : '#22c97a',
+                              padding: '2px 5px',
+                              borderRadius: 4,
+                              fontSize: 10,
+                              fontWeight: 600,
+                              border: 'none',
+                              cursor: 'pointer',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              fontFamily: 'DM Sans, sans-serif',
+                              lineHeight: 1.4,
+                              marginTop: 1,
+                            }}
+                            title={`${p.cliente_nombre} — $${p.monto.toLocaleString('es-AR')} (${p.estado})`}
+                          >
+                            <span style={{ fontSize: 8 }}>$</span>
+                            {p.cliente_nombre.split(' ')[0]}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   )

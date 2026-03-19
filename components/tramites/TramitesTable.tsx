@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatFecha } from '@/lib/utils'
 import type { EstadoVisa } from '@/lib/constants'
 import AccionLoteGrupoModal from '@/components/grupos/AccionLoteGrupoModal'
+import NuevoTramiteModal from '@/components/tramites/NuevoTramiteModal'
 
 export interface TramiteRow {
   id: string
@@ -76,7 +77,10 @@ export default function TramitesTable({ tramites, grupos }: Props) {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [loteModalOpen, setLoteModalOpen] = useState(false)
+  const [nuevoTramiteOpen, setNuevoTramiteOpen] = useState(false)
   const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({})
+  const [fechaAprobEdits, setFechaAprobEdits] = useState<Record<string, string>>({})
+  const [fechaVencEdits, setFechaVencEdits] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (errorMsg) {
@@ -103,20 +107,24 @@ export default function TramitesTable({ tramites, grupos }: Props) {
 
   const grupoSeleccionado = grupoFiltro ? grupos.find((g) => g.id === grupoFiltro) ?? null : null
 
-  async function handleFechaTurno(visaId: string, fecha: string) {
+  async function handleFechaField(visaId: string, field: 'fecha_turno' | 'fecha_aprobacion' | 'fecha_vencimiento', fecha: string) {
     try {
       const res = await fetch(`/api/visas/${visaId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fecha_turno: fecha || null }),
+        body: JSON.stringify({ [field]: fecha || null }),
       })
-      const json = await res.json() as { success?: boolean; visa?: { fecha_turno: string | null } }
+      const json = await res.json() as { success?: boolean; visa?: Partial<TramiteRow> }
       if (json.success) {
         setRows((prev) =>
-          prev.map((r) => r.id === visaId ? { ...r, fecha_turno: json.visa?.fecha_turno ?? null } : r)
+          prev.map((r) => r.id === visaId ? { ...r, [field]: json.visa?.[field] ?? null } : r)
         )
       }
     } catch { /* silencioso */ }
+  }
+
+  async function handleFechaTurno(visaId: string, fecha: string) {
+    void handleFechaField(visaId, 'fecha_turno', fecha)
   }
 
   async function handleCambiarEstado(visaId: string, nuevoEstado: EstadoVisa) {
@@ -165,6 +173,12 @@ export default function TramitesTable({ tramites, grupos }: Props) {
 
   return (
     <div>
+      <NuevoTramiteModal
+        open={nuevoTramiteOpen}
+        onOpenChange={setNuevoTramiteOpen}
+        onSuccess={() => { setNuevoTramiteOpen(false); router.refresh() }}
+      />
+
       {/* Error banner */}
       {errorMsg && (
         <div
@@ -240,6 +254,21 @@ export default function TramitesTable({ tramites, grupos }: Props) {
             Actualizar todas las visas del grupo
           </button>
         )}
+        <button
+          onClick={() => setNuevoTramiteOpen(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '8px 16px', borderRadius: 8, border: 'none',
+            backgroundColor: '#4a9eff', color: '#fff',
+            fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap',
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Nuevo trámite
+        </button>
         <span style={{ color: '#9ba8bb', fontSize: 13, fontFamily: 'DM Sans, sans-serif', marginLeft: 4 }}>
           {filtrados.length} trámite{filtrados.length !== 1 ? 's' : ''}
         </span>
@@ -432,35 +461,94 @@ export default function TramitesTable({ tramites, grupos }: Props) {
                           {t.ds160 ?? '—'}
                         </Link>
                       </td>
+                      {/* Fecha turno */}
                       <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
                         {t.estado === 'TURNO_ASIGNADO' ? (
-                          <input
-                            type="date"
-                            style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
-                            value={fechaTurnoEdits[t.id] ?? (t.fecha_turno ?? '')}
-                            onChange={(e) =>
-                              setFechaTurnoEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
-                            }
-                            onBlur={(e) => {
-                              const val = e.target.value
-                              if (val !== (t.fecha_turno ?? '')) void handleFechaTurno(t.id, val)
-                            }}
-                          />
+                          <div>
+                            <input
+                              type="date"
+                              style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                              value={fechaTurnoEdits[t.id] ?? (t.fecha_turno ?? '')}
+                              onChange={(e) =>
+                                setFechaTurnoEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
+                              }
+                              onBlur={(e) => {
+                                const val = e.target.value
+                                if (val !== (t.fecha_turno ?? '')) void handleFechaTurno(t.id, val)
+                              }}
+                            />
+                            {!t.fecha_turno && !(fechaTurnoEdits[t.id]) && (
+                              <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Completá la fecha
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <span style={{ fontSize: 13, color: '#9ba8bb' }}>
                             {t.fecha_turno ? formatFecha(t.fecha_turno) : '—'}
                           </span>
                         )}
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          {t.fecha_aprobacion ? formatFecha(t.fecha_aprobacion) : '—'}
-                        </Link>
+
+                      {/* Fecha aprobación */}
+                      <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                        {t.estado === 'APROBADA' ? (
+                          <div>
+                            <input
+                              type="date"
+                              style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                              value={fechaAprobEdits[t.id] ?? (t.fecha_aprobacion ?? '')}
+                              onChange={(e) =>
+                                setFechaAprobEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
+                              }
+                              onBlur={(e) => {
+                                const val = e.target.value
+                                if (val !== (t.fecha_aprobacion ?? '')) void handleFechaField(t.id, 'fecha_aprobacion', val)
+                              }}
+                            />
+                            {!t.fecha_aprobacion && !(fechaAprobEdits[t.id]) && (
+                              <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Completá la fecha
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>
+                            {t.fecha_aprobacion ? formatFecha(t.fecha_aprobacion) : '—'}
+                          </span>
+                        )}
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          {t.fecha_vencimiento ? formatFecha(t.fecha_vencimiento) : '—'}
-                        </Link>
+
+                      {/* Fecha vencimiento */}
+                      <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                        {t.estado === 'APROBADA' ? (
+                          <div>
+                            <input
+                              type="date"
+                              style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                              value={fechaVencEdits[t.id] ?? (t.fecha_vencimiento ?? '')}
+                              onChange={(e) =>
+                                setFechaVencEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
+                              }
+                              onBlur={(e) => {
+                                const val = e.target.value
+                                if (val !== (t.fecha_vencimiento ?? '')) void handleFechaField(t.id, 'fecha_vencimiento', val)
+                              }}
+                            />
+                            {!t.fecha_vencimiento && !(fechaVencEdits[t.id]) && (
+                              <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Completá la fecha
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>
+                            {t.fecha_vencimiento ? formatFecha(t.fecha_vencimiento) : '—'}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   )

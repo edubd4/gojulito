@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import CalendarioView from '@/components/calendario/CalendarioView'
-import type { TurnoItem } from '@/components/calendario/CalendarioView'
+import type { TurnoItem, PagoCalItem } from '@/components/calendario/CalendarioView'
 
 export default async function CalendarioPage() {
   const authClient = await createServerClient()
@@ -17,7 +17,7 @@ export default async function CalendarioPage() {
   const lastDay = new Date(anio, mes, 0).getDate()
   const fin = `${anio}-${String(mes).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
 
-  const [{ data: rawTurnos }, { data: rawSemana }] = await Promise.all([
+  const [{ data: rawTurnos }, { data: rawSemana }, { data: rawPagos }] = await Promise.all([
     supabase
       .from('visas')
       .select('visa_id, cliente_id, fecha_turno, estado, clientes(id, nombre, gj_id, telefono)')
@@ -29,6 +29,13 @@ export default async function CalendarioPage() {
       .from('v_turnos_semana')
       .select('visa_id, cliente_id, nombre_cliente, gj_id, telefono, fecha_turno, estado_visa')
       .order('fecha_turno', { ascending: true }),
+    supabase
+      .from('pagos')
+      .select('id, pago_id, cliente_id, monto, estado, fecha_pago, fecha_vencimiento_deuda, clientes(nombre, gj_id)')
+      .or(
+        `and(fecha_pago.gte.${inicio},fecha_pago.lte.${fin}),and(estado.eq.DEUDA,fecha_vencimiento_deuda.gte.${inicio},fecha_vencimiento_deuda.lte.${fin})`
+      )
+      .order('fecha_pago', { ascending: true }),
   ])
 
   const turnos: TurnoItem[] = (rawTurnos ?? []).map((v) => {
@@ -54,12 +61,30 @@ export default async function CalendarioPage() {
     estado: (v.estado_visa ?? 'EN_PROCESO') as TurnoItem['estado'],
   }))
 
+  const pagosCalendario: PagoCalItem[] = (rawPagos ?? []).map((p) => {
+    const cliente = p.clientes as unknown as { nombre: string; gj_id: string } | null
+    const fechaCalendario = p.estado === 'DEUDA' && p.fecha_vencimiento_deuda
+      ? p.fecha_vencimiento_deuda as string
+      : p.fecha_pago as string | null
+    return {
+      id: p.id as string,
+      pago_id: p.pago_id as string,
+      cliente_id: p.cliente_id as string,
+      cliente_nombre: cliente?.nombre ?? '—',
+      cliente_gj_id: cliente?.gj_id ?? '—',
+      monto: p.monto as number,
+      estado: p.estado as PagoCalItem['estado'],
+      fecha: fechaCalendario ?? '',
+    }
+  }).filter((p) => !!p.fecha)
+
   return (
     <CalendarioView
       initialTurnos={turnos}
       initialMes={mes}
       initialAnio={anio}
       turnosSemana={turnosSemana}
+      initialPagos={pagosCalendario}
     />
   )
 }

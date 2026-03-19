@@ -7,11 +7,13 @@ import type { EstadoPago } from '@/lib/constants'
 import FechaVencimientoDialog from '@/components/pagos/FechaVencimientoDialog'
 import DetallePagoModal from '@/components/pagos/DetallePagoModal'
 import NuevoPagoModal from '@/components/pagos/NuevoPagoModal'
+import CambiarEstadoPagoDialog from '@/components/pagos/CambiarEstadoPagoDialog'
 
 export interface PagoRow {
   id: string
   pago_id: string
   cliente_id: string
+  visa_id: string | null
   cliente_nombre: string
   cliente_gj_id: string
   tipo: 'VISA' | 'SEMINARIO'
@@ -98,6 +100,7 @@ export default function PagosTable({ pagos }: Props) {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [pendingDeuda, setPendingDeuda] = useState<{ id: string } | null>(null)
+  const [pendingPagado, setPendingPagado] = useState<PagoRow | null>(null)
   const [selectedPago, setSelectedPago] = useState<PagoRow | null>(null)
   const [nuevoPagoOpen, setNuevoPagoOpen] = useState(false)
 
@@ -138,12 +141,18 @@ export default function PagosTable({ pagos }: Props) {
     [filtrados]
   )
 
-  async function applyChange(pagoId: string, nuevoEstado: EstadoPago, fecha_vencimiento_deuda?: string | null) {
+  async function applyChange(
+    pagoId: string,
+    nuevoEstado: EstadoPago,
+    opts?: { fecha_vencimiento_deuda?: string | null; fecha_pago?: string; monto?: number }
+  ) {
     setLoadingId(pagoId)
     setErrorMsg(null)
     try {
       const body: Record<string, unknown> = { estado: nuevoEstado }
-      if (fecha_vencimiento_deuda !== undefined) body.fecha_vencimiento_deuda = fecha_vencimiento_deuda
+      if (opts?.fecha_vencimiento_deuda !== undefined) body.fecha_vencimiento_deuda = opts.fecha_vencimiento_deuda
+      if (opts?.fecha_pago) body.fecha_pago = opts.fecha_pago
+      if (opts?.monto !== undefined) body.monto = opts.monto
       const res = await fetch(`/api/pagos/${pagoId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -152,7 +161,7 @@ export default function PagosTable({ pagos }: Props) {
       const json = await res.json() as {
         success?: boolean
         error?: string
-        pago?: { estado: EstadoPago; fecha_pago: string | null; fecha_vencimiento_deuda: string | null }
+        pago?: { estado: EstadoPago; fecha_pago: string | null; fecha_vencimiento_deuda: string | null; monto: number }
       }
       if (!res.ok || !json.success) {
         setErrorMsg(json.error ?? 'Error al actualizar')
@@ -166,6 +175,7 @@ export default function PagosTable({ pagos }: Props) {
                 estado: nuevoEstado,
                 fecha_pago: json.pago?.fecha_pago ?? r.fecha_pago,
                 fecha_vencimiento_deuda: json.pago?.fecha_vencimiento_deuda ?? r.fecha_vencimiento_deuda,
+                monto: json.pago?.monto ?? r.monto,
               }
             : r
         )
@@ -177,13 +187,40 @@ export default function PagosTable({ pagos }: Props) {
     }
   }
 
-  function handleCambiarEstado(pagoId: string, nuevoEstado: EstadoPago) {
+  async function applyPagadoParcial(pago: PagoRow, fechaPago: string, montoPagado: number) {
+    const montoRestante = pago.monto - montoPagado
+    // 1. Actualizar registro original
+    await applyChange(pago.id, 'PAGADO', { fecha_pago: fechaPago, monto: montoPagado })
+    // 2. Crear nuevo registro con el saldo pendiente
+    try {
+      const body: Record<string, unknown> = {
+        cliente_id: pago.cliente_id,
+        tipo: pago.tipo,
+        monto: montoRestante,
+        fecha_pago: fechaPago,
+        estado: 'DEUDA',
+      }
+      if (pago.tipo === 'VISA' && pago.visa_id) body.visa_id = pago.visa_id
+      await fetch('/api/pagos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      router.refresh()
+    } catch { /* silencioso */ }
+  }
+
+  function handleCambiarEstado(pagoRow: PagoRow, nuevoEstado: EstadoPago) {
     setOpenDropdownId(null)
     if (nuevoEstado === 'DEUDA') {
-      setPendingDeuda({ id: pagoId })
+      setPendingDeuda({ id: pagoRow.id })
       return
     }
-    void applyChange(pagoId, nuevoEstado)
+    if (nuevoEstado === 'PAGADO') {
+      setPendingPagado(pagoRow)
+      return
+    }
+    void applyChange(pagoRow.id, nuevoEstado)
   }
 
   return (
@@ -214,10 +251,27 @@ export default function PagosTable({ pagos }: Props) {
           if (!pendingDeuda) return
           const { id } = pendingDeuda
           setPendingDeuda(null)
-          void applyChange(id, 'DEUDA', fecha)
+          void applyChange(id, 'DEUDA', { fecha_vencimiento_deuda: fecha })
         }}
         onCancel={() => setPendingDeuda(null)}
       />
+
+      {pendingPagado && (
+        <CambiarEstadoPagoDialog
+          open={true}
+          montoOriginal={pendingPagado.monto}
+          onConfirm={({ fechaPago, tipo, montoPagado }) => {
+            const pago = pendingPagado
+            setPendingPagado(null)
+            if (tipo === 'total') {
+              void applyChange(pago.id, 'PAGADO', { fecha_pago: fechaPago })
+            } else {
+              void applyPagadoParcial(pago, fechaPago, montoPagado)
+            }
+          }}
+          onCancel={() => setPendingPagado(null)}
+        />
+      )}
 
       {/* Error banner */}
       {errorMsg && (
@@ -417,7 +471,7 @@ export default function PagosTable({ pagos }: Props) {
                                   {getOpciones(p.estado).map((opt) => (
                                     <button
                                       key={opt}
-                                      onClick={() => handleCambiarEstado(p.id, opt)}
+                                      onClick={() => handleCambiarEstado(p, opt)}
                                       style={{
                                         display: 'flex',
                                         alignItems: 'center',

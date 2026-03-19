@@ -24,7 +24,8 @@
       "WebFetch(domain:docs.n8n.io)",
       "WebFetch(domain:js.langchain.com)",
       "Bash(wc -l \"c:/Users/edu_i/OneDrive/Documentos/Proyectos2026/gojulito/app/\\(dashboard\\)/clientes/\\\\[id\\\\]/page.tsx\")",
-      "Bash(ls -la \"c:\\\\Users\\\\edu_i\\\\OneDrive\\\\Documentos\\\\Proyectos2026\\\\gojulito\\\\app\\\\\\(dashboard\\)\")"
+      "Bash(ls -la \"c:\\\\Users\\\\edu_i\\\\OneDrive\\\\Documentos\\\\Proyectos2026\\\\gojulito\\\\app\\\\\\(dashboard\\)\")",
+      "Bash(git diff:*)"
     ]
   }
 }

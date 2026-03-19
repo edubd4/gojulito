@@ -9,6 +9,7 @@ export interface ClienteOption {
   gj_id: string
   nombre: string
   telefono: string | null
+  provincia: string | null
   grupo_familiar_id: string | null
 }
 
@@ -109,7 +110,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
 
   function handleClienteChange(clienteId: string) {
     if (!clienteId) {
-      setForm((prev) => ({ ...prev, cliente_id: '', nombre: '', telefono: '' }))
+      setForm((prev) => ({ ...prev, cliente_id: '', nombre: '', telefono: '', provincia: '' }))
       setUsePrecioGrupo(false)
       return
     }
@@ -120,6 +121,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
         cliente_id: clienteId,
         nombre: cliente.nombre,
         telefono: cliente.telefono ?? '',
+        provincia: cliente.provincia ?? prev.provincia,
       }))
       setErrors((prev) => ({ ...prev, nombre: undefined, telefono: undefined }))
       setUsePrecioGrupo(false)

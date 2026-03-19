@@ -250,6 +250,29 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
     }
   }
 
+  // Edición inline en tabla
+  const [localRows, setLocalRows] = useState<ClienteRow[]>(clientes)
+  const [editingCell, setEditingCell] = useState<{ id: string; field: 'nombre' | 'telefono' } | null>(null)
+  const [editingValue, setEditingValue] = useState('')
+
+  useEffect(() => { setLocalRows(clientes) }, [clientes])
+
+  async function handleInlinePatch(clienteId: string, field: keyof ClienteRow, value: string) {
+    const trimmed = value.trim()
+    try {
+      const res = await fetch(`/api/clientes/${clienteId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: trimmed || null }),
+      })
+      if (res.ok) {
+        setLocalRows((prev) =>
+          prev.map((r) => r.id === clienteId ? { ...r, [field]: trimmed || null } : r)
+        )
+      }
+    } catch { /* silencioso */ }
+  }
+
   // Filtros
   const [busqueda, setBusqueda] = useState('')
   const [filtroEstadoCliente, setFiltroEstadoCliente] = useState<FiltroEstadoCliente>('TODOS')
@@ -284,7 +307,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
   const clientesFiltrados = useMemo(() => {
     const q = busqueda.toLowerCase().trim()
-    return clientes.filter((c) => {
+    return localRows.filter((c) => {
       if (q && !c.nombre.toLowerCase().includes(q) && !(c.telefono ?? '').includes(q) && !c.gj_id.toLowerCase().includes(q)) {
         return false
       }
@@ -294,7 +317,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
       if (filtroCanal !== 'TODOS' && c.canal !== filtroCanal) return false
       return true
     })
-  }, [clientes, busqueda, filtroEstadoCliente, filtroEstadoVisa, filtroEstadoPago, filtroCanal])
+  }, [localRows, busqueda, filtroEstadoCliente, filtroEstadoVisa, filtroEstadoPago, filtroCanal])
 
   // Deselect items no longer visible when filters change
   useEffect(() => {
@@ -601,17 +624,83 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                     <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb', fontSize: 12 }}>
                       {c.gj_id}
                     </td>
-                    <td className="px-3 py-3 font-medium" style={{ color: '#e8e6e0' }}>
-                      {c.nombre}
+                    {/* Nombre — editable inline */}
+                    <td className="px-3 py-3 font-medium" style={{ color: '#e8e6e0' }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setEditingCell({ id: c.id, field: 'nombre' })
+                        setEditingValue(c.nombre)
+                      }}
+                    >
+                      {editingCell?.id === c.id && editingCell.field === 'nombre' ? (
+                        <input
+                          autoFocus
+                          value={editingValue}
+                          onChange={(e) => setEditingValue(e.target.value)}
+                          onBlur={() => {
+                            setEditingCell(null)
+                            if (editingValue.trim() && editingValue.trim() !== c.nombre) {
+                              void handleInlinePatch(c.id, 'nombre', editingValue)
+                            }
+                          }}
+                          onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ backgroundColor: '#172645', color: '#e8e6e0', border: '1px solid rgba(74,158,255,0.5)', borderRadius: 6, padding: '3px 8px', fontSize: 14, fontFamily: 'DM Sans, sans-serif', outline: 'none', minWidth: 120 }}
+                        />
+                      ) : (
+                        <span style={{ borderBottom: '1px dashed rgba(255,255,255,0.2)', cursor: 'text' }}>{c.nombre}</span>
+                      )}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb' }}>
-                      {c.telefono ?? '—'}
+                    {/* Teléfono — editable inline */}
+                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb' }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setEditingCell({ id: c.id, field: 'telefono' })
+                        setEditingValue(c.telefono ?? '')
+                      }}
+                    >
+                      {editingCell?.id === c.id && editingCell.field === 'telefono' ? (
+                        <input
+                          autoFocus
+                          value={editingValue}
+                          onChange={(e) => setEditingValue(e.target.value)}
+                          onBlur={() => {
+                            setEditingCell(null)
+                            if (editingValue !== (c.telefono ?? '')) {
+                              void handleInlinePatch(c.id, 'telefono', editingValue)
+                            }
+                          }}
+                          onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ backgroundColor: '#172645', color: '#e8e6e0', border: '1px solid rgba(74,158,255,0.5)', borderRadius: 6, padding: '3px 8px', fontSize: 13, fontFamily: 'DM Sans, sans-serif', outline: 'none', minWidth: 110 }}
+                        />
+                      ) : (
+                        <span style={{ borderBottom: '1px dashed rgba(255,255,255,0.2)', cursor: 'text' }}>{c.telefono ?? '—'}</span>
+                      )}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb', textTransform: 'capitalize' }}>
-                      {c.canal.charAt(0) + c.canal.slice(1).toLowerCase()}
+                    {/* Canal — dropdown inline */}
+                    <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={c.canal}
+                        onChange={(e) => void handleInlinePatch(c.id, 'canal', e.target.value)}
+                        style={{ backgroundColor: '#172645', color: '#9ba8bb', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, padding: '3px 6px', fontSize: 13, fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', outline: 'none' }}
+                      >
+                        {(['SEMINARIO', 'WHATSAPP', 'INSTAGRAM', 'REFERIDO', 'CHARLA', 'OTRO'] as const).map((opt) => (
+                          <option key={opt} value={opt}>{opt.charAt(0) + opt.slice(1).toLowerCase()}</option>
+                        ))}
+                      </select>
                     </td>
-                    <td className="px-3 py-3">
-                      <Badge {...BADGE_ESTADO_CLIENTE[c.estado]} />
+                    {/* Estado cliente — dropdown inline */}
+                    <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={c.estado}
+                        onChange={(e) => void handleInlinePatch(c.id, 'estado', e.target.value)}
+                        style={{ backgroundColor: BADGE_ESTADO_CLIENTE[c.estado].bg, color: BADGE_ESTADO_CLIENTE[c.estado].color, border: `1px solid ${BADGE_ESTADO_CLIENTE[c.estado].color}40`, borderRadius: 6, padding: '3px 6px', fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', outline: 'none' }}
+                      >
+                        {(['ACTIVO', 'PROSPECTO', 'FINALIZADO', 'INACTIVO'] as const).map((opt) => (
+                          <option key={opt} value={opt} style={{ backgroundColor: '#172645', color: '#e8e6e0' }}>{BADGE_ESTADO_CLIENTE[opt].label}</option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-3 py-3">
                       {c.estado_visa ? (
