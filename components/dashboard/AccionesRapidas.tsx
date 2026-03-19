@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import NuevoClienteModal from '@/components/clientes/NuevoClienteModal'
+import NuevoTramiteModal from '@/components/tramites/NuevoTramiteModal'
+import NuevoPagoModal from '@/components/pagos/NuevoPagoModal'
 import type { GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
 
 interface Props {
@@ -20,39 +22,40 @@ const btnBase: React.CSSProperties = {
   fontFamily: 'DM Sans, sans-serif',
   cursor: 'pointer',
   textDecoration: 'none',
-  transition: 'opacity 0.15s',
   border: 'none',
   whiteSpace: 'nowrap',
 }
 
 export default function AccionesRapidas({ gruposFamiliares }: Props) {
-  const [modalOpen, setModalOpen] = useState(false)
+  const router = useRouter()
+  const [clienteOpen, setClienteOpen] = useState(false)
+  const [tramiteOpen, setTramiteOpen] = useState(false)
+  const [pagoOpen, setPagoOpen] = useState(false)
 
   return (
     <>
       <NuevoClienteModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
+        open={clienteOpen}
+        onOpenChange={setClienteOpen}
         gruposFamiliares={gruposFamiliares}
-        onSuccess={() => setModalOpen(false)}
+        onSuccess={() => { setClienteOpen(false); router.refresh() }}
+      />
+      <NuevoTramiteModal
+        open={tramiteOpen}
+        onOpenChange={setTramiteOpen}
+        onSuccess={() => router.refresh()}
+      />
+      <NuevoPagoModal
+        open={pagoOpen}
+        onOpenChange={setPagoOpen}
+        onSuccess={() => router.refresh()}
       />
 
-      <div
-        style={{
-          display: 'flex',
-          gap: 10,
-          flexWrap: 'wrap',
-          marginBottom: 28,
-        }}
-      >
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 28 }}>
         {/* Nuevo cliente */}
         <button
-          onClick={() => setModalOpen(true)}
-          style={{
-            ...btnBase,
-            backgroundColor: '#e8a020',
-            color: '#0b1628',
-          }}
+          onClick={() => setClienteOpen(true)}
+          style={{ ...btnBase, backgroundColor: '#e8a020', color: '#0b1628' }}
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -64,8 +67,8 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
         </button>
 
         {/* Nuevo trámite de visa */}
-        <Link
-          href="/tramites"
+        <button
+          onClick={() => setTramiteOpen(true)}
           style={{
             ...btnBase,
             backgroundColor: 'rgba(74,158,255,0.12)',
@@ -78,11 +81,11 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
             <line x1="2" y1="10" x2="22" y2="10"/>
           </svg>
           Nuevo trámite de visa
-        </Link>
+        </button>
 
         {/* Registrar pago */}
-        <Link
-          href="/clientes"
+        <button
+          onClick={() => setPagoOpen(true)}
           style={{
             ...btnBase,
             backgroundColor: 'rgba(34,201,122,0.12)',
@@ -95,7 +98,7 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
             <line x1="1" y1="10" x2="23" y2="10"/>
           </svg>
           Registrar pago
-        </Link>
+        </button>
       </div>
     </>
   )

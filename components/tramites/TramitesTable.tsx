@@ -76,6 +76,7 @@ export default function TramitesTable({ tramites, grupos }: Props) {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [loteModalOpen, setLoteModalOpen] = useState(false)
+  const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (errorMsg) {
@@ -101,6 +102,22 @@ export default function TramitesTable({ tramites, grupos }: Props) {
   }, [rows, estadoFiltro, grupoFiltro, busqueda])
 
   const grupoSeleccionado = grupoFiltro ? grupos.find((g) => g.id === grupoFiltro) ?? null : null
+
+  async function handleFechaTurno(visaId: string, fecha: string) {
+    try {
+      const res = await fetch(`/api/visas/${visaId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fecha_turno: fecha || null }),
+      })
+      const json = await res.json() as { success?: boolean; visa?: { fecha_turno: string | null } }
+      if (json.success) {
+        setRows((prev) =>
+          prev.map((r) => r.id === visaId ? { ...r, fecha_turno: json.visa?.fecha_turno ?? null } : r)
+        )
+      }
+    } catch { /* silencioso */ }
+  }
 
   async function handleCambiarEstado(visaId: string, nuevoEstado: EstadoVisa) {
     setLoadingId(visaId)
@@ -415,10 +432,25 @@ export default function TramitesTable({ tramites, grupos }: Props) {
                           {t.ds160 ?? '—'}
                         </Link>
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          {t.fecha_turno ? formatFecha(t.fecha_turno) : '—'}
-                        </Link>
+                      <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                        {t.estado === 'TURNO_ASIGNADO' ? (
+                          <input
+                            type="date"
+                            style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                            value={fechaTurnoEdits[t.id] ?? (t.fecha_turno ?? '')}
+                            onChange={(e) =>
+                              setFechaTurnoEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
+                            }
+                            onBlur={(e) => {
+                              const val = e.target.value
+                              if (val !== (t.fecha_turno ?? '')) void handleFechaTurno(t.id, val)
+                            }}
+                          />
+                        ) : (
+                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>
+                            {t.fecha_turno ? formatFecha(t.fecha_turno) : '—'}
+                          </span>
+                        )}
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
                         <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>

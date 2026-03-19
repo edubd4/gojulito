@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
   const now = new Date().toISOString()
   const { data: perfil, error: insertError } = await supabase!
     .from('profiles')
-    .insert({
+    .upsert({
       id: newUser.id,
       email: body.email.trim(),
       nombre: body.nombre.trim(),
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
       activo: true,
       created_at: now,
       updated_at: now,
-    })
+    }, { onConflict: 'id' })
     .select('id, email, nombre, rol, activo, created_at')
     .single()
 

@@ -56,11 +56,14 @@ export async function PATCH(
   if (body.fecha_vencimiento !== undefined) updateData.fecha_vencimiento = body.fecha_vencimiento ?? null
   if (body.notas !== undefined) updateData.notas = body.notas ?? null
 
-  // fecha_turno solo si estado = TURNO_ASIGNADO
-  if (body.estado === 'TURNO_ASIGNADO' && body.fecha_turno) {
-    updateData.fecha_turno = body.fecha_turno
-  } else if (body.estado && body.estado !== 'TURNO_ASIGNADO') {
+  // fecha_turno: al cambiar estado a TURNO_ASIGNADO o al actualizarla independientemente
+  if (body.estado === 'TURNO_ASIGNADO') {
+    if (body.fecha_turno !== undefined) updateData.fecha_turno = body.fecha_turno ?? null
+  } else if (body.estado) {
     updateData.fecha_turno = null
+  } else if (body.estado === undefined && body.fecha_turno !== undefined) {
+    // Actualización independiente de fecha_turno (sin cambio de estado)
+    updateData.fecha_turno = body.fecha_turno ?? null
   }
 
   // fecha_aprobacion: si estado = APROBADA, usar el valor del body o hoy como fallback
@@ -83,6 +86,20 @@ export async function PATCH(
 
   if (updateError || !visaActualizada) {
     return NextResponse.json({ error: 'Error al actualizar la visa' }, { status: 500 })
+  }
+
+  // Historial: actualización independiente de fecha_turno
+  if (!body.estado && body.fecha_turno !== undefined) {
+    await supabase.from('historial').insert({
+      cliente_id: visaActual.cliente_id,
+      visa_id: id,
+      tipo: 'TURNO_ASIGNADO',
+      descripcion: body.fecha_turno
+        ? `Fecha de turno actualizada a ${body.fecha_turno}`
+        : 'Fecha de turno eliminada',
+      origen: 'dashboard',
+      usuario_id: user.id,
+    })
   }
 
   // Registrar en historial solo si cambió el estado

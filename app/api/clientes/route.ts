@@ -2,6 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
 
+export async function GET() {
+  const authClient = await createServerClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+
+  const supabase = await createServiceRoleClient()
+  const { data, error } = await supabase
+    .from('clientes')
+    .select('id, nombre, gj_id')
+    .neq('estado', 'INACTIVO')
+    .order('nombre', { ascending: true })
+
+  if (error) return NextResponse.json({ error: 'Error al obtener clientes' }, { status: 500 })
+  return NextResponse.json({ clientes: data ?? [] })
+}
+
 interface CreateClienteBody {
   nombre: string
   telefono: string

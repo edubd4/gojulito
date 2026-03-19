@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { formatFecha, formatPesos } from '@/lib/utils'
 import type { EstadoPago } from '@/lib/constants'
 import FechaVencimientoDialog from '@/components/pagos/FechaVencimientoDialog'
 import DetallePagoModal from '@/components/pagos/DetallePagoModal'
+import NuevoPagoModal from '@/components/pagos/NuevoPagoModal'
 
 export interface PagoRow {
   id: string
@@ -87,6 +89,7 @@ function getOpciones(estado: EstadoPago): EstadoPago[] {
 }
 
 export default function PagosTable({ pagos }: Props) {
+  const router = useRouter()
   const [rows, setRows] = useState<PagoRow[]>(pagos)
   const [busqueda, setBusqueda] = useState('')
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoPago | ''>('')
@@ -96,6 +99,7 @@ export default function PagosTable({ pagos }: Props) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [pendingDeuda, setPendingDeuda] = useState<{ id: string } | null>(null)
   const [selectedPago, setSelectedPago] = useState<PagoRow | null>(null)
+  const [nuevoPagoOpen, setNuevoPagoOpen] = useState(false)
 
   useEffect(() => {
     setRows(pagos)
@@ -184,6 +188,15 @@ export default function PagosTable({ pagos }: Props) {
 
   return (
     <div>
+      <NuevoPagoModal
+        open={nuevoPagoOpen}
+        onOpenChange={setNuevoPagoOpen}
+        onSuccess={() => {
+          setNuevoPagoOpen(false)
+          router.refresh()
+        }}
+      />
+
       {selectedPago && (
         <DetallePagoModal
           pago={selectedPago}
@@ -240,6 +253,21 @@ export default function PagosTable({ pagos }: Props) {
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
+        <button
+          onClick={() => setNuevoPagoOpen(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '8px 16px', borderRadius: 8, border: 'none',
+            backgroundColor: '#22c97a', color: '#0b1628',
+            fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap',
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Registrar pago
+        </button>
         <select
           style={{ ...inputStyle, cursor: 'pointer' }}
           value={estadoFiltro}
