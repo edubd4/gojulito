@@ -350,18 +350,18 @@ export default async function DashboardPage() {
                       style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                     >
                       <td style={{ padding: '11px 0' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
+                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
                           <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{t.nombre_cliente}</div>
                           <div style={{ fontSize: 11, color: '#9ba8bb' }}>{t.gj_id}</div>
                         </Link>
                       </td>
                       <td style={{ padding: '11px 16px 11px 0', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
                           {formatFecha(t.fecha_turno)}
                         </Link>
                       </td>
                       <td style={{ padding: '11px 0' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
+                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
                           <Badge estado={t.estado_visa} />
                         </Link>
                       </td>
@@ -406,18 +406,18 @@ export default async function DashboardPage() {
                     return (
                       <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                         <td style={{ padding: '11px 0' }}>
-                          <Link href={`/clientes/${d.cliente_id}`} style={{ textDecoration: 'none' }}>
+                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
                             <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{d.nombre_cliente}</div>
                             <div style={{ fontSize: 11, color: '#9ba8bb' }}>{d.gj_id}</div>
                           </Link>
                         </td>
                         <td style={{ padding: '11px 20px 11px 0', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                          <Link href={`/clientes/${d.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
                             {formatPesos(d.monto)}
                           </Link>
                         </td>
                         <td style={{ padding: '11px 0', whiteSpace: 'nowrap' }}>
-                          <Link href={`/clientes/${d.cliente_id}`} style={{ textDecoration: 'none' }}>
+                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
                             <div style={{ fontSize: 13, color: urgColor, fontWeight: 600 }}>
                               {dias === 0 ? 'Hoy' : dias === 1 ? '1 día' : `${dias} días`}
                             </div>
