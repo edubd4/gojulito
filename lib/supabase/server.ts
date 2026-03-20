@@ -1,4 +1,5 @@
 import { createServerClient as createSSRServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 export async function createServerClient() {
@@ -26,27 +27,13 @@ export async function createServerClient() {
   )
 }
 
-export async function createServiceRoleClient() {
-  const cookieStore = await cookies()
-
-  return createSSRServerClient(
+// Usa createClient directo (sin cookies) para que el service role key no sea
+// sobreescrito por el JWT del usuario en el header Authorization → bypasea RLS correctamente.
+export function createServiceRoleClient() {
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // ignorar en Server Components
-          }
-        },
-      },
       auth: {
         autoRefreshToken: false,
         persistSession: false,

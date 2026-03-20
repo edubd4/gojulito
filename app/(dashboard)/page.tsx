@@ -7,9 +7,12 @@ import AccionesRapidas from '@/components/dashboard/AccionesRapidas'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Metrica {
-  estado: string
-  total: number
+interface MetricaRow {
+  en_proceso: number
+  turno_asignado: number
+  aprobadas: number
+  rechazadas: number
+  pausadas: number
 }
 
 interface TurnoSemana {
@@ -170,7 +173,7 @@ export default async function DashboardPage() {
     { count: clientesActivos },
     { data: rawGrupos },
   ] = await Promise.all([
-    supabase.from('v_metricas').select('estado, total').returns<Metrica[]>(),
+    supabase.from('v_metricas').select('*').returns<MetricaRow[]>(),
     supabase.from('v_turnos_semana').select('*').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
     supabase.from('v_deudas_proximas').select('*').order('fecha_vencimiento_deuda', { ascending: true }).returns<DeudaProxima[]>(),
     supabase.from('historial').select('id, tipo, descripcion, created_at, cliente_id, clientes(nombre, gj_id)').order('created_at', { ascending: false }).limit(10),
@@ -178,14 +181,13 @@ export default async function DashboardPage() {
     supabase.from('grupos_familiares').select('id, nombre').order('nombre', { ascending: true }),
   ])
 
-  const metricas = rawMetricas ?? []
   const turnos = rawTurnos ?? []
   const deudas = rawDeudas ?? []
   const historial = (rawHistorial ?? []) as unknown as HistorialEvento[]
   const gruposFamiliares = (rawGrupos ?? []).map((g) => ({ id: g.id as string, nombre: g.nombre as string }))
 
-  const metricaMap = new Map<string, number>(metricas.map((m) => [m.estado, m.total]))
-  const visasEnProceso = (metricaMap.get('EN_PROCESO') ?? 0) + (metricaMap.get('TURNO_ASIGNADO') ?? 0)
+  const metricaRow = rawMetricas?.[0]
+  const visasEnProceso = (metricaRow?.en_proceso ?? 0) + (metricaRow?.turno_asignado ?? 0)
 
   const METRIC_CARDS = [
     {
