@@ -88,7 +88,7 @@ export default async function ClientesPage() {
   }))
 
   return (
-    <div style={{ backgroundColor: '#0b1628', minHeight: '100%', padding: '28px 32px', fontFamily: 'DM Sans, sans-serif' }}>
+    <div className="p-4 sm:p-6 lg:p-8" style={{ backgroundColor: '#0b1628', minHeight: '100%', fontFamily: 'DM Sans, sans-serif' }}>
       <ClientesTable
         clientes={clientes}
         isAdmin={isAdmin}

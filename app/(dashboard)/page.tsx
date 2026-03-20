@@ -237,10 +237,10 @@ export default async function DashboardPage() {
 
   return (
     <div
+      className="p-4 sm:p-6 lg:p-8"
       style={{
         backgroundColor: '#0b1628',
         minHeight: '100%',
-        padding: '28px 32px',
         fontFamily: 'DM Sans, sans-serif',
       }}
     >
@@ -266,14 +266,7 @@ export default async function DashboardPage() {
       <AccionesRapidas gruposFamiliares={gruposFamiliares} />
 
       {/* ── Métricas ── */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {METRIC_CARDS.map(({ label, value, color, icon }) => (
           <div
             key={label}
@@ -307,14 +300,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Cuerpo — dos columnas ── */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 340px',
-          gap: 20,
-          alignItems: 'start',
-        }}
-      >
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-5 items-start">
         {/* Columna izquierda */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
@@ -331,7 +317,7 @@ export default async function DashboardPage() {
                         key={col}
                         style={{
                           textAlign: 'left',
-                          padding: '0 0 10px',
+                          padding: '0 16px 10px 0',
                           fontSize: 11,
                           fontWeight: 600,
                           color: '#9ba8bb',
@@ -387,7 +373,7 @@ export default async function DashboardPage() {
                         key={col}
                         style={{
                           textAlign: 'left',
-                          padding: '0 0 10px',
+                          padding: '0 16px 10px 0',
                           fontSize: 11,
                           fontWeight: 600,
                           color: '#9ba8bb',

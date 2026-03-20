@@ -37,10 +37,10 @@ export default async function PagosPage() {
 
   return (
     <div
+      className="p-4 sm:p-6 lg:p-8"
       style={{
         backgroundColor: '#0b1628',
         minHeight: '100%',
-        padding: '28px 32px',
         fontFamily: 'DM Sans, sans-serif',
       }}
     >

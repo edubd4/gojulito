@@ -59,7 +59,7 @@ export default async function ConfiguracionPage() {
   const rolLabel = perfil.rol === 'admin' ? 'Admin' : 'Colaborador'
 
   return (
-    <div style={{ padding: '32px 40px', maxWidth: 900, margin: '0 auto' }}>
+    <div className="p-4 sm:p-6 lg:p-10" style={{ maxWidth: 900, margin: '0 auto' }}>
       <h1 style={{
         fontSize: 26, fontWeight: 700, color: '#e8e6e0',
         fontFamily: 'Fraunces, serif', marginBottom: 32,

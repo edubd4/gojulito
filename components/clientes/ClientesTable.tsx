@@ -553,7 +553,8 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             </p>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div style={{ overflowX: 'auto' }}>
+          <table className="w-full text-sm" style={{ minWidth: 600 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                 <th className="w-10 px-4 py-3 text-left">
@@ -781,6 +782,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

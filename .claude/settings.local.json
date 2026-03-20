@@ -25,7 +25,11 @@
       "WebFetch(domain:js.langchain.com)",
       "Bash(wc -l \"c:/Users/edu_i/OneDrive/Documentos/Proyectos2026/gojulito/app/\\(dashboard\\)/clientes/\\\\[id\\\\]/page.tsx\")",
       "Bash(ls -la \"c:\\\\Users\\\\edu_i\\\\OneDrive\\\\Documentos\\\\Proyectos2026\\\\gojulito\\\\app\\\\\\(dashboard\\)\")",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "Bash(grep -r \"md:\\\\|lg:\\\\|sm:\\\\|2xl:\\\\|xl:\" /c/Users/edu_i/OneDrive/Documentos/Proyectos2026/gojulito/components/dashboard/ --include=*.tsx)",
+      "mcp__claude_ai_Supabase__get_logs",
+      "mcp__claude_ai_Supabase__execute_sql",
+      "Bash(node -e \"require\\(''@supabase/supabase-js''\\); console.log\\(''ok''\\)\")"
     ]
   }
 }
