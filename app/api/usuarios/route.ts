@@ -39,25 +39,28 @@ export async function PATCH(req: NextRequest) {
   const { user, supabase, error } = await verificarAdmin()
   if (error) return error
 
-  let body: { id: string; activo: boolean }
+  let body: { id: string; activo?: boolean; nombre?: string; rol?: string }
   try {
-    body = await req.json() as { id: string; activo: boolean }
+    body = await req.json() as { id: string; activo?: boolean; nombre?: string; rol?: string }
   } catch {
     return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
   }
 
-  if (!body.id || typeof body.activo !== 'boolean') {
-    return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
-  }
+  if (!body.id) return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
 
   // El admin no puede desactivarse a sí mismo
-  if (body.id === user!.id && !body.activo) {
+  if (body.id === user!.id && body.activo === false) {
     return NextResponse.json({ error: 'No podés desactivar tu propia cuenta' }, { status: 400 })
   }
 
+  const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
+  if (typeof body.activo === 'boolean') updates.activo = body.activo
+  if (body.nombre?.trim()) updates.nombre = body.nombre.trim()
+  if (body.rol === 'admin' || body.rol === 'colaborador') updates.rol = body.rol
+
   const { data: usuario, error: updateError } = await supabase!
     .from('profiles')
-    .update({ activo: body.activo, updated_at: new Date().toISOString() })
+    .update(updates)
     .eq('id', body.id)
     .select('id, email, nombre, rol, activo')
     .single()
@@ -67,6 +70,26 @@ export async function PATCH(req: NextRequest) {
   }
 
   return NextResponse.json({ success: true, usuario })
+}
+
+export async function DELETE(req: NextRequest) {
+  const { user, supabase, error } = await verificarAdmin()
+  if (error) return error
+
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id')
+
+  if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
+  if (id === user!.id) return NextResponse.json({ error: 'No podés eliminar tu propia cuenta' }, { status: 400 })
+
+  // Eliminar de Auth (el perfil se elimina en cascada o lo borramos manualmente)
+  const { error: deleteAuthError } = await supabase!.auth.admin.deleteUser(id)
+  if (deleteAuthError) return NextResponse.json({ error: 'Error al eliminar el usuario' }, { status: 500 })
+
+  // Por las dudas, también eliminar el perfil (si no hay cascade en la FK)
+  await supabase!.from('profiles').delete().eq('id', id)
+
+  return NextResponse.json({ success: true })
 }
 
 export async function POST(req: NextRequest) {

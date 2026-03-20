@@ -5,6 +5,8 @@ import ToggleUsuario from '@/components/configuracion/ToggleUsuario'
 import PreciosForm from '@/components/configuracion/PreciosForm'
 import CambiarPasswordForm from '@/components/configuracion/CambiarPasswordForm'
 import NuevoUsuarioTrigger from '@/components/configuracion/NuevoUsuarioTrigger'
+import EditarUsuarioModal from '@/components/configuracion/EditarUsuarioModal'
+import EliminarUsuarioBtn from '@/components/configuracion/EliminarUsuarioBtn'
 
 interface Perfil {
   id: string
@@ -144,16 +146,18 @@ export default async function ConfiguracionPage() {
             <NuevoUsuarioTrigger />
           </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
             <thead>
               <tr>
-                {['Nombre', 'Email', 'Rol', 'Estado', 'Desde'].map((h) => (
+                {['Nombre', 'Email', 'Rol', 'Estado', 'Desde', 'Acciones'].map((h) => (
                   <th key={h} style={{
                     textAlign: 'left', padding: '8px 12px',
                     fontSize: 12, color: '#9ba8bb', fontWeight: 600,
                     fontFamily: 'DM Sans, sans-serif',
                     borderBottom: '1px solid rgba(255,255,255,0.07)',
                     textTransform: 'uppercase', letterSpacing: '0.05em',
+                    whiteSpace: 'nowrap',
                   }}>
                     {h}
                   </th>
@@ -164,12 +168,13 @@ export default async function ConfiguracionPage() {
               {usuarios.map((u) => {
                 const uRolColor = u.rol === 'admin' ? '#e8a020' : '#4a9eff'
                 const uRolLabel = u.rol === 'admin' ? 'Admin' : 'Colaborador'
+                const esMisma = u.id === user.id
                 return (
                   <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '12px 12px', fontSize: 14, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+                    <td style={{ padding: '12px 12px', fontSize: 14, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap' }}>
                       {u.nombre ?? '—'}
                     </td>
-                    <td style={{ padding: '12px 12px', fontSize: 14, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+                    <td style={{ padding: '12px 12px', fontSize: 13, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
                       {u.email}
                     </td>
                     <td style={{ padding: '12px 12px' }}>
@@ -179,6 +184,7 @@ export default async function ConfiguracionPage() {
                         border: `1px solid ${uRolColor}40`,
                         backgroundColor: `${uRolColor}15`, color: uRolColor,
                         fontSize: 11, fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
+                        whiteSpace: 'nowrap',
                       }}>
                         <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: uRolColor, flexShrink: 0 }} />
                         {uRolLabel}
@@ -188,17 +194,31 @@ export default async function ConfiguracionPage() {
                       <ToggleUsuario
                         userId={u.id}
                         activo={u.activo}
-                        esMismoCuenta={u.id === user.id}
+                        esMismoCuenta={esMisma}
                       />
                     </td>
-                    <td style={{ padding: '12px 12px', fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+                    <td style={{ padding: '12px 12px', fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap' }}>
                       {new Date(u.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    </td>
+                    <td style={{ padding: '12px 12px' }}>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <EditarUsuarioModal
+                          usuario={{ id: u.id, nombre: u.nombre ?? '', email: u.email, rol: u.rol }}
+                          esMismaCuenta={esMisma}
+                        />
+                        <EliminarUsuarioBtn
+                          userId={u.id}
+                          nombreUsuario={u.nombre ?? u.email}
+                          esMismaCuenta={esMisma}
+                        />
+                      </div>
                     </td>
                   </tr>
                 )
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
