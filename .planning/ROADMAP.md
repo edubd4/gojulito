@@ -32,7 +32,10 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
   1. El admin selecciona varios clientes y usa bulk-delete: los registros quedan marcados como INACTIVO en la base de datos, sin filas eliminadas físicamente.
   2. La lista de clientes muestra el estado de visa activo correcto (ej: EN_PROCESO, APROBADA) y el estado de pago correcto (ej: DEUDA, PAGADO) para cada cliente, sin valores incorrectos por agregación.
   3. Al aprobar o rechazar una visa, la cascada FINALIZADO al cliente ocurre desde un helper centralizado, tanto desde el API route de visas como desde el webhook de Telegram, produciendo el mismo resultado en ambos paths.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Centralizar cascada FINALIZADO en helper compartido (lib/visas.ts)
+- [ ] 01-02-PLAN.md — Fix bulk-delete soft-delete y estados de visa/pago en lista de clientes
 
 ### Phase 2: Validation Layer
 **Goal**: Todos los endpoints de escritura validan inputs con Zod antes de ejecutar, retornan `{ data, error }` de forma consistente, y los formularios del dashboard muestran los errores del servidor al usuario.
@@ -60,6 +63,6 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 1. Data Integrity | v1.1 | 0/? | Not started | - |
+| 1. Data Integrity | v1.1 | 0/2 | Planned | - |
 | 2. Validation Layer | v1.1 | 0/? | Not started | - |
 | 3. Error Feedback | v1.1 | 0/? | Not started | - |
