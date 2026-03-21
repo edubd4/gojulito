@@ -11,7 +11,7 @@ Requirements for Core Hardening milestone. Each maps to roadmap phases.
 
 - [x] **INTG-01**: El bulk-delete de clientes marca registros como INACTIVO en lugar de ejecutar DELETE físico
 - [x] **INTG-02**: La lista de clientes muestra el estado de visa activo y de pago correcto para cada cliente
-- [ ] **INTG-03**: La lógica de cascada FINALIZADO está centralizada en un helper compartido y funciona correctamente en todos los paths (API de visas, webhooks)
+- [x] **INTG-03**: La lógica de cascada FINALIZADO está centralizada en un helper compartido y funciona correctamente en todos los paths (API de visas, webhooks)
 
 ### Validation
 
@@ -63,7 +63,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | INTG-01 | Phase 1 | Done (01-02) |
 | INTG-02 | Phase 1 | Done (01-02) |
-| INTG-03 | Phase 1 | Pending |
+| INTG-03 | Phase 1 | Complete |
 | VAL-01 | Phase 2 | Pending |
 | VAL-02 | Phase 2 | Pending |
 | VAL-03 | Phase 2 | Pending |

@@ -34,7 +34,7 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
   3. Al aprobar o rechazar una visa, la cascada FINALIZADO al cliente ocurre desde un helper centralizado, tanto desde el API route de visas como desde el webhook de Telegram, produciendo el mismo resultado en ambos paths.
 **Plans**: 2 plans
 Plans:
-- [ ] 01-01-PLAN.md — Centralizar cascada FINALIZADO en helper compartido (lib/visas.ts)
+- [x] 01-01-PLAN.md — Centralizar cascada FINALIZADO en helper compartido (lib/visas.ts)
 - [x] 01-02-PLAN.md — Fix bulk-delete soft-delete y estados de visa/pago en lista de clientes
 
 ### Phase 2: Validation Layer

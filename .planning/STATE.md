@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: Core Hardening
+status: verifying
+stopped_at: Completed 01-data-integrity-01-PLAN.md
+last_updated: "2026-03-21T22:10:00.290Z"
+last_activity: 2026-03-21
+progress:
+  total_phases: 3
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
+  percent: 30
+---
+
 # Project State
 
 ## Project Reference
@@ -11,14 +27,15 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 Phase: 1 of 3 (Data Integrity)
 Plan: 2 of 2 completed
-Status: Phase 1 executing — plans 01 and 02 done, ready for next
-Last activity: 2026-03-21 — Plan 02 completed (data integrity bugs fixed)
+Status: Phase complete — ready for verification
+Last activity: 2026-03-21
 
 Progress: [████░░░░░░] ~30%
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 2
 - Average duration: ~20 min
 - Total execution time: ~40 min
@@ -32,6 +49,7 @@ Progress: [████░░░░░░] ~30%
 **Recent Trend:** 2 plans completed 2026-03-21
 
 *Updated after each plan completion*
+| Phase 01-data-integrity P01 | 7 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -46,6 +64,8 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - 01-02: Use Array.from(map.entries()).forEach() for Map iteration — tsconfig targets ES5, no downlevelIteration
 - 01-02: 3 separate queries instead of nested select for clientes list — nested selects lack ordering guarantees
 - 01-02: Visa cancellation on bulk-delete is best-effort — errors ignored silently to prevent bulk operation failure
+- [Phase 01-data-integrity]: Cascada FINALIZADO extracted to lib/visas.ts helper — fixes once, applies in all 3 paths (dashboard, webhook, batch)
+- [Phase 01-data-integrity]: Helper receives supabase client as parameter, returns boolean — avoids redundant client instantiations and enables result branching
 
 ### Pending Todos
 
@@ -57,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-21
-Stopped at: Completed 01-02-PLAN.md (bulk-delete soft-delete + clientes list estado fixes)
+Last session: 2026-03-21T22:10:00.277Z
+Stopped at: Completed 01-data-integrity-01-PLAN.md
 Resume file: None
