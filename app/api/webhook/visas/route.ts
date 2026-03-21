@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { validateApiKey } from '@/lib/auth-m2m'
 import type { EstadoVisa } from '@/lib/constants'
+import { ESTADOS_TERMINALES, aplicarCascadaFinalizado } from '@/lib/visas'
 
 interface WebhookVisaPatchBody {
   visa_id: string
@@ -103,32 +104,9 @@ export async function PATCH(req: NextRequest) {
       usuario_id: null,
     })
 
-    // Cascada: visa terminal → cliente FINALIZADO si no quedan visas activas
-    const ESTADOS_TERMINALES = ['APROBADA', 'RECHAZADA', 'CANCELADA']
+    // Cascada: visa terminal -> cliente FINALIZADO si no quedan visas activas
     if (ESTADOS_TERMINALES.includes(body.estado)) {
-      const { data: visasActivas } = await supabase
-        .from('visas')
-        .select('id')
-        .eq('cliente_id', clienteId)
-        .neq('id', visaUUID)
-        .not('estado', 'in', `(${ESTADOS_TERMINALES.join(',')})`)
-        .limit(1)
-
-      if (!visasActivas || visasActivas.length === 0) {
-        await supabase
-          .from('clientes')
-          .update({ estado: 'FINALIZADO', updated_at: new Date().toISOString() })
-          .eq('id', clienteId)
-
-        await supabase.from('historial').insert({
-          cliente_id: clienteId,
-          visa_id: visaUUID,
-          tipo: 'CAMBIO_ESTADO',
-          descripcion: 'Cliente marcado como FINALIZADO (todas las visas en estado terminal)',
-          origen: 'sistema',
-          usuario_id: null,
-        })
-      }
+      await aplicarCascadaFinalizado(supabase, clienteId, visaUUID)
     }
   }
 
