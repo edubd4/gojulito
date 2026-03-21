@@ -29,7 +29,8 @@
       "Bash(grep -r \"md:\\\\|lg:\\\\|sm:\\\\|2xl:\\\\|xl:\" /c/Users/edu_i/OneDrive/Documentos/Proyectos2026/gojulito/components/dashboard/ --include=*.tsx)",
       "mcp__claude_ai_Supabase__get_logs",
       "mcp__claude_ai_Supabase__execute_sql",
-      "Bash(node -e \"require\\(''@supabase/supabase-js''\\); console.log\\(''ok''\\)\")"
+      "Bash(node -e \"require\\(''@supabase/supabase-js''\\); console.log\\(''ok''\\)\")",
+      "Bash(node:*)"
     ]
   }
 }
