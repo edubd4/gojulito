@@ -35,7 +35,7 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
 **Plans**: 2 plans
 Plans:
 - [ ] 01-01-PLAN.md — Centralizar cascada FINALIZADO en helper compartido (lib/visas.ts)
-- [ ] 01-02-PLAN.md — Fix bulk-delete soft-delete y estados de visa/pago en lista de clientes
+- [x] 01-02-PLAN.md — Fix bulk-delete soft-delete y estados de visa/pago en lista de clientes
 
 ### Phase 2: Validation Layer
 **Goal**: Todos los endpoints de escritura validan inputs con Zod antes de ejecutar, retornan `{ data, error }` de forma consistente, y los formularios del dashboard muestran los errores del servidor al usuario.
@@ -63,6 +63,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 1. Data Integrity | v1.1 | 0/2 | Planned | - |
+| 1. Data Integrity | v1.1 | 1/2 | Executing | - |
 | 2. Validation Layer | v1.1 | 0/? | Not started | - |
 | 3. Error Feedback | v1.1 | 0/? | Not started | - |

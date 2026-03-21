@@ -10,26 +10,26 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 3 (Data Integrity)
-Plan: — (not yet planned)
-Status: Ready to plan
-Last activity: 2026-03-21 — Roadmap created, phases defined
+Plan: 2 of 2 completed
+Status: Phase 1 executing — plans 01 and 02 done, ready for next
+Last activity: 2026-03-21 — Plan 02 completed (data integrity bugs fixed)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [████░░░░░░] ~30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: —
+- Total plans completed: 2
+- Average duration: ~20 min
+- Total execution time: ~40 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01-data-integrity | 2 | ~40 min | ~20 min |
 
-**Recent Trend:** No data yet
+**Recent Trend:** 2 plans completed 2026-03-21
 
 *Updated after each plan completion*
 
@@ -43,18 +43,20 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - v1.1: Zod validation server-side only — client-side basic validation is sufficient
 - v1.1: `{ data, error }` pattern to be standardized across all route handlers
 - v1.1: Cascada FINALIZADO to be extracted to shared helper (currently duplicated in 3+ places)
+- 01-02: Use Array.from(map.entries()).forEach() for Map iteration — tsconfig targets ES5, no downlevelIteration
+- 01-02: 3 separate queries instead of nested select for clientes list — nested selects lack ordering guarantees
+- 01-02: Visa cancellation on bulk-delete is best-effort — errors ignored silently to prevent bulk operation failure
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-- Phase 1: INTG-02 fix requires identifying the exact aggregation query causing incorrect state display — needs codebase investigation before planning
 - Phase 2: VAL-03 depends on VAL-02 being complete (can't show server errors reliably without consistent return shape)
 
 ## Session Continuity
 
 Last session: 2026-03-21
-Stopped at: Roadmap created — ready to plan Phase 1
+Stopped at: Completed 01-02-PLAN.md (bulk-delete soft-delete + clientes list estado fixes)
 Resume file: None
