@@ -45,7 +45,11 @@ Plans:
   1. Al enviar un formulario de creación o edición con datos inválidos (campo requerido vacío, tipo incorrecto), el servidor retorna un error de validación descriptivo con status 400 — no un 500 ni un error silencioso.
   2. Todos los API route handlers (clientes, visas, pagos, seminarios — POST y PATCH) retornan exactamente `{ data: T | null, error: string | null }`, sin variaciones de forma entre rutas.
   3. Los formularios de crear cliente, editar cliente, registrar pago y cambiar estado de visa muestran el mensaje de error del servidor inline cuando la validación falla, sin recargar la página.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 02-01-PLAN.md — Instalar Zod y crear schemas de dominio (clientes, visas, pagos)
+- [ ] 02-02-PLAN.md — Aplicar Zod safeParse + estandarizar { data, error } en los 9 route handlers
+- [ ] 02-03-PLAN.md — Actualizar formularios del frontend para leer { data, error }
 
 ### Phase 3: Error Feedback
 **Goal**: Ninguna acción de edición falla silenciosamente: el usuario siempre recibe feedback visual claro cuando una operación no puede completarse.
@@ -63,6 +67,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 1. Data Integrity | v1.1 | 1/2 | Executing | - |
-| 2. Validation Layer | v1.1 | 0/? | Not started | - |
+| 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
+| 2. Validation Layer | v1.1 | 0/3 | Planned | - |
 | 3. Error Feedback | v1.1 | 0/? | Not started | - |
