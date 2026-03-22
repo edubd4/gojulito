@@ -30,7 +30,10 @@
       "mcp__claude_ai_Supabase__get_logs",
       "mcp__claude_ai_Supabase__execute_sql",
       "Bash(node -e \"require\\(''@supabase/supabase-js''\\); console.log\\(''ok''\\)\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Skill(gsd:execute-phase)",
+      "Skill(gsd:update)",
+      "Skill(gsd:plan-phase)"
     ]
   }
 }
