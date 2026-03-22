@@ -1,20 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { validateApiKey } from '@/lib/auth-m2m'
-import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
-
-interface WebhookClienteBody {
-  nombre: string
-  telefono: string
-  email?: string
-  dni?: string
-  fecha_nac?: string
-  provincia?: string
-  canal: CanalIngreso
-  estado: EstadoCliente
-  grupo_familiar_id?: string
-  observaciones?: string
-}
+import { createClienteSchema } from '@/lib/schemas/clientes'
 
 export async function GET(req: NextRequest) {
   if (!validateApiKey(req)) {
@@ -50,19 +37,22 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!validateApiKey(req)) {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autorizado' }, { status: 401 })
   }
 
-  let body: WebhookClienteBody
+  let raw: unknown
   try {
-    body = await req.json() as WebhookClienteBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
 
-  if (!body.nombre?.trim() || !body.telefono?.trim() || !body.canal || !body.estado) {
-    return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
+  const parsed = createClienteSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
   }
+  const body = parsed.data
 
   const supabase = await createServiceRoleClient()
 
@@ -96,7 +86,7 @@ export async function POST(req: NextRequest) {
     id_column: 'gj_id',
   })
   if (idError || !newId) {
-    return NextResponse.json({ error: 'Error generando ID' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error generando ID' }, { status: 500 })
   }
   const gj_id = newId as string
 
@@ -121,7 +111,7 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ data: null, error: error.message }, { status: 500 })
 
   await supabase.from('historial').insert({
     cliente_id: (cliente as { id: string }).id,
@@ -131,5 +121,5 @@ export async function POST(req: NextRequest) {
     usuario_id: null,
   })
 
-  return NextResponse.json({ success: true, cliente })
+  return NextResponse.json({ data: cliente, error: null })
 }

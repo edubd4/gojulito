@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
-import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
+import { createClienteSchema } from '@/lib/schemas/clientes'
 
 export async function GET() {
   const authClient = await createServerClient()
   const { data: { user } } = await authClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  if (!user) return NextResponse.json({ data: null, error: 'No autenticado' }, { status: 401 })
 
   const supabase = await createServiceRoleClient()
   const { data, error } = await supabase
@@ -14,36 +14,8 @@ export async function GET() {
     .neq('estado', 'INACTIVO')
     .order('nombre', { ascending: true })
 
-  if (error) return NextResponse.json({ error: 'Error al obtener clientes' }, { status: 500 })
+  if (error) return NextResponse.json({ data: null, error: 'Error al obtener clientes' }, { status: 500 })
   return NextResponse.json({ clientes: data ?? [] })
-}
-
-interface CreateClienteBody {
-  nombre: string
-  telefono: string
-  email?: string
-  dni?: string
-  fecha_nac?: string
-  provincia?: string
-  canal: CanalIngreso
-  estado: EstadoCliente
-  grupo_familiar_id?: string
-  observaciones?: string
-}
-
-interface ClienteInsert {
-  gj_id: string
-  nombre: string
-  telefono: string
-  canal: CanalIngreso
-  estado: EstadoCliente
-  created_by: string
-  email?: string
-  dni?: string
-  fecha_nac?: string
-  provincia?: string
-  grupo_familiar_id?: string
-  observaciones?: string
 }
 
 export async function POST(req: NextRequest) {
@@ -51,19 +23,22 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await authClient.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autenticado' }, { status: 401 })
   }
 
-  let body: CreateClienteBody
+  let raw: unknown
   try {
-    body = await req.json() as CreateClienteBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
 
-  if (!body.nombre?.trim() || !body.telefono?.trim() || !body.canal || !body.estado) {
-    return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
+  const parsed = createClienteSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
   }
+  const body = parsed.data
 
   const supabase = await createServiceRoleClient()
 
@@ -98,11 +73,11 @@ export async function POST(req: NextRequest) {
     id_column: 'gj_id',
   })
   if (idError || !newId) {
-    return NextResponse.json({ error: 'Error generando ID' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error generando ID' }, { status: 500 })
   }
   const gj_id = newId as string
 
-  const insert: ClienteInsert = {
+  const insert: Record<string, unknown> = {
     gj_id,
     nombre: body.nombre.trim(),
     telefono: body.telefono.trim(),
@@ -125,7 +100,7 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ data: null, error: error.message }, { status: 500 })
   }
 
   await supabase.from('historial').insert({
@@ -136,5 +111,5 @@ export async function POST(req: NextRequest) {
     usuario_id: user.id,
   })
 
-  return NextResponse.json({ success: true, cliente })
+  return NextResponse.json({ data: cliente, error: null })
 }
