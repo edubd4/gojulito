@@ -59,7 +59,9 @@ Plans:
   1. Al editar un cliente con un valor inválido (ej: teléfono duplicado), el usuario ve un mensaje de error claro en la UI — no un spinner que se detiene sin explicación ni un formulario que se cierra como si hubiera tenido éxito.
   2. Al editar una visa o un pago y ocurrir un error de red o de servidor, aparece un mensaje de error visible; el formulario permanece abierto con los datos ingresados.
   3. No existe ningún flujo de edición (clientes, visas, pagos) donde un error cause que la UI quede en estado inconsistente sin notificar al usuario.
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 03-01-PLAN.md — Fix error check en EditarVisaModal y DetallePagoModal (json.success -> json.error)
 
 ## Progress
 
@@ -69,4 +71,4 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
 | 2. Validation Layer | v1.1 | 3/3 | Complete   | 2026-03-22 |
-| 3. Error Feedback | v1.1 | 0/? | Not started | - |
+| 3. Error Feedback | v1.1 | 0/1 | Not started | - |
