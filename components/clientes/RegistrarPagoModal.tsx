@@ -120,8 +120,8 @@ export default function RegistrarPagoModal({ clienteId, visaId }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      const json = await res.json() as { success?: boolean; error?: string }
-      if (!res.ok || !json.success) {
+      const json = await res.json() as { data?: unknown; error?: string }
+      if (!res.ok || json.error) {
         setServerError(json.error ?? 'Error al registrar el pago')
         return
       }

@@ -160,7 +160,7 @@ export default function NuevoClienteModal({
       })
 
       const json = await res.json() as {
-        success?: boolean
+        data?: unknown
         error?: string
         message?: string
         cliente_existente?: ClienteDuplicado
@@ -172,7 +172,7 @@ export default function NuevoClienteModal({
         return
       }
 
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error) {
         setServerError(json.error ?? 'Error al crear el cliente')
         return
       }

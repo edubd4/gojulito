@@ -1,19 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
-import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
-
-interface PatchBody {
-  nombre?: string
-  telefono?: string | null
-  email?: string | null
-  dni?: string | null
-  fecha_nac?: string | null
-  provincia?: string | null
-  canal?: CanalIngreso
-  estado?: EstadoCliente
-  grupo_familiar_id?: string | null
-  observaciones?: string | null
-}
+import { patchClienteSchema } from '@/lib/schemas/clientes'
 
 export async function PATCH(
   req: NextRequest,
@@ -23,7 +10,7 @@ export async function PATCH(
   const { data: { user } } = await authClient.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autenticado' }, { status: 401 })
   }
 
   const { id } = params
@@ -37,10 +24,22 @@ export async function PATCH(
     .single()
 
   if (fetchError || !clienteActual) {
-    return NextResponse.json({ error: 'Cliente no encontrado' }, { status: 404 })
+    return NextResponse.json({ data: null, error: 'Cliente no encontrado' }, { status: 404 })
   }
 
-  const body = await req.json() as PatchBody
+  let raw: unknown
+  try {
+    raw = await req.json()
+  } catch {
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
+  }
+
+  const parsed = patchClienteSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
+  }
+  const body = parsed.data
 
   const updateData: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
@@ -65,7 +64,7 @@ export async function PATCH(
     .single()
 
   if (updateError || !clienteActualizado) {
-    return NextResponse.json({ error: 'Error al actualizar el cliente' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error al actualizar el cliente' }, { status: 500 })
   }
 
   // Registrar en historial solo si cambió el estado
@@ -79,7 +78,7 @@ export async function PATCH(
     })
   }
 
-  return NextResponse.json({ success: true, cliente: clienteActualizado })
+  return NextResponse.json({ data: clienteActualizado, error: null })
 }
 
 export async function GET(

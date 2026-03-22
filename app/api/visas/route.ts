@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import type { EstadoVisa } from '@/lib/constants'
+import { createVisaSchema } from '@/lib/schemas/visas'
 
 export async function GET(req: NextRequest) {
   const authClient = await createServerClient()
@@ -55,38 +56,27 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ visas: data ?? [] })
 }
 
-interface CreateVisaBody {
-  cliente_id: string
-  ds160?: string | null
-  email_portal?: string | null
-  estado: EstadoVisa
-  orden_atencion?: string | null
-  fecha_turno?: string | null
-  notas?: string | null
-  cobrar?: boolean
-  monto?: number
-  estado_pago?: 'PAGADO' | 'DEUDA'
-  fecha_vencimiento_deuda?: string | null
-}
-
 export async function POST(req: NextRequest) {
   const authClient = await createServerClient()
   const { data: { user } } = await authClient.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autenticado' }, { status: 401 })
   }
 
-  let body: CreateVisaBody
+  let raw: unknown
   try {
-    body = await req.json() as CreateVisaBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
 
-  if (!body.cliente_id || !body.estado) {
-    return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
+  const parsed = createVisaSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
   }
+  const body = parsed.data
 
   const supabase = await createServiceRoleClient()
 
@@ -97,7 +87,7 @@ export async function POST(req: NextRequest) {
     id_column: 'visa_id',
   })
   if (visaIdError || !newVisaId) {
-    return NextResponse.json({ error: 'Error generando ID de visa' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error generando ID de visa' }, { status: 500 })
   }
   const visa_id = newVisaId as string
 
@@ -122,7 +112,7 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ data: null, error: error.message }, { status: 500 })
   }
 
   const visaId = (visa as { id: string }).id
@@ -168,7 +158,7 @@ export async function POST(req: NextRequest) {
       id_column: 'pago_id',
     })
     if (pagoIdError || !newPagoId) {
-      return NextResponse.json({ error: 'Error generando ID de pago' }, { status: 500 })
+      return NextResponse.json({ data: null, error: 'Error generando ID de pago' }, { status: 500 })
     }
     const pago_id = newPagoId as string
 
@@ -197,5 +187,5 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  return NextResponse.json({ success: true, visa })
+  return NextResponse.json({ data: visa, error: null })
 }

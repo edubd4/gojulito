@@ -136,16 +136,16 @@ export default function EditarVisaModal({ visa }: Props) {
         body: JSON.stringify(body),
       })
 
-      let json: { success?: boolean; error?: string }
+      let json: { data?: unknown; error?: string }
       try {
-        json = await res.json() as { success?: boolean; error?: string }
+        json = await res.json() as { data?: unknown; error?: string }
       } catch {
         console.error('[EditarVisaModal] respuesta no-JSON del servidor, status:', res.status)
         setServerError(`Error del servidor (${res.status})`)
         return
       }
 
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error) {
         setServerError(json.error ?? 'Error al actualizar el trámite')
         return
       }

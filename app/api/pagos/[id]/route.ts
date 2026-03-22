@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
-import type { EstadoPago } from '@/lib/constants'
-
-interface PatchBody {
-  estado?: EstadoPago
-  fecha_pago?: string | null
-  fecha_vencimiento_deuda?: string | null
-  monto?: number
-  notas?: string | null
-}
+import { patchPagoSchema } from '@/lib/schemas/pagos'
 
 export async function GET(
   req: NextRequest,
@@ -40,24 +32,24 @@ export async function PATCH(
 ) {
   const authClient = await createServerClient()
   const { data: { user } } = await authClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  if (!user) return NextResponse.json({ data: null, error: 'No autenticado' }, { status: 401 })
 
   const { id } = params
   const supabase = await createServiceRoleClient()
 
-  let body: PatchBody
+  let raw: unknown
   try {
-    body = await req.json() as PatchBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
 
-  // Al menos uno de los campos debe estar presente
-  const camposEditables = ['estado', 'fecha_pago', 'fecha_vencimiento_deuda', 'monto', 'notas']
-  const tieneCampo = camposEditables.some((k) => k in body)
-  if (!tieneCampo) {
-    return NextResponse.json({ error: 'Sin campos para actualizar' }, { status: 400 })
+  const parsed = patchPagoSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
   }
+  const body = parsed.data
 
   // Fetch pago actual
   const { data: pagoActual, error: fetchError } = await supabase
@@ -67,16 +59,13 @@ export async function PATCH(
     .single()
 
   if (fetchError || !pagoActual) {
-    return NextResponse.json({ error: 'Pago no encontrado' }, { status: 404 })
+    return NextResponse.json({ data: null, error: 'Pago no encontrado' }, { status: 404 })
   }
 
   const update: Record<string, unknown> = {}
 
   // Monto
   if (body.monto !== undefined) {
-    if (typeof body.monto !== 'number' || body.monto <= 0) {
-      return NextResponse.json({ error: 'Monto inválido' }, { status: 400 })
-    }
     update.monto = body.monto
   }
 
@@ -116,7 +105,7 @@ export async function PATCH(
     .single()
 
   if (updateError || !pagoActualizado) {
-    return NextResponse.json({ error: 'Error al actualizar el pago' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error al actualizar el pago' }, { status: 500 })
   }
 
   // Historial solo si cambia el estado o el monto
@@ -135,5 +124,5 @@ export async function PATCH(
     })
   }
 
-  return NextResponse.json({ success: true, pago: pagoActualizado })
+  return NextResponse.json({ data: pagoActualizado, error: null })
 }

@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { validateApiKey } from '@/lib/auth-m2m'
-import type { EstadoVisa } from '@/lib/constants'
-
-interface WebhookVisaPatchBody {
-  visa_id: string
-  estado: EstadoVisa
-  fecha_turno?: string | null
-  notas?: string | null
-}
+import { ESTADOS_TERMINALES, aplicarCascadaFinalizado } from '@/lib/visas'
+import { webhookVisaPatchSchema } from '@/lib/schemas/visas'
 
 export async function GET(req: NextRequest) {
   if (!validateApiKey(req)) {
@@ -42,19 +36,22 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   if (!validateApiKey(req)) {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autorizado' }, { status: 401 })
   }
 
-  let body: WebhookVisaPatchBody
+  let raw: unknown
   try {
-    body = await req.json() as WebhookVisaPatchBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
 
-  if (!body.visa_id || !body.estado) {
-    return NextResponse.json({ error: 'Campos requeridos: visa_id, estado' }, { status: 400 })
+  const parsed = webhookVisaPatchSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
   }
+  const body = parsed.data
 
   const supabase = await createServiceRoleClient()
 
@@ -65,7 +62,7 @@ export async function PATCH(req: NextRequest) {
     .single()
 
   if (fetchError || !visaActual) {
-    return NextResponse.json({ error: 'Visa no encontrada' }, { status: 404 })
+    return NextResponse.json({ data: null, error: 'Visa no encontrada' }, { status: 404 })
   }
 
   const updateData: Record<string, unknown> = {
@@ -86,7 +83,7 @@ export async function PATCH(req: NextRequest) {
     .single()
 
   if (updateError || !visaActualizada) {
-    return NextResponse.json({ error: 'Error al actualizar la visa' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error al actualizar la visa' }, { status: 500 })
   }
 
   const estadoAnterior = (visaActual as { estado: string }).estado
@@ -103,34 +100,11 @@ export async function PATCH(req: NextRequest) {
       usuario_id: null,
     })
 
-    // Cascada: visa terminal → cliente FINALIZADO si no quedan visas activas
-    const ESTADOS_TERMINALES = ['APROBADA', 'RECHAZADA', 'CANCELADA']
+    // Cascada: visa terminal -> cliente FINALIZADO si no quedan visas activas
     if (ESTADOS_TERMINALES.includes(body.estado)) {
-      const { data: visasActivas } = await supabase
-        .from('visas')
-        .select('id')
-        .eq('cliente_id', clienteId)
-        .neq('id', visaUUID)
-        .not('estado', 'in', `(${ESTADOS_TERMINALES.join(',')})`)
-        .limit(1)
-
-      if (!visasActivas || visasActivas.length === 0) {
-        await supabase
-          .from('clientes')
-          .update({ estado: 'FINALIZADO', updated_at: new Date().toISOString() })
-          .eq('id', clienteId)
-
-        await supabase.from('historial').insert({
-          cliente_id: clienteId,
-          visa_id: visaUUID,
-          tipo: 'CAMBIO_ESTADO',
-          descripcion: 'Cliente marcado como FINALIZADO (todas las visas en estado terminal)',
-          origen: 'sistema',
-          usuario_id: null,
-        })
-      }
+      await aplicarCascadaFinalizado(supabase, clienteId, visaUUID)
     }
   }
 
-  return NextResponse.json({ success: true, visa: visaActualizada })
+  return NextResponse.json({ data: visaActualizada, error: null })
 }

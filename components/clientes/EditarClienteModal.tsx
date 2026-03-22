@@ -190,9 +190,9 @@ export default function EditarClienteModal({
         body: JSON.stringify(body),
       })
 
-      const json = await res.json() as { success?: boolean; error?: string }
+      const json = await res.json() as { data?: unknown; error?: string }
 
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error) {
         setServerError(json.error ?? 'Error al actualizar el cliente')
         return
       }

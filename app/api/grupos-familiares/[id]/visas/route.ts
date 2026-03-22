@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import type { EstadoVisa } from '@/lib/constants'
-
-const ESTADOS_TERMINALES: EstadoVisa[] = ['APROBADA', 'RECHAZADA', 'CANCELADA']
+import { ESTADOS_TERMINALES, aplicarCascadaFinalizado } from '@/lib/visas'
 
 export async function GET(
   _req: NextRequest,
@@ -170,31 +169,9 @@ export async function PATCH(
       usuario_id: user.id,
     })
 
-    // Cascada T29: visa terminal → cliente FINALIZADO si no quedan visas activas
+    // Cascada: visa terminal -> cliente FINALIZADO si no quedan visas activas
     if (ESTADOS_TERMINALES.includes(body.estado)) {
-      const { data: visasActivas } = await supabase
-        .from('visas')
-        .select('id')
-        .eq('cliente_id', cliente.id)
-        .neq('id', visa.id)
-        .not('estado', 'in', `(${ESTADOS_TERMINALES.join(',')})`)
-        .limit(1)
-
-      if (!visasActivas || visasActivas.length === 0) {
-        await supabase
-          .from('clientes')
-          .update({ estado: 'FINALIZADO', updated_at: new Date().toISOString() })
-          .eq('id', cliente.id)
-
-        await supabase.from('historial').insert({
-          cliente_id: cliente.id,
-          visa_id: visa.id,
-          tipo: 'CAMBIO_ESTADO',
-          descripcion: 'Cliente marcado como FINALIZADO (todas las visas en estado terminal)',
-          origen: 'sistema',
-          usuario_id: null,
-        })
-      }
+      await aplicarCascadaFinalizado(supabase, cliente.id, visa.id)
     }
 
     resultados.push({ cliente_id: cliente.id, gj_id: cliente.gj_id, nombre: cliente.nombre, visa_id: visa.visa_id, resultado: 'ok' })
