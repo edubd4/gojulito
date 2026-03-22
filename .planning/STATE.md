@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Core Hardening
 status: unknown
-stopped_at: Completed 02-validation-layer-02-PLAN.md
-last_updated: "2026-03-22T15:41:45.191Z"
+stopped_at: Completed 02-validation-layer-03-PLAN.md
+last_updated: "2026-03-22T15:46:44.296Z"
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -46,6 +46,7 @@ Plan: 3 of 3
 | Phase 01-data-integrity P01 | 7 | 2 tasks | 4 files |
 | Phase 02-validation-layer P01 | 4 | 2 tasks | 5 files |
 | Phase 02-validation-layer P02 | 7 | 3 tasks | 9 files |
+| Phase 02-validation-layer P03 | 10 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - [Phase 02-01]: createPagoSchema uses .refine() to enforce visa_id presence when tipo=VISA, centralizing the 422 check from route handler
 - [Phase 02-validation-layer]: Zod v4 uses .issues not .errors for error access; items typed as { message: string } to satisfy TypeScript strict mode
 - [Phase 02-validation-layer]: 409 DUPLICATE_CLIENT exception maintained in clientes POST — Telegram bot parses this specific shape, cannot be changed
+- [Phase 02-validation-layer]: Frontend error check: json.error (truthy) instead of !json.success — aligns with { data, error } API shape
+- [Phase 02-validation-layer]: 409 DUPLICATE_CLIENT branch must remain before general json.error check in NuevoClienteModal — Telegram bot compatibility
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-22T15:41:45.182Z
-Stopped at: Completed 02-validation-layer-02-PLAN.md
+Last session: 2026-03-22T15:46:44.282Z
+Stopped at: Completed 02-validation-layer-03-PLAN.md
 Resume file: None

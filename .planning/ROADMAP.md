@@ -19,7 +19,7 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
 **Milestone Goal:** Corregir bugs de integridad de datos, centralizar validación con Zod, estandarizar el patrón de retorno `{ data, error }` y garantizar que los errores sean siempre visibles al usuario.
 
 - [ ] **Phase 1: Data Integrity** - Corregir bugs de integridad: soft-delete en bulk, estado de visa/pago correcto en lista, cascada FINALIZADO centralizada
-- [ ] **Phase 2: Validation Layer** - Agregar Zod en todos los handlers POST/PATCH, estandarizar retorno `{ data, error }` en todos los API routes, mostrar errores de servidor en formularios
+- [x] **Phase 2: Validation Layer** - Agregar Zod en todos los handlers POST/PATCH, estandarizar retorno `{ data, error }` en todos los API routes, mostrar errores de servidor en formularios (completed 2026-03-22)
 - [ ] **Phase 3: Error Feedback** - Garantizar que toda acción de edición muestre feedback de error claro y nunca falle silenciosamente
 
 ## Phase Details
@@ -49,7 +49,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Instalar Zod y crear schemas de dominio (clientes, visas, pagos)
 - [x] 02-02-PLAN.md — Aplicar Zod safeParse + estandarizar { data, error } en los 9 route handlers
-- [ ] 02-03-PLAN.md — Actualizar formularios del frontend para leer { data, error }
+- [x] 02-03-PLAN.md — Actualizar formularios del frontend para leer { data, error }
 
 ### Phase 3: Error Feedback
 **Goal**: Ninguna acción de edición falla silenciosamente: el usuario siempre recibe feedback visual claro cuando una operación no puede completarse.
@@ -68,5 +68,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
-| 2. Validation Layer | v1.1 | 2/3 | In Progress|  |
+| 2. Validation Layer | v1.1 | 3/3 | Complete   | 2026-03-22 |
 | 3. Error Feedback | v1.1 | 0/? | Not started | - |
