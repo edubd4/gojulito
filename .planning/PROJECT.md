@@ -29,12 +29,11 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 - ✓ **VAL-01**: Todos los endpoints CREATE/UPDATE validan inputs con Zod schema — Validated in Phase 02: validation-layer
 - ✓ **VAL-02**: Todos los API routes retornan `{ data, error }` consistentemente — Validated in Phase 02: validation-layer
 - ✓ **VAL-03**: Los formularios muestran errores de validación del servidor al usuario — Validated in Phase 02: validation-layer
+- ✓ **UX-01**: Las acciones de edición muestran feedback de error cuando fallan (sin fallas silenciosas) — Validated in Phase 03: error-feedback
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
-
-- [ ] **UX-01**: Las acciones de edición muestran feedback de error cuando fallan (sin fallas silenciosas)
 
 ### Out of Scope
 
@@ -48,7 +47,7 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 ## Context
 
 - **Codebase existente**: todo el código de v1.0 está en producción con bugs documentados en `.planning/codebase/CONCERNS.md`
-- **Bugs conocidos**: bulk-delete hace hard DELETE, lista de clientes muestra estado incorrecto, edición silenciosa sin feedback
+- **Bugs conocidos**: bulk-delete hace hard DELETE → fixed (Phase 01), lista de clientes muestra estado incorrecto → fixed (Phase 01), edición silenciosa sin feedback → fixed (Phase 03)
 - **Tech debt**: validación manual en cada route handler (sin Zod), sin patrón de retorno consistente, cascada FINALIZADO duplicada en 3+ lugares
 - **Restricción Node**: 18.18.1 — shadcn CLI incompatible, todos los componentes UI creados manualmente
 - **Base de datos**: Supabase con RLS; SERVICE_ROLE_KEY solo en servidor; historial es inmutable
@@ -98,4 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-22 — Phase 02 (validation-layer) complete*
+*Last updated: 2026-03-22 — Phase 03 (error-feedback) complete — milestone v1.1 Core Hardening complete*
