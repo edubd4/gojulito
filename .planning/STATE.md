@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Core Hardening
-status: Milestone complete
+status: v1.1 milestone complete
 stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-22T17:05:44.776Z"
+last_updated: "2026-03-22T17:10:50.483Z"
 progress:
   total_phases: 3
   completed_phases: 3
@@ -16,15 +16,14 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-21)
+See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 03 — error-feedback
+**Current focus:** Planning next milestone (v1.2)
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
+Milestone v1.1 complete. Planning next milestone.
 
 ## Performance Metrics
 
@@ -79,7 +78,7 @@ None.
 
 ### Blockers/Concerns
 
-- Phase 2: VAL-03 depends on VAL-02 being complete (can't show server errors reliably without consistent return shape)
+None. v1.1 complete.
 
 ## Session Continuity
 
