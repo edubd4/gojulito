@@ -20,7 +20,7 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
 
 - [ ] **Phase 1: Data Integrity** - Corregir bugs de integridad: soft-delete en bulk, estado de visa/pago correcto en lista, cascada FINALIZADO centralizada
 - [x] **Phase 2: Validation Layer** - Agregar Zod en todos los handlers POST/PATCH, estandarizar retorno `{ data, error }` en todos los API routes, mostrar errores de servidor en formularios (completed 2026-03-22)
-- [ ] **Phase 3: Error Feedback** - Garantizar que toda acción de edición muestre feedback de error claro y nunca falle silenciosamente
+- [x] **Phase 3: Error Feedback** - Garantizar que toda acción de edición muestre feedback de error claro y nunca falle silenciosamente (completed 2026-03-22)
 
 ## Phase Details
 
@@ -61,7 +61,7 @@ Plans:
   3. No existe ningún flujo de edición (clientes, visas, pagos) donde un error cause que la UI quede en estado inconsistente sin notificar al usuario.
 **Plans**: 1 plan
 Plans:
-- [ ] 03-01-PLAN.md — Fix error check en EditarVisaModal y DetallePagoModal (json.success -> json.error)
+- [x] 03-01-PLAN.md — Fix error check en EditarVisaModal y DetallePagoModal (json.success -> json.error)
 
 ## Progress
 
@@ -71,4 +71,4 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
 | 2. Validation Layer | v1.1 | 3/3 | Complete   | 2026-03-22 |
-| 3. Error Feedback | v1.1 | 0/1 | Not started | - |
+| 3. Error Feedback | v1.1 | 1/1 | Complete   | 2026-03-22 |

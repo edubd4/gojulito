@@ -15,13 +15,13 @@ Requirements for Core Hardening milestone. Each maps to roadmap phases.
 
 ### Validation
 
-- [ ] **VAL-01**: Los endpoints POST y PATCH de clientes, visas y pagos validan el body con un Zod schema antes de procesar
-- [ ] **VAL-02**: Todos los API route handlers retornan `{ data: T | null, error: string | null }` de forma consistente
-- [ ] **VAL-03**: Los formularios del cliente (crear, editar, registrar pago) muestran los errores de validación del servidor al usuario
+- [x] **VAL-01**: Los endpoints POST y PATCH de clientes, visas y pagos validan el body con un Zod schema antes de procesar
+- [x] **VAL-02**: Todos los API route handlers retornan `{ data: T | null, error: string | null }` de forma consistente
+- [x] **VAL-03**: Los formularios del cliente (crear, editar, registrar pago) muestran los errores de validación del servidor al usuario
 
 ### UX / Feedback
 
-- [ ] **UX-01**: Toda acción de edición (clientes, visas, pagos) muestra un mensaje de error claro cuando falla, sin fallar silenciosamente
+- [x] **UX-01**: Toda acción de edición (clientes, visas, pagos) muestra un mensaje de error claro cuando falla, sin fallar silenciosamente
 
 ## v2 Requirements
 
@@ -64,10 +64,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INTG-01 | Phase 1 | Done (01-02) |
 | INTG-02 | Phase 1 | Done (01-02) |
 | INTG-03 | Phase 1 | Complete |
-| VAL-01 | Phase 2 | Pending |
-| VAL-02 | Phase 2 | Pending |
-| VAL-03 | Phase 2 | Pending |
-| UX-01 | Phase 3 | Pending |
+| VAL-01 | Phase 2 | Complete |
+| VAL-02 | Phase 2 | Complete |
+| VAL-03 | Phase 2 | Complete |
+| UX-01 | Phase 3 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 7 total

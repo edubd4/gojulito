@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Core Hardening
-status: unknown
-stopped_at: Completed 02-validation-layer-03-PLAN.md
-last_updated: "2026-03-22T15:55:05.278Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-22T17:00:03.765Z"
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 3
+  total_plans: 6
+  completed_plans: 6
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 02 — validation-layer
+**Current focus:** Phase 03 — error-feedback
 
 ## Current Position
 
-Phase: 3
-Plan: Not started
+Phase: 03 (error-feedback) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: Not started
 | Phase 02-validation-layer P01 | 4 | 2 tasks | 5 files |
 | Phase 02-validation-layer P02 | 7 | 3 tasks | 9 files |
 | Phase 02-validation-layer P03 | 10 | 2 tasks | 4 files |
+| Phase 03-error-feedback P01 | 5 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,7 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - [Phase 02-validation-layer]: 409 DUPLICATE_CLIENT exception maintained in clientes POST — Telegram bot parses this specific shape, cannot be changed
 - [Phase 02-validation-layer]: Frontend error check: json.error (truthy) instead of !json.success — aligns with { data, error } API shape
 - [Phase 02-validation-layer]: 409 DUPLICATE_CLIENT branch must remain before general json.error check in NuevoClienteModal — Telegram bot compatibility
+- [Phase 03-error-feedback]: Error check pattern: use json.error truthy check instead of !json.success — aligns with { data, error } API shape from Phase 02
 
 ### Pending Todos
 
@@ -81,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-22T15:46:44.282Z
-Stopped at: Completed 02-validation-layer-03-PLAN.md
+Last session: 2026-03-22T17:00:03.749Z
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
