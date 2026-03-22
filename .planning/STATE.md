@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Core Hardening
 status: unknown
-stopped_at: Completed 02-validation-layer-01-PLAN.md
-last_updated: "2026-03-22T15:32:27.406Z"
+stopped_at: Completed 02-validation-layer-02-PLAN.md
+last_updated: "2026-03-22T15:41:45.191Z"
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 02 (validation-layer) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Plan: 2 of 3
 *Updated after each plan completion*
 | Phase 01-data-integrity P01 | 7 | 2 tasks | 4 files |
 | Phase 02-validation-layer P01 | 4 | 2 tasks | 5 files |
+| Phase 02-validation-layer P02 | 7 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,8 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - [Phase 02-01]: Zod v4 API uses 'error' string param instead of required_error/invalid_type_error objects in z.enum()
 - [Phase 02-01]: Webhook visa schema separate from dashboard schema — payload uses visa_id string (not UUID), matches WebhookVisaPatchBody interface
 - [Phase 02-01]: createPagoSchema uses .refine() to enforce visa_id presence when tipo=VISA, centralizing the 422 check from route handler
+- [Phase 02-validation-layer]: Zod v4 uses .issues not .errors for error access; items typed as { message: string } to satisfy TypeScript strict mode
+- [Phase 02-validation-layer]: 409 DUPLICATE_CLIENT exception maintained in clientes POST — Telegram bot parses this specific shape, cannot be changed
 
 ### Pending Todos
 
@@ -75,6 +78,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-22T15:32:27.387Z
-Stopped at: Completed 02-validation-layer-01-PLAN.md
+Last session: 2026-03-22T15:41:45.182Z
+Stopped at: Completed 02-validation-layer-02-PLAN.md
 Resume file: None

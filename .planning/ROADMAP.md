@@ -48,7 +48,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 02-01-PLAN.md — Instalar Zod y crear schemas de dominio (clientes, visas, pagos)
-- [ ] 02-02-PLAN.md — Aplicar Zod safeParse + estandarizar { data, error } en los 9 route handlers
+- [x] 02-02-PLAN.md — Aplicar Zod safeParse + estandarizar { data, error } en los 9 route handlers
 - [ ] 02-03-PLAN.md — Actualizar formularios del frontend para leer { data, error }
 
 ### Phase 3: Error Feedback
@@ -68,5 +68,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
-| 2. Validation Layer | v1.1 | 1/3 | In Progress|  |
+| 2. Validation Layer | v1.1 | 2/3 | In Progress|  |
 | 3. Error Feedback | v1.1 | 0/? | Not started | - |
