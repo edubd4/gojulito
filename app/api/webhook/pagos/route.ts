@@ -1,38 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { validateApiKey } from '@/lib/auth-m2m'
-import type { EstadoPago } from '@/lib/constants'
-
-interface WebhookPagoBody {
-  cliente_id: string
-  visa_id?: string | null
-  tipo: 'VISA' | 'SEMINARIO'
-  monto: number
-  fecha_pago: string
-  estado: EstadoPago
-  fecha_vencimiento_deuda?: string | null
-  notas?: string | null
-}
+import { createPagoSchema } from '@/lib/schemas/pagos'
 
 export async function POST(req: NextRequest) {
   if (!validateApiKey(req)) {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autorizado' }, { status: 401 })
   }
 
-  let body: WebhookPagoBody
+  let raw: unknown
   try {
-    body = await req.json() as WebhookPagoBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
 
-  if (!body.cliente_id || !body.tipo || !body.monto || !body.fecha_pago || !body.estado) {
-    return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 })
+  const parsed = createPagoSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
   }
-
-  if (body.tipo === 'VISA' && !body.visa_id) {
-    return NextResponse.json({ error: 'Se requiere visa_id para pago tipo VISA' }, { status: 422 })
-  }
+  const body = parsed.data
 
   const supabase = await createServiceRoleClient()
 
@@ -42,7 +30,7 @@ export async function POST(req: NextRequest) {
     id_column: 'pago_id',
   })
   if (idError || !newId) {
-    return NextResponse.json({ error: 'Error generando ID' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error generando ID' }, { status: 500 })
   }
   const pago_id = newId as string
 
@@ -67,7 +55,7 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ data: null, error: error.message }, { status: 500 })
 
   await supabase.from('historial').insert({
     cliente_id: body.cliente_id,
@@ -77,5 +65,5 @@ export async function POST(req: NextRequest) {
     usuario_id: null,
   })
 
-  return NextResponse.json({ success: true, pago })
+  return NextResponse.json({ data: pago, error: null })
 }
