@@ -26,14 +26,14 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 - ✓ **INTG-01**: Bulk delete marca clientes como INACTIVO (soft delete, no hard DELETE) — Validated in Phase 01: data-integrity
 - ✓ **INTG-02**: Lista de clientes muestra el estado de visa y pago correcto (sin agregación incorrecta) — Validated in Phase 01: data-integrity
 - ✓ **INTG-03**: Cascada FINALIZADO extraída a helper compartido y funciona en todos los paths — Validated in Phase 01: data-integrity
+- ✓ **VAL-01**: Todos los endpoints CREATE/UPDATE validan inputs con Zod schema — Validated in Phase 02: validation-layer
+- ✓ **VAL-02**: Todos los API routes retornan `{ data, error }` consistentemente — Validated in Phase 02: validation-layer
+- ✓ **VAL-03**: Los formularios muestran errores de validación del servidor al usuario — Validated in Phase 02: validation-layer
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] **VAL-01**: Todos los endpoints CREATE/UPDATE validan inputs con Zod schema
-- [ ] **VAL-02**: Todos los API routes retornan `{ data, error }` consistentemente
-- [ ] **VAL-03**: Los formularios muestran errores de validación del servidor al usuario
 - [ ] **UX-01**: Las acciones de edición muestran feedback de error cuando fallan (sin fallas silenciosas)
 
 ### Out of Scope
@@ -67,8 +67,8 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | API routes sobre Server Actions | No hay beneficio real para este scope; evita reescritura masiva | — Pending |
-| Zod en handlers del servidor | Centraliza validación en el único lugar que importa para seguridad | — Pending |
-| `{ data, error }` en todos los routes | Consistencia para el cliente; facilita manejo de errores en forms | — Pending |
+| Zod en handlers del servidor | Centraliza validación en el único lugar que importa para seguridad | ✓ Shipped Phase 02 |
+| `{ data, error }` en todos los routes | Consistencia para el cliente; facilita manejo de errores en forms | ✓ Shipped Phase 02 |
 | Cascada FINALIZADO como helper | Elimina deuda técnica de lógica duplicada en 3 places | ✓ Shipped Phase 01 |
 
 ## Current Milestone: v1.1 Core Hardening
@@ -98,4 +98,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-21 — Phase 01 (data-integrity) complete*
+*Last updated: 2026-03-22 — Phase 02 (validation-layer) complete*
