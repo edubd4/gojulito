@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
-import type { EstadoVisa } from '@/lib/constants'
 import { ESTADOS_TERMINALES, aplicarCascadaFinalizado } from '@/lib/visas'
-
-interface PatchBody {
-  estado?: EstadoVisa
-  ds160?: string | null
-  email_portal?: string | null
-  orden_atencion?: string | null
-  fecha_turno?: string | null
-  fecha_aprobacion?: string | null
-  fecha_vencimiento?: string | null
-  notas?: string | null
-}
+import { patchVisaSchema } from '@/lib/schemas/visas'
 
 export async function PATCH(
   req: NextRequest,
@@ -22,7 +11,7 @@ export async function PATCH(
   const { data: { user } } = await authClient.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    return NextResponse.json({ data: null, error: 'No autenticado' }, { status: 401 })
   }
 
   const { id } = params
@@ -36,15 +25,22 @@ export async function PATCH(
     .single()
 
   if (fetchError || !visaActual) {
-    return NextResponse.json({ error: 'Visa no encontrada' }, { status: 404 })
+    return NextResponse.json({ data: null, error: 'Visa no encontrada' }, { status: 404 })
   }
 
-  let body: PatchBody
+  let raw: unknown
   try {
-    body = await req.json() as PatchBody
+    raw = await req.json()
   } catch {
-    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
   }
+
+  const parsed = patchVisaSchema.safeParse(raw)
+  if (!parsed.success) {
+    const msg = parsed.error.issues.map((e: { message: string }) => e.message).join(', ')
+    return NextResponse.json({ data: null, error: msg }, { status: 400 })
+  }
+  const body = parsed.data
 
   const updateData: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
@@ -86,7 +82,7 @@ export async function PATCH(
     .single()
 
   if (updateError || !visaActualizada) {
-    return NextResponse.json({ error: 'Error al actualizar la visa' }, { status: 500 })
+    return NextResponse.json({ data: null, error: 'Error al actualizar la visa' }, { status: 500 })
   }
 
   // Historial: actualización independiente de fecha_turno
@@ -131,5 +127,5 @@ export async function PATCH(
     }
   }
 
-  return NextResponse.json({ success: true, visa: visaActualizada })
+  return NextResponse.json({ data: visaActualizada, error: null })
 }
