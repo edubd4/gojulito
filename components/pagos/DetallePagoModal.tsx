@@ -123,9 +123,9 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      const json = await res.json() as { success?: boolean; error?: string; pago?: Record<string, unknown> }
+      const json = await res.json() as { data?: Record<string, unknown> | null; error?: string }
 
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error) {
         setError(json.error ?? 'Error al guardar')
         return
       }
@@ -135,8 +135,8 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
         ...pago,
         monto: montoNum,
         estado,
-        fecha_pago: (json.pago?.fecha_pago as string | null) ?? pago.fecha_pago,
-        fecha_vencimiento_deuda: (json.pago?.fecha_vencimiento_deuda as string | null) ?? null,
+        fecha_pago: (json.data?.fecha_pago as string | null) ?? pago.fecha_pago,
+        fecha_vencimiento_deuda: (json.data?.fecha_vencimiento_deuda as string | null) ?? null,
       })
       setTimeout(() => setSuccess(false), 2000)
     } catch {
