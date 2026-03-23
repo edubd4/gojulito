@@ -28,6 +28,7 @@ export default async function SeminariosPage() {
   const { data: rawSeminarios } = await supabase
     .from('seminarios')
     .select('id, sem_id, nombre, fecha, modalidad, notas, seminario_asistentes(monto, estado_pago)')
+    .eq('activo', true)
     .order('fecha', { ascending: false })
 
   const seminarios = (rawSeminarios ?? []) as SeminarioRow[]
