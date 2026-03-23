@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada
-status: Roadmap defined
-stopped_at: Roadmap v1.2 created — ready to plan Phase 4
-last_updated: "2026-03-23T00:00:00.000Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-23T20:52:42.994Z"
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Project State
@@ -19,18 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** v1.2 — Phase 4: Seminarios — Core
+**Current focus:** Phase 04 — seminarios-core
 
 ## Current Position
 
-Phase: 4 — Seminarios — Core (not started)
-Plan: —
-Status: Roadmap defined, awaiting plan-phase
-Last activity: 2026-03-23 — Roadmap v1.2 created
-
-```
-Progress: [-------- 0% --------] 0/4 phases complete
-```
+Phase: 04 (seminarios-core) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -49,6 +43,7 @@ Progress: [-------- 0% --------] 0/4 phases complete
 | 03-error-feedback | 1 | ~20 min |
 
 *Updated after each plan completion*
+| Phase 04-seminarios-core P01 | 15 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -67,6 +62,8 @@ Decisions relevant to v1.2:
 - SEM IDs generated via RPC (same pattern as GJ-XXXX, VISA-XXXX)
 - telegram_historial migration goes in database/migrations/ — no schema changes to existing tables
 - Bot endpoints always go through API routes — bot never accesses DB directly
+- [Phase 04-seminarios-core]: try/catch used for historial insert in seminarios PATCH — Supabase PostgrestFilterBuilder does not expose .catch() method
+- [Phase 04-seminarios-core]: InactivarSeminarioButton as separate client component in components/seminarios/ — follows same pattern as EditarSeminarioModal
 
 ### Pending Todos
 
@@ -78,6 +75,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23
-Stopped at: Roadmap v1.2 defined
-Resume file: None — start with `/gsd:plan-phase 4`
+Last session: 2026-03-23T20:52:42.984Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: None

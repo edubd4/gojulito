@@ -7,7 +7,7 @@
 
 ### Seminarios
 
-- [ ] **SEM-01**: El admin puede crear, editar y eliminar (soft) ediciones de seminario con IDs SEM-YYYY-NN generados via RPC
+- [x] **SEM-01**: El admin puede crear, editar y eliminar (soft) ediciones de seminario con IDs SEM-YYYY-NN generados via RPC
 - [ ] **SEM-02**: El admin puede agregar asistentes a un seminario con campos: nombre, teléfono, provincia, modalidad (PRESENCIAL/VIRTUAL), estado_pago (PAGADO/DEUDA/PENDIENTE), monto
 - [ ] **SEM-03**: El admin puede registrar si un asistente convirtió a cliente de visa (SI/NO/EN_SEGUIMIENTO)
 - [ ] **SEM-04**: El admin puede vincular un asistente a un cliente existente (cliente_id nullable, búsqueda opcional)
@@ -53,7 +53,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEM-01 | Phase 4 | Pending |
+| SEM-01 | Phase 4 | Complete |
 | SEM-02 | Phase 5 | Pending |
 | SEM-03 | Phase 5 | Pending |
 | SEM-04 | Phase 5 | Pending |

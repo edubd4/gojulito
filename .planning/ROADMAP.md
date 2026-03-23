@@ -41,7 +41,7 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
   4. La lista de seminarios muestra todos los campos clave sin errores de carga
 **Plans**: 1 plan
 Plans:
-- [ ] 04-01-PLAN.md — Soft delete seminarios (migration + API + filtered list + inactivar button)
+- [x] 04-01-PLAN.md — Soft delete seminarios (migration + API + filtered list + inactivar button)
 **UI hint**: yes
 
 ### Phase 5: Seminarios — Asistentes
@@ -90,7 +90,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
 | 2. Validation Layer | v1.1 | 3/3 | Complete | 2026-03-22 |
 | 3. Error Feedback | v1.1 | 1/1 | Complete | 2026-03-22 |
-| 4. Seminarios — Core | v1.2 | 0/1 | Not started | - |
+| 4. Seminarios — Core | v1.2 | 1/1 | Complete   | 2026-03-23 |
 | 5. Seminarios — Asistentes | v1.2 | 0/? | Not started | - |
 | 6. Bot Telegram Alfred | v1.2 | 0/? | Not started | - |
 | 7. Calendario y Configuracion | v1.2 | 0/? | Not started | - |
