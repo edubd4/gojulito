@@ -54,7 +54,9 @@ Plans:
   3. El admin puede vincular un asistente a un cliente existente buscando por nombre o ID
   4. Un asistente sin cliente vinculado puede existir con cliente_id en NULL (campo opcional)
   5. La lista de asistentes de un seminario muestra todos sus campos correctamente
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
 **UI hint**: yes
 
 ### Phase 6: Bot Telegram Alfred
@@ -66,7 +68,9 @@ Plans:
   2. El endpoint GET /api/webhook/clientes acepta búsqueda por nombre, telefono y gj_id
   3. El endpoint GET /api/webhook/clientes retorna id, gj_id, nombre, estado, visas[] y pagos[] en su respuesta
   4. Existe documentación con pasos para importar agente_gojulito.json en n8n y configurar credenciales
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
 
 ### Phase 7: Calendario y Configuracion
 **Goal**: El admin puede ver turnos y seminarios próximos en una vista de calendario, y gestionar precios desde la app
@@ -77,7 +81,9 @@ Plans:
   2. La página /calendario muestra las fechas de los próximos seminarios
   3. El admin puede ver y editar precio_visa y precio_seminario desde la página /configuracion
   4. Un usuario con rol colaborador no puede acceder a /configuracion (redireccionado o bloqueado)
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
 **UI hint**: yes
 
 ## Progress
@@ -91,6 +97,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 2. Validation Layer | v1.1 | 3/3 | Complete | 2026-03-22 |
 | 3. Error Feedback | v1.1 | 1/1 | Complete | 2026-03-22 |
 | 4. Seminarios — Core | v1.2 | 1/1 | Complete   | 2026-03-23 |
-| 5. Seminarios — Asistentes | v1.2 | 0/? | Not started | - |
+| 5. Seminarios — Asistentes | v1.2 | 0/1 | Planning | - |
 | 6. Bot Telegram Alfred | v1.2 | 0/? | Not started | - |
 | 7. Calendario y Configuracion | v1.2 | 0/? | Not started | - |
