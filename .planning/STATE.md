@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Core Hardening
-status: v1.1 milestone complete
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-22T17:10:50.483Z"
+milestone: v1.2
+milestone_name: Canales y Operación Avanzada
+status: Defining requirements
+stopped_at: Milestone v1.2 started
+last_updated: "2026-03-23T00:00:00.000Z"
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -23,7 +23,10 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 
 ## Current Position
 
-Milestone v1.1 complete. Planning next milestone.
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-23 — Milestone v1.2 started
 
 ## Performance Metrics
 
