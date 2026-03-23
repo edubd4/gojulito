@@ -56,7 +56,7 @@ Plans:
   5. La lista de asistentes de un seminario muestra todos sus campos correctamente
 **Plans**: 1 plan
 Plans:
-- [ ] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
+- [x] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
 **UI hint**: yes
 
 ### Phase 6: Bot Telegram Alfred
