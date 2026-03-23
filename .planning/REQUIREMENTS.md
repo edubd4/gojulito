@@ -53,23 +53,23 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEM-01 | — | Pending |
-| SEM-02 | — | Pending |
-| SEM-03 | — | Pending |
-| SEM-04 | — | Pending |
-| BOT-01 | — | Pending |
-| BOT-02 | — | Pending |
-| BOT-03 | — | Pending |
-| CAL-01 | — | Pending |
-| CAL-02 | — | Pending |
-| CFG-01 | — | Pending |
-| CFG-02 | — | Pending |
+| SEM-01 | Phase 4 | Pending |
+| SEM-02 | Phase 5 | Pending |
+| SEM-03 | Phase 5 | Pending |
+| SEM-04 | Phase 5 | Pending |
+| BOT-01 | Phase 6 | Pending |
+| BOT-02 | Phase 6 | Pending |
+| BOT-03 | Phase 6 | Pending |
+| CAL-01 | Phase 7 | Pending |
+| CAL-02 | Phase 7 | Pending |
+| CFG-01 | Phase 7 | Pending |
+| CFG-02 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 11 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 11 ⚠️
+- Mapped to phases: 11 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-23 after initial definition*
+*Last updated: 2026-03-23 — traceability updated after roadmap creation*
