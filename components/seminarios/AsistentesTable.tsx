@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { formatPesos } from '@/lib/utils'
 import EditarAsistenteModal from '@/components/seminarios/EditarAsistenteModal'
 import type { AsistenteEditableData } from '@/components/seminarios/EditarAsistenteModal'
+import type { ClienteOption } from '@/components/seminarios/AgregarAsistenteModal'
 
 export interface AsistenteRow {
   id: string
@@ -23,6 +24,7 @@ interface Props {
   initialAsistentes: AsistenteRow[]
   seminarioId: string
   seminarioModalidad: string
+  clientes: ClienteOption[]
 }
 
 type EstadoPago = 'PAGADO' | 'DEUDA' | 'PENDIENTE'
@@ -88,6 +90,7 @@ export default function AsistentesTable({
   initialAsistentes,
   seminarioId,
   seminarioModalidad,
+  clientes,
 }: Props) {
   // localUpdates stores partial overrides for rows (applied on top of initialAsistentes)
   const [localUpdates, setLocalUpdates] = useState<Record<string, Partial<AsistenteRow>>>({})
@@ -320,6 +323,7 @@ export default function AsistentesTable({
                         asistente={a as AsistenteEditableData}
                         seminarioId={seminarioId}
                         seminarioModalidad={seminarioModalidad}
+                        clientes={clientes}
                       />
                     </td>
                   </tr>

@@ -129,6 +129,7 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
         initialAsistentes={asistentes}
         seminarioId={sem.id}
         seminarioModalidad={sem.modalidad}
+        clientes={clienteOptions}
       />
 
       {/* Notas del seminario */}
