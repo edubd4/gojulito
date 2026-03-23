@@ -10,6 +10,8 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 
 ## Current State
 
+**v1.2 en progreso — Phase 04 complete (2026-03-23).** Seminarios soft delete implementado: migration `activo boolean`, PATCH extendido, lista filtrada por activo=true, botón "Marcar inactivo" con modal de confirmación e historial. SEM-01 satisfecho.
+
 **v1.1 shipped 2026-03-22.** Codebase hardened: todos los bugs de integridad de datos corregidos, validación Zod en todos los handlers, patrón `{ data, error }` unificado, y los formularios de edición muestran errores de servidor de forma visible.
 
 Stack: Next.js 14 App Router + TypeScript strict + Supabase + Tailwind gj-* tokens. Node 18.18.1 (restricción conocida: shadcn CLI incompatible).
