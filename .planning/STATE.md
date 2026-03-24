@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada
-status: Ready to plan
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-03-24T21:44:46.726Z"
+status: Ready to execute
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-03-24T22:50:27.753Z"
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 06 — bot-telegram-alfred
+**Current focus:** Phase 07 — calendario-y-configuracion
 
 ## Current Position
 
-Phase: 7
-Plan: Not started
+Phase: 07 (calendario-y-configuracion) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -46,6 +46,7 @@ Plan: Not started
 | Phase 04-seminarios-core P01 | 15 | 2 tasks | 6 files |
 | Phase 05-seminarios-asistentes P01 | 8 | 2 tasks | 4 files |
 | Phase 06-bot-telegram-alfred P01 | 8 | 2 tasks | 2 files |
+| Phase 07-calendario-y-configuracion P02 | 8 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,8 @@ Decisions relevant to v1.2:
 - [Phase 05-01]: Send cliente_id in PATCH only when changed from original to avoid unnecessary historial entries
 - [Phase 06-bot-telegram-alfred]: telegram_historial con exactamente 4 columnas sin adicionales — n8n gestiona la tabla directamente, columnas extra causan errores en memoryPostgresChat v1.3
 - [Phase 06-bot-telegram-alfred]: Credencial PostgreSQL nombrada gojulitotestev1 — coincide con id del JSON del agente que debe reasignarse al importar en n8n
+- [Phase 07-02]: Redirect inserted after perfil null check and BEFORE esAdmin — prevents admin queries for colaboradores
+- [Phase 07-02]: visibleNavItems computed inside Sidebar using existing rol prop — no new SidebarProps fields needed
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-24T21:41:12.787Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-03-24T22:50:27.735Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None

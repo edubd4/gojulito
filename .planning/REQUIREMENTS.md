@@ -14,9 +14,9 @@
 
 ### Bot Telegram (Alfred)
 
-- [ ] **BOT-01**: Existe tabla `telegram_historial` con columna `message` tipo JSONB (requerido por n8n `memoryPostgresChat` v1.3)
+- [x] **BOT-01**: Existe tabla `telegram_historial` con columna `message` tipo JSONB (requerido por n8n `memoryPostgresChat` v1.3)
 - [ ] **BOT-02**: El endpoint `GET /api/webhook/clientes` soporta búsqueda por `nombre`, `telefono` y `gj_id`, y retorna `id`, `gj_id`, `nombre`, `estado`, `visas[]`, `pagos[]`
-- [ ] **BOT-03**: El flujo n8n `agente_gojulito.json` está documentado con instrucciones de importación y configuración de credenciales
+- [x] **BOT-03**: El flujo n8n `agente_gojulito.json` está documentado con instrucciones de importación y configuración de credenciales
 
 ### Calendario
 
@@ -25,8 +25,8 @@
 
 ### Configuración
 
-- [ ] **CFG-01**: La página `/configuracion` permite al admin ver y editar `precio_visa` y `precio_seminario` desde la tabla `configuracion`
-- [ ] **CFG-02**: La página `/configuracion` solo es accesible por usuarios con rol `admin`
+- [x] **CFG-01**: La página `/configuracion` permite al admin ver y editar `precio_visa` y `precio_seminario` desde la tabla `configuracion`
+- [x] **CFG-02**: La página `/configuracion` solo es accesible por usuarios con rol `admin`
 
 ## Future Requirements
 
@@ -57,13 +57,13 @@
 | SEM-02 | Phase 5 | Complete |
 | SEM-03 | Phase 5 | Complete |
 | SEM-04 | Phase 5 | Complete |
-| BOT-01 | Phase 6 | Pending |
+| BOT-01 | Phase 6 | Complete |
 | BOT-02 | Phase 6 | Pending |
-| BOT-03 | Phase 6 | Pending |
+| BOT-03 | Phase 6 | Complete |
 | CAL-01 | Phase 7 | Pending |
 | CAL-02 | Phase 7 | Pending |
-| CFG-01 | Phase 7 | Pending |
-| CFG-02 | Phase 7 | Pending |
+| CFG-01 | Phase 7 | Complete |
+| CFG-02 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 11 total
