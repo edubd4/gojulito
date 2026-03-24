@@ -10,7 +10,7 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 
 ## Current State
 
-**v1.2 en progreso — Phase 04 complete (2026-03-23).** Seminarios soft delete implementado: migration `activo boolean`, PATCH extendido, lista filtrada por activo=true, botón "Marcar inactivo" con modal de confirmación e historial. SEM-01 satisfecho.
+**v1.2 en progreso — Phase 05 complete (2026-03-24).** Gestión completa de asistentes de seminario implementada: agregar con todos los campos, editar incluyendo vincular/desvincular cliente post-creación, registrar conversión a visa (convirtio). SEM-01, SEM-02, SEM-03, SEM-04 satisfechos.
 
 **v1.1 shipped 2026-03-22.** Codebase hardened: todos los bugs de integridad de datos corregidos, validación Zod en todos los handlers, patrón `{ data, error }` unificado, y los formularios de edición muestran errores de servidor de forma visible.
 
@@ -55,10 +55,10 @@ No known active bugs. Tech debt residual: algunos routes menores fuera del scope
 
 <!-- v1.2 scope — in progress -->
 
-- **SEM-01**: CRUD completo de seminarios con SEM-YYYY-NN IDs via RPC
-- **SEM-02**: Gestión de asistentes con campos nombre, teléfono, provincia, modalidad, estado_pago, monto
-- **SEM-03**: Campo `convirtio` (SI/NO/EN_SEGUIMIENTO) para trackear conversión a cliente de visa
-- **SEM-04**: Asistente puede vincularse a cliente existente (cliente_id nullable)
+- ✓ **SEM-01**: CRUD completo de seminarios con SEM-YYYY-NN IDs via RPC — Validated in Phase 04
+- ✓ **SEM-02**: Gestión de asistentes con campos nombre, teléfono, provincia, modalidad, estado_pago, monto — Validated in Phase 05
+- ✓ **SEM-03**: Campo `convirtio` (SI/NO/EN_SEGUIMIENTO) para trackear conversión a cliente de visa — Validated in Phase 05
+- ✓ **SEM-04**: Asistente puede vincularse a cliente existente (cliente_id nullable) — Validated in Phase 05
 - **BOT-01**: Migración `telegram_historial` con `message` JSONB para memoria de n8n
 - **BOT-02**: Endpoints webhook retornan shape correcto para el AI Agent (buscar, crear, actualizar)
 - **CAL-01**: Página `/calendario` con vista de turnos de visa (v_turnos_semana, próximos 7 días)
