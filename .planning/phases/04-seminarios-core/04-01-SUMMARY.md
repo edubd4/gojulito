@@ -132,3 +132,13 @@ None beyond the auto-fixed `.catch()` compilation error above.
 ---
 *Phase: 04-seminarios-core*
 *Completed: 2026-03-23*
+
+## Self-Check: PASSED
+
+- FOUND: database/migrations/002_add_activo_seminarios.sql
+- FOUND: lib/supabase/types.ts (with seminarios entry)
+- FOUND: app/api/seminarios/[id]/route.ts (with activo handling)
+- FOUND: components/seminarios/InactivarSeminarioButton.tsx
+- FOUND: .planning/phases/04-seminarios-core/04-01-SUMMARY.md
+- FOUND commit: 894ef03 (Task 1)
+- FOUND commit: 53ca486 (Task 2)

@@ -1,0 +1,653 @@
+{
+  "name": "agente_gojulito",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        48
+      ],
+      "id": "f722c98a-81d0-4f9a-817c-220237eff751",
+      "name": "Telegram Trigger",
+      "webhookId": "9480f043-af95-41f5-ab54-939df0af42b1",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTEDuD7XBXTLIZrY",
+          "name": "gojulito_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Responderás a esto:\n{{ $json.message.text }}  {{ $json.text }}\n\n{{ $now.format('yyyy-MM-dd') }}",
+        "options": {
+          "systemMessage": "=IDENTIDAD\nSos Alfred, el asistente operativo de GoJulito. Trabajás exclusivamente para Julio Correa, que gestiona trámites de visa norteamericana y seminarios de viaje.\n\nTu función es ser la memoria operativa del negocio: consultás datos reales, registrás operaciones con confirmación, y generás resúmenes claros. No inventás datos. Si no encontrás algo en la base de datos, lo decís.\n\nDIRECTIVAS OPERATIVAS\n1. Nunca inventes IDs, nombres ni estados. Siempre consultá la base de datos primero.\n2. Antes de crear o modificar cualquier dato, confirmá con Julio lo que vas a hacer.\n3. Si Julio menciona un cliente por nombre, buscalo primero con buscar_cliente antes de cualquier otra acción.\n4. Para cambiar el estado de una visa, primero buscá al cliente, obtené el visa_id, y recién entonces actualizá.\n5. Siempre respondé en español, de forma concisa y directa.\n6. Nunca menciones credenciales del portal consular ni contraseñas.\n\nFLUJO DE CONFIRMACIÓN\nAnte operaciones de escritura (crear cliente, registrar pago, cambiar estado):\n1. Mostrá un resumen de lo que vas a hacer\n2. Pedí confirmación: \"¿Confirmo?\"\n3. Solo ejecutá después de recibir \"sí\", \"dale\", \"confirmá\" o equivalente\n\nESTADOS VÁLIDOS\n- Cliente: PROSPECTO | ACTIVO | FINALIZADO | INACTIVO\n- Visa: EN_PROCESO | TURNO_ASIGNADO | APROBADA | RECHAZADA | PAUSADA | CANCELADA\n- Pago: PAGADO | DEUDA | PENDIENTE\n\nFORMATO DE RESPUESTA\n- Sin markdown, sin asteriscos, sin listas largas\n- Respuestas cortas por defecto\n- Para resúmenes: usar emojis simples como separadores visuales\n- Fechas siempre en formato DD/MM/YYYY\n\nEJEMPLOS DE RESPUESTA\nConsulta rápida: \"Rolando (GJ-0003) — Visa TURNO_ASIGNADO para el 19/03. Deuda pendiente: $400.\"\nConfirmación: \"Voy a registrar pago de $500 PAGADO para Rolando (GJ-0003). ¿Confirmo?\"\nResumen: \" Hoy 17/03: 4 clientes activos | 2 turnos esta semana | 1 deuda próxima\"\n\nHERRAMIENTAS DISPONIBLES Y CUÁNDO USARLAS\n\nresumen_operativo\n→ Usar cuando Julio pida el resumen del día, métricas generales, \n  turnos de la semana o deudas próximas.\n→ Ejemplo: \"resumen\", \"cómo está el negocio\", \"qué turnos hay esta semana\"\n\nbuscar_cliente\n→ Usar SIEMPRE antes de cualquier operación sobre un cliente.\n→ Parámetros: nombre= | telefono= | gj_id=\n→ Ejemplo: \"cómo está Rolando\", \"busca a Juan\", \"qué tiene GJ-0003\"\n\ncrear_cliente\n→ Usar solo cuando Julio quiera registrar un cliente nuevo.\n→ Requiere confirmación antes de ejecutar.\n→ Campos mínimos: nombre, telefono, canal (WHATSAPP|INSTAGRAM|SEMINARIO|REFERIDO|CHARLA|OTRO)\n\nbuscar_visa\n→ Usar para consultar el trámite de visa de un cliente específico.\n→ Parámetros: cliente_id= (UUID interno, obtenido de buscar_cliente)\n→ Siempre llamar a buscar_cliente primero para obtener el cliente_id\n\nactualizar_visa\n→ Usar para cambiar el estado de una visa o cargar fecha de turno.\n→ Requiere visa_id legible (VISA-0001), obtenido de buscar_cliente o buscar_visa.\n→ Requiere confirmación antes de ejecutar.\n→ Ejemplo: \"se aprobó la visa de Rolando\", \"cargar turno para el 25/03\"\n\nregistrar_pago\n→ Usar para registrar un cobro nuevo.\n→ Requiere: cliente_id, tipo (VISA|SEMINARIO), monto, estado (PAGADO|DEUDA)\n→ Requiere confirmación antes de ejecutar.\n→ Ejemplo: \"Rolando pagó $500\", \"anotar deuda de $300 para Juan\"\n\nSECUENCIA OBLIGATORIA PARA OPERACIONES\n1. Si mencionan un nombre → buscar_cliente primero\n2. Si necesitás el visa_id → viene del resultado de buscar_cliente (campo visas[0].visa_id)\n3. Si necesitás el cliente_id para un pago → viene del resultado de buscar_cliente (campo id)\n4. Nunca uses IDs inventados o asumidos"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1008,
+        48
+      ],
+      "id": "eb81a346-87b1-4954-960b-2b3254f92d68",
+      "name": "AI Agent1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output.replace(/\\*/g, '') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1728,
+        48
+      ],
+      "id": "a9f2cf0b-f34b-4244-aa02-09c739424740",
+      "name": "Send a text message",
+      "webhookId": "68cdaea1-471d-4d79-90c4-35fe7e10ec99",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTEDuD7XBXTLIZrY",
+          "name": "gojulito_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fe4dbc7a-2598-4522-90de-c54fd20a82f7",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -48,
+        48
+      ],
+      "id": "7dc7546a-0f92-43a8-9053-c26b658de0e9",
+      "name": "Switch2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        128
+      ],
+      "id": "7eab9dd7-e40c-4062-9e42-7fe8c867a500",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "seJXTko8yd3gGf7C",
+          "name": "Gabi Caro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        128
+      ],
+      "id": "c13b0768-2181-46fa-a48b-465064ba3bd3",
+      "name": "Get a file",
+      "webhookId": "a1e869d8-fd54-4998-a4dc-a23f0bec395a",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTEDuD7XBXTLIZrY",
+          "name": "gojulito_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-5-20250929",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        272
+      ],
+      "id": "992b8109-54f1-48cf-82c4-306f123000ea",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "d66cOabei9WEjysU",
+          "name": "gojulito_test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Busca un cliente por nombre, teléfono o gj_id. Usar cuando Julio mencione un cliente por cualquier dato identificatorio.",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/clientes",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "nombre",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Nombre o parte del nombre del cliente a buscar`, 'string') }}"
+            },
+            {
+              "name": "telefono",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Número de teléfono del cliente`, 'string') }}"
+            },
+            {
+              "name": "gj_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `ID legible del cliente, formato GJ-0001`, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        880,
+        272
+      ],
+      "id": "784ec8c4-6992-42ea-bb62-e8cb495946dd",
+      "name": "buscar_cliente"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Crea un nuevo cliente en el sistema. Requiere nombre y teléfono mínimo.",
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/clientes",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nombre",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Nombre completo del cliente`, 'string') }}"
+            },
+            {
+              "name": "telefono",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Numero de telefono del cliente`, 'string') }}"
+            },
+            {
+              "name": "canal",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Canal de ingreso. Valores válidos: WHATSAPP | INSTAGRAM | SEMINARIO | REFERIDO | CHARLA | OTRO`, 'string') }}"
+            },
+            {
+              "name": "estado",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Estado del cliente. Valores válidos: PROSPECTO | ACTIVO`, 'string') }}"
+            },
+            {
+              "name": "observaciones",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Notas opcionales sobre el cliente`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1008,
+        272
+      ],
+      "id": "d6bf47fa-e354-4f0a-90e1-6876e9ab99eb",
+      "name": "crear_cliente"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Busca el trámite de visa de un cliente por cliente_id o visa_id.",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/visas",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cliente_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `UUID interno del cliente, obtenido del campo 'id' de buscar_cliente`, 'string') }}"
+            },
+            {
+              "name": "visa_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `ID legible de la visa, formato VISA-0001`, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        272
+      ],
+      "id": "0e88bc8a-623a-47c2-9b59-74fd002b128c",
+      "name": "buscar_visa"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Actualiza el estado de una visa. Requiere visa_id legible (VISA-0001) y el nuevo estado.",
+        "method": "PATCH",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/visas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "visa_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID legible de la visa a actualizar, formato VISA-0001`, 'string') }}"
+            },
+            {
+              "name": "estado",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Nuevo estado. Valores válidos: EN_PROCESO | TURNO_ASIGNADO | APROBADA | RECHAZADA | PAUSADA | CANCELADA`, 'string') }}"
+            },
+            {
+              "name": "fecha_turno",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Fecha del turno en formato YYYY-MM-DD. Solo si estado es TURNO_ASIGNADO`, 'string') }}"
+            },
+            {
+              "name": "notas",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Notas opcionales sobre el trámite`, 'string') }}"
+            },
+            {
+              "name": "fecha_vencimiento",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `YYYY-MM-DD, fecha de vencimiento de la visa`, 'string') }}"
+            },
+            {
+              "name": "fecha_aprobacion",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters5_Value', `YYYY-MM-DD, solo si estado = APROBADA. Si no viene, el servidor usa hoy`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1264,
+        272
+      ],
+      "id": "d4a8ad15-e0eb-4ed2-9e25-8223a2388ed4",
+      "name": "actualizar_visa"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Registra un pago para un cliente. Requiere cliente_id, tipo (VISA o SEMINARIO), monto, fecha y estado.",
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/pagos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "cliente_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `UUID interno del cliente, obtenido del campo 'id' de buscar_cliente`, 'string') }}"
+            },
+            {
+              "name": "tipo",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Tipo de pago. Valores válidos: VISA | SEMINARIO`, 'string') }}"
+            },
+            {
+              "name": "monto",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Monto en pesos, número entero sin símbolo`, 'string') }}"
+            },
+            {
+              "name": "fecha_pago",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Fecha del pago en formato YYYY-MM-DD. Si no se especifica usar la fecha de hoy`, 'string') }}"
+            },
+            {
+              "name": "estado",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Estado del pago. Valores válidos: PAGADO | DEUDA`, 'string') }}"
+            },
+            {
+              "name": "visa_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters5_Value', `UUID interno de la visa, obtenido del campo 'visas[0].id' de buscar_cliente. Solo para pagos tipo VISA`, 'string') }}"
+            },
+            {
+              "name": "notas",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters6_Value', `Notas opcionales`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1392,
+        272
+      ],
+      "id": "e068e49c-2b9c-4424-8c69-0c4714704eea",
+      "name": "registrar_pago"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve el resumen del negocio: métricas generales, turnos de la semana y deudas próximas. Usar para responder preguntas generales de estado del negocio.",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/resumen",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1520,
+        272
+      ],
+      "id": "9f1622ea-033e-4445-91c5-7defa793d772",
+      "name": "resumen_operativo"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "tableName": "telegram_historial",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        752,
+        272
+      ],
+      "id": "78036bca-e566-4495-a7d9-b8255c38d2af",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "CMXFQs4C0p2xTkc4",
+          "name": "gojulitotestev1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_visa": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar_visa": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "registrar_pago": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "resumen_operativo": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c71e3c0b-38cd-4fca-b8e8-0beb10e2740f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6af9cd62f5f297fdfae12c219c00a208aa9d4320581f83b92d5d11f0cd0cdc07"
+  },
+  "id": "74GUwIBOBnWrKKjU",
+  "tags": []
+}
