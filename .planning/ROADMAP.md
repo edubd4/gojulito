@@ -83,7 +83,7 @@ Plans:
   4. Un usuario con rol colaborador no puede acceder a /configuracion (redireccionado o bloqueado)
 **Plans**: 2 plans
 Plans:
-- [ ] 07-01-PLAN.md — Seminarios en el calendario (API + page + CalendarioView con chips purpura y popup)
+- [x] 07-01-PLAN.md — Seminarios en el calendario (API + page + CalendarioView con chips purpura y popup)
 - [x] 07-02-PLAN.md — Control de acceso a /configuracion (redirect admin-only + ocultar link sidebar)
 **UI hint**: yes
 
@@ -100,4 +100,4 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 4. Seminarios — Core | v1.2 | 1/1 | Complete   | 2026-03-23 |
 | 5. Seminarios — Asistentes | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 6. Bot Telegram Alfred | v1.2 | 1/1 | Complete | 2026-03-24 |
-| 7. Calendario y Configuracion | v1.2 | 1/2 | In Progress|  |
+| 7. Calendario y Configuracion | v1.2 | 2/2 | Complete   | 2026-03-24 |

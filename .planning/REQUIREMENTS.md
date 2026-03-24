@@ -20,8 +20,8 @@
 
 ### Calendario
 
-- [ ] **CAL-01**: La página `/calendario` muestra los turnos de visa de los próximos 7 días (datos de `v_turnos_semana`)
-- [ ] **CAL-02**: La página `/calendario` muestra las fechas de los próximos seminarios
+- [x] **CAL-01**: La página `/calendario` muestra los turnos de visa de los próximos 7 días (datos de `v_turnos_semana`)
+- [x] **CAL-02**: La página `/calendario` muestra las fechas de los próximos seminarios
 
 ### Configuración
 
@@ -60,8 +60,8 @@
 | BOT-01 | Phase 6 | Complete |
 | BOT-02 | Phase 6 | Pending |
 | BOT-03 | Phase 6 | Complete |
-| CAL-01 | Phase 7 | Pending |
-| CAL-02 | Phase 7 | Pending |
+| CAL-01 | Phase 7 | Complete |
+| CAL-02 | Phase 7 | Complete |
 | CFG-01 | Phase 7 | Complete |
 | CFG-02 | Phase 7 | Complete |
 

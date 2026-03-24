@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada
-status: Ready to execute
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-03-24T22:50:27.753Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-03-24T22:52:41.395Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -47,6 +47,7 @@ Plan: 2 of 2
 | Phase 05-seminarios-asistentes P01 | 8 | 2 tasks | 4 files |
 | Phase 06-bot-telegram-alfred P01 | 8 | 2 tasks | 2 files |
 | Phase 07-calendario-y-configuracion P02 | 8 | 1 tasks | 2 files |
+| Phase 07 P01 | 664 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Decisions relevant to v1.2:
 - [Phase 06-bot-telegram-alfred]: Credencial PostgreSQL nombrada gojulitotestev1 — coincide con id del JSON del agente que debe reasignarse al importar en n8n
 - [Phase 07-02]: Redirect inserted after perfil null check and BEFORE esAdmin — prevents admin queries for colaboradores
 - [Phase 07-02]: visibleNavItems computed inside Sidebar using existing rol prop — no new SidebarProps fields needed
+- [Phase 07-01]: Purple chip color rgba(167,139,250,0.18) bg with #a78bfa text — Violet-400 semantic for seminarios, distinct from visa (blue/amber) and pago (green/red) chips
+- [Phase 07-01]: SeminarioCalItem exported from CalendarioView alongside TurnoItem and PagoCalItem — keeps all calendar types co-located
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-24T22:50:27.735Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-03-24T22:52:41.368Z
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
