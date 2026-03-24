@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Menu } from 'lucide-react'
+import Link from 'next/link'
 import { Sidebar } from './Sidebar'
 
 interface DashboardShellProps {
@@ -41,7 +42,7 @@ export function DashboardShell({ displayName, rol, children }: DashboardShellPro
           >
             <Menu className="w-5 h-5" />
           </button>
-          <span className="font-display text-gj-text text-sm font-bold">GoJulito</span>
+          <Link href="/" className="font-display text-gj-text text-sm font-bold no-underline">GoJulito</Link>
           <div className="w-5" />
         </header>
 

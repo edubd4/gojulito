@@ -129,3 +129,41 @@ export async function PATCH(
 
   return NextResponse.json({ success: true, visa: visaActualizada })
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const authClient = await createServerClient()
+  const { data: { user } } = await authClient.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  }
+
+  const supabase = await createServiceRoleClient()
+
+  // Solo admin puede eliminar
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('rol')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.rol !== 'admin') {
+    return NextResponse.json({ error: 'Sin permisos para eliminar' }, { status: 403 })
+  }
+
+  const { id } = params
+
+  const { error } = await supabase
+    .from('visas')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json({ success: true })
+}

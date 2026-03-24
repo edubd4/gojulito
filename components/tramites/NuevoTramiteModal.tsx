@@ -39,6 +39,8 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
   const [clientes, setClientes] = useState<ClienteOption[]>([])
   const [clienteId, setClienteId] = useState('')
   const [ds160, setDs160] = useState('')
+  const [emailPortal, setEmailPortal] = useState('')
+  const [ordenAtencion, setOrdenAtencion] = useState('')
   const [estado, setEstado] = useState<EstadoVisa>('EN_PROCESO')
   const [fechaTurno, setFechaTurno] = useState('')
   const [notas, setNotas] = useState('')
@@ -49,6 +51,8 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
     if (!open) return
     setClienteId('')
     setDs160('')
+    setEmailPortal('')
+    setOrdenAtencion('')
     setEstado('EN_PROCESO')
     setFechaTurno('')
     setNotas('')
@@ -66,6 +70,8 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
     try {
       const body: Record<string, unknown> = { cliente_id: clienteId, estado }
       if (ds160.trim()) body.ds160 = ds160.trim()
+      if (emailPortal.trim()) body.email_portal = emailPortal.trim()
+      if (ordenAtencion.trim()) body.orden_atencion = ordenAtencion.trim()
       if (notas.trim()) body.notas = notas.trim()
       if (estado === 'TURNO_ASIGNADO' && fechaTurno) body.fecha_turno = fechaTurno
 
@@ -74,8 +80,8 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      const json = await res.json() as { success?: boolean; error?: string }
-      if (!res.ok || !json.success) { setError(json.error ?? 'Error al crear'); return }
+      const json = await res.json() as { data?: unknown; error?: string | null }
+      if (!res.ok || json.error) { setError(json.error ?? 'Error al crear'); return }
       onSuccess()
       onOpenChange(false)
     } catch {
@@ -150,6 +156,29 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               value={ds160}
               onChange={(e) => setDs160(e.target.value)}
               placeholder="Número de caso (opcional)"
+            />
+          </div>
+
+          {/* Email portal */}
+          <div>
+            <label style={labelStyle}>Email portal</label>
+            <input
+              style={inputStyle}
+              type="email"
+              value={emailPortal}
+              onChange={(e) => setEmailPortal(e.target.value)}
+              placeholder="Email del portal de visa (opcional)"
+            />
+          </div>
+
+          {/* Orden de atención */}
+          <div>
+            <label style={labelStyle}>Orden de atención</label>
+            <input
+              style={inputStyle}
+              value={ordenAtencion}
+              onChange={(e) => setOrdenAtencion(e.target.value)}
+              placeholder="Número de orden (opcional)"
             />
           </div>
 

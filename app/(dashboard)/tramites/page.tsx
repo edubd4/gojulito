@@ -11,6 +11,13 @@ export default async function TramitesPage() {
 
   const supabase = await createServiceRoleClient()
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('rol')
+    .eq('id', user.id)
+    .single()
+  const isAdmin = profile?.rol === 'admin'
+
   const [{ data: rawVisas }, { data: rawGrupos }] = await Promise.all([
     supabase
       .from('visas')
@@ -78,7 +85,7 @@ export default async function TramitesPage() {
         </p>
       </div>
 
-      <TramitesTable tramites={tramites} grupos={grupos} />
+      <TramitesTable tramites={tramites} grupos={grupos} isAdmin={isAdmin} />
     </div>
   )
 }

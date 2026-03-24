@@ -26,6 +26,7 @@ export interface TramiteRow {
 interface Props {
   tramites: TramiteRow[]
   grupos: { id: string; nombre: string }[]
+  isAdmin?: boolean
 }
 
 const BADGE_VISA: Record<EstadoVisa, { label: string; color: string; bg: string }> = {
@@ -67,7 +68,7 @@ function Spinner() {
   )
 }
 
-export default function TramitesTable({ tramites, grupos }: Props) {
+export default function TramitesTable({ tramites, grupos, isAdmin = false }: Props) {
   const router = useRouter()
   const [rows, setRows] = useState<TramiteRow[]>(tramites)
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoVisa | ''>('')
@@ -81,6 +82,8 @@ export default function TramitesTable({ tramites, grupos }: Props) {
   const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({})
   const [fechaAprobEdits, setFechaAprobEdits] = useState<Record<string, string>>({})
   const [fechaVencEdits, setFechaVencEdits] = useState<Record<string, string>>({})
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   useEffect(() => {
     if (errorMsg) {
@@ -171,8 +174,63 @@ export default function TramitesTable({ tramites, grupos }: Props) {
     }
   }
 
+  async function handleEliminar(visaId: string) {
+    setDeleteLoading(true)
+    try {
+      const res = await fetch(`/api/visas/${visaId}`, { method: 'DELETE' })
+      const json = await res.json() as { success?: boolean; error?: string }
+      if (!res.ok || !json.success) {
+        setErrorMsg(json.error ?? 'Error al eliminar')
+      } else {
+        setRows((prev) => prev.filter((r) => r.id !== visaId))
+      }
+    } catch {
+      setErrorMsg('Error de conexión')
+    } finally {
+      setDeleteLoading(false)
+      setConfirmDeleteId(null)
+    }
+  }
+
   return (
     <div>
+      {/* Confirm delete dialog */}
+      {confirmDeleteId && (
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10000 }}
+            onClick={() => !deleteLoading && setConfirmDeleteId(null)}
+          />
+          <div
+            style={{
+              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+              zIndex: 10001, backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 12, padding: '28px 32px', maxWidth: 420, width: '90%',
+              fontFamily: 'DM Sans, sans-serif', boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
+            }}
+          >
+            <p style={{ color: '#e8e6e0', fontSize: 15, lineHeight: 1.6, marginBottom: 24 }}>
+              ¿Eliminar este trámite permanentemente? Esta acción no se puede deshacer.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                disabled={deleteLoading}
+                style={{ padding: '8px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13, cursor: deleteLoading ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => void handleEliminar(confirmDeleteId)}
+                disabled={deleteLoading}
+                style={{ padding: '8px 18px', borderRadius: 8, border: 'none', backgroundColor: '#e85a5a', color: '#fff', fontSize: 13, fontWeight: 600, cursor: deleteLoading ? 'not-allowed' : 'pointer', opacity: deleteLoading ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}
+              >
+                {deleteLoading ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
       <NuevoTramiteModal
         open={nuevoTramiteOpen}
         onOpenChange={setNuevoTramiteOpen}
@@ -280,7 +338,7 @@ export default function TramitesTable({ tramites, grupos }: Props) {
           backgroundColor: '#111f38',
           borderRadius: 12,
           border: '1px solid rgba(255,255,255,0.06)',
-          overflow: 'hidden',
+          overflow: 'visible',
         }}
       >
         {filtrados.length === 0 ? (
@@ -300,7 +358,7 @@ export default function TramitesTable({ tramites, grupos }: Props) {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', minWidth: 580 }}>
               <thead>
                 <tr>
-                  {['Visa ID', 'Cliente', 'Estado', 'DS-160', 'Fecha turno', 'Aprobación', 'Vencimiento'].map((col) => (
+                  {['Visa ID', 'Cliente', 'Estado', 'DS-160', 'Fecha turno', 'Aprobación', 'Vencimiento', ...(isAdmin ? [''] : [])].map((col) => (
                     <th
                       key={col}
                       style={{
@@ -550,6 +608,22 @@ export default function TramitesTable({ tramites, grupos }: Props) {
                           </span>
                         )}
                       </td>
+                      {isAdmin && (
+                        <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                          <button
+                            title="Eliminar trámite"
+                            onClick={() => setConfirmDeleteId(t.id)}
+                            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#e85a5a', display: 'flex', alignItems: 'center' }}
+                          >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="3 6 5 6 21 6"/>
+                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                              <path d="M10 11v6M14 11v6"/>
+                              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                            </svg>
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   )
                 })}

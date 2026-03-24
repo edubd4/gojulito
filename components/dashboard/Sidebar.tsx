@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   Users,
@@ -11,7 +11,9 @@ import {
   Calendar,
   Settings,
   X,
+  LogOut,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -32,6 +34,13 @@ interface SidebarProps {
 
 export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
 
   function isActive(item: typeof navItems[number]) {
     if (item.exact) return pathname === item.href
@@ -42,10 +51,10 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
     <>
       {/* Header */}
       <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
-        <div>
+        <Link href="/" onClick={onClose} className="no-underline">
           <h1 className="font-display text-xl text-gj-text font-bold">GoJulito</h1>
           <p className="text-gj-secondary text-xs mt-0.5">Panel operativo</p>
-        </div>
+        </Link>
         <button
           onClick={onClose}
           className="lg:hidden text-gj-secondary hover:text-gj-text transition-colors"
@@ -80,18 +89,29 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
 
       {/* Footer */}
       <div className="px-4 py-4 border-t border-white/10">
-        <p className="text-sm font-medium text-gj-text truncate font-sans">{displayName}</p>
-        {rol && (
-          <span
-            className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium font-sans ${
-              rol === 'admin'
-                ? 'bg-gj-amber/15 text-gj-amber'
-                : 'bg-gj-blue/15 text-gj-blue'
-            }`}
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-gj-text truncate font-sans">{displayName}</p>
+            {rol && (
+              <span
+                className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium font-sans ${
+                  rol === 'admin'
+                    ? 'bg-gj-amber/15 text-gj-amber'
+                    : 'bg-gj-blue/15 text-gj-blue'
+                }`}
+              >
+                {rol === 'admin' ? 'Admin' : 'Colaborador'}
+              </span>
+            )}
+          </div>
+          <button
+            onClick={() => void handleLogout()}
+            title="Cerrar sesión"
+            className="text-gj-secondary hover:text-gj-red transition-colors flex-shrink-0"
           >
-            {rol === 'admin' ? 'Admin' : 'Colaborador'}
-          </span>
-        )}
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </>
   )
