@@ -10,7 +10,7 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 
 ## Current State
 
-**v1.2 en progreso — Phase 06 complete (2026-03-24).** Bot Telegram Alfred: migración SQL `telegram_historial` (BIGSERIAL + JSONB, índice en session_id) lista para ejecutar en Supabase + guía de setup en español con 8 pasos para importar el agente n8n, asignar credenciales y activar el workflow. BOT-01, BOT-03 satisfechos.
+**v1.2 en progreso — Phase 07 complete (2026-03-24).** Calendario y Configuracion: seminarios activos aparecen como chips púrpura en el grid mensual con popup (sem_id, fecha, modalidad, link a detalle); navegación de mes carga datos frescos. /configuracion restringido a admin — colaboradores son redirigidos a / y no ven el link en el sidebar. CAL-01, CAL-02, CFG-01, CFG-02 satisfechos. Milestone v1.2 completo.
 
 **v1.1 shipped 2026-03-22.** Codebase hardened: todos los bugs de integridad de datos corregidos, validación Zod en todos los handlers, patrón `{ data, error }` unificado, y los formularios de edición muestran errores de servidor de forma visible.
 
