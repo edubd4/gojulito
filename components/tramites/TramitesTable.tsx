@@ -84,6 +84,8 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
   const [fechaVencEdits, setFechaVencEdits] = useState<Record<string, string>>({})
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (errorMsg) {
@@ -338,7 +340,7 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
           backgroundColor: '#111f38',
           borderRadius: 12,
           border: '1px solid rgba(255,255,255,0.06)',
-          overflow: 'visible',
+          overflow: 'hidden',
         }}
       >
         {filtrados.length === 0 ? (
@@ -419,7 +421,13 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
-                                setOpenDropdownId(openDropdownId === t.id ? null : t.id)
+                                if (openDropdownId === t.id) {
+                                  setOpenDropdownId(null)
+                                } else {
+                                  const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect()
+                                  setDropdownPos({ top: rect.bottom + 4, left: rect.left })
+                                  setOpenDropdownId(t.id)
+                                }
                               }}
                               style={{
                                 background: 'none',
@@ -456,9 +464,9 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                                 />
                                 <div
                                   style={{
-                                    position: 'absolute',
-                                    top: 'calc(100% + 4px)',
-                                    left: 0,
+                                    position: 'fixed',
+                                    top: dropdownPos.top,
+                                    left: dropdownPos.left,
                                     zIndex: 50,
                                     backgroundColor: '#111f38',
                                     border: '1px solid rgba(255,255,255,0.12)',
@@ -532,10 +540,11 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                               }
                               onBlur={(e) => {
                                 const val = e.target.value
+                                if (!val) setTouchedFields(prev => { const s = new Set(prev); s.add(t.id + '_turno'); return s })
                                 if (val !== (t.fecha_turno ?? '')) void handleFechaTurno(t.id, val)
                               }}
                             />
-                            {!t.fecha_turno && !(fechaTurnoEdits[t.id]) && (
+                            {!t.fecha_turno && !(fechaTurnoEdits[t.id]) && touchedFields.has(t.id + '_turno') && (
                               <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 Completá la fecha
@@ -562,10 +571,11 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                               }
                               onBlur={(e) => {
                                 const val = e.target.value
+                                if (!val) setTouchedFields(prev => { const s = new Set(prev); s.add(t.id + '_aprob'); return s })
                                 if (val !== (t.fecha_aprobacion ?? '')) void handleFechaField(t.id, 'fecha_aprobacion', val)
                               }}
                             />
-                            {!t.fecha_aprobacion && !(fechaAprobEdits[t.id]) && (
+                            {!t.fecha_aprobacion && !(fechaAprobEdits[t.id]) && touchedFields.has(t.id + '_aprob') && (
                               <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 Completá la fecha
@@ -592,10 +602,11 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                               }
                               onBlur={(e) => {
                                 const val = e.target.value
+                                if (!val) setTouchedFields(prev => { const s = new Set(prev); s.add(t.id + '_venc'); return s })
                                 if (val !== (t.fecha_vencimiento ?? '')) void handleFechaField(t.id, 'fecha_vencimiento', val)
                               }}
                             />
-                            {!t.fecha_vencimiento && !(fechaVencEdits[t.id]) && (
+                            {!t.fecha_vencimiento && !(fechaVencEdits[t.id]) && touchedFields.has(t.id + '_venc') && (
                               <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 Completá la fecha

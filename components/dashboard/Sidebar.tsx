@@ -107,6 +107,7 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
           <button
             onClick={() => void handleLogout()}
             title="Cerrar sesión"
+            aria-label="Cerrar sesión"
             className="text-gj-secondary hover:text-gj-red transition-colors flex-shrink-0"
           >
             <LogOut className="w-4 h-4" />
