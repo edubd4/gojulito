@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import type { ClienteOption } from '@/components/seminarios/AgregarAsistenteModal'
 
 export interface AsistenteEditableData {
   id: string
@@ -12,12 +13,15 @@ export interface AsistenteEditableData {
   monto: number
   convirtio: 'SI' | 'NO' | 'EN_SEGUIMIENTO'
   provincia: string | null
+  cliente_id: string | null
+  clientes: { id: string; gj_id: string; nombre: string } | null
 }
 
 interface Props {
   asistente: AsistenteEditableData
   seminarioId: string
   seminarioModalidad: string
+  clientes: ClienteOption[]
 }
 
 interface FormState {
@@ -26,6 +30,7 @@ interface FormState {
   monto: string
   convirtio: 'SI' | 'NO' | 'EN_SEGUIMIENTO'
   provincia: string
+  cliente_id: string
 }
 
 const inputStyle: React.CSSProperties = {
@@ -49,7 +54,7 @@ const labelStyle: React.CSSProperties = {
   fontFamily: 'DM Sans, sans-serif',
 }
 
-export default function EditarAsistenteModal({ asistente, seminarioId, seminarioModalidad }: Props) {
+export default function EditarAsistenteModal({ asistente, seminarioId, seminarioModalidad, clientes }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<FormState>({
@@ -58,6 +63,7 @@ export default function EditarAsistenteModal({ asistente, seminarioId, seminario
     monto: String(asistente.monto),
     convirtio: asistente.convirtio,
     provincia: asistente.provincia ?? '',
+    cliente_id: asistente.cliente_id ?? '',
   })
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
   const [serverError, setServerError] = useState('')
@@ -72,6 +78,7 @@ export default function EditarAsistenteModal({ asistente, seminarioId, seminario
         monto: String(asistente.monto),
         convirtio: asistente.convirtio,
         provincia: asistente.provincia ?? '',
+        cliente_id: asistente.cliente_id ?? '',
       })
       setErrors({})
       setServerError('')
@@ -98,16 +105,22 @@ export default function EditarAsistenteModal({ asistente, seminarioId, seminario
     setLoading(true)
     setServerError('')
     try {
+      const body: Record<string, unknown> = {
+        modalidad: form.modalidad,
+        estado_pago: form.estado_pago,
+        monto: Number(form.monto),
+        convirtio: form.convirtio,
+        provincia: form.provincia.trim() || null,
+      }
+      // Only send cliente_id if it changed from original value
+      const originalClienteId = asistente.cliente_id ?? ''
+      if (form.cliente_id !== originalClienteId) {
+        body.cliente_id = form.cliente_id || null
+      }
       const res = await fetch(`/api/seminarios/${seminarioId}/asistentes/${asistente.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          modalidad: form.modalidad,
-          estado_pago: form.estado_pago,
-          monto: Number(form.monto),
-          convirtio: form.convirtio,
-          provincia: form.provincia.trim() || null,
-        }),
+        body: JSON.stringify(body),
       })
       const json = await res.json() as { success?: boolean; error?: string }
       if (!res.ok || !json.success) { setServerError(json.error ?? 'Error al actualizar'); return }
@@ -242,6 +255,21 @@ export default function EditarAsistenteModal({ asistente, seminarioId, seminario
                     <option value="EN_SEGUIMIENTO">En seguimiento</option>
                     <option value="SI">Sí</option>
                     <option value="NO">No</option>
+                  </select>
+                </div>
+
+                {/* Cliente vinculado — per D-02 */}
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label style={labelStyle}>Vincular a cliente</label>
+                  <select
+                    style={{ ...inputStyle, cursor: 'pointer' }}
+                    value={form.cliente_id}
+                    onChange={(e) => setField('cliente_id', e.target.value)}
+                  >
+                    <option value="">Sin vincular</option>
+                    {clientes.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nombre} — {c.gj_id}</option>
+                    ))}
                   </select>
                 </div>
 

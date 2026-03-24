@@ -7,6 +7,7 @@ interface PatchBody {
   monto?: number
   convirtio?: string
   provincia?: string | null
+  cliente_id?: string | null
 }
 
 export async function PATCH(
@@ -30,6 +31,7 @@ export async function PATCH(
   if (body.monto !== undefined) update.monto = body.monto
   if (body.convirtio) update.convirtio = body.convirtio
   if (body.provincia !== undefined) update.provincia = body.provincia ?? null
+  if ('cliente_id' in body) update.cliente_id = body.cliente_id ?? null
 
   const supabase = await createServiceRoleClient()
 
@@ -51,6 +53,45 @@ export async function PATCH(
 
   if (error || !asistente) {
     return NextResponse.json({ error: 'Error al actualizar el asistente' }, { status: 500 })
+  }
+
+  // Historial: registrar vinculacion/desvinculacion de cliente
+  if ('cliente_id' in body) {
+    const nuevoClienteId = body.cliente_id ?? null
+    if (nuevoClienteId) {
+      // Fetch the client's gj_id for the description
+      const { data: clienteData } = await supabase
+        .from('clientes')
+        .select('gj_id')
+        .eq('id', nuevoClienteId)
+        .single()
+      const gjId = (clienteData as { gj_id: string } | null)?.gj_id ?? nuevoClienteId
+      try {
+        await supabase.from('historial').insert({
+          tipo: 'CAMBIO_ESTADO',
+          descripcion: `Asistente vinculado a cliente ${gjId}`,
+          origen: 'dashboard',
+          usuario_id: user.id,
+          cliente_id: nuevoClienteId,
+        })
+      } catch {
+        // historial insert is best-effort
+      }
+    } else {
+      // Desvincular
+      const prevClienteId = asistenteActual?.cliente_id as string | undefined ?? undefined
+      try {
+        await supabase.from('historial').insert({
+          tipo: 'CAMBIO_ESTADO',
+          descripcion: 'Asistente desvinculado de cliente',
+          origen: 'dashboard',
+          usuario_id: user.id,
+          ...(prevClienteId ? { cliente_id: prevClienteId } : {}),
+        })
+      } catch {
+        // historial insert is best-effort
+      }
+    }
   }
 
   // Si nuevo estado_pago es PAGADO y el asistente tiene cliente_id, sincronizar el pago vinculado

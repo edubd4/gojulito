@@ -10,11 +10,23 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 
 ## Current State
 
+**v1.2 en progreso — Phase 05 complete (2026-03-24).** Gestión completa de asistentes de seminario implementada: agregar con todos los campos, editar incluyendo vincular/desvincular cliente post-creación, registrar conversión a visa (convirtio). SEM-01, SEM-02, SEM-03, SEM-04 satisfechos.
+
 **v1.1 shipped 2026-03-22.** Codebase hardened: todos los bugs de integridad de datos corregidos, validación Zod en todos los handlers, patrón `{ data, error }` unificado, y los formularios de edición muestran errores de servidor de forma visible.
 
 Stack: Next.js 14 App Router + TypeScript strict + Supabase + Tailwind gj-* tokens. Node 18.18.1 (restricción conocida: shadcn CLI incompatible).
 
 No known active bugs. Tech debt residual: algunos routes menores fuera del scope de v1.1 siguen retornando `{ success: true }` (PagosTable, ClientePagosTable, bulk-update/delete — anotado para v1.2).
+
+## Current Milestone: v1.2 Canales y Operación Avanzada
+
+**Goal:** Completar la operación sin abrir el dashboard — seminarios con gestión real de asistentes, bot Telegram Alfred funcional con AI Agent, vista de calendario, y configuración de precios desde la app.
+
+**Target features:**
+- Seminarios: CRUD completo (SEM-YYYY-NN via RPC), gestión de asistentes (nombre, teléfono, provincia, modalidad, estado_pago, monto, convirtio), vínculo opcional a cliente existente
+- Bot Telegram Alfred: migración `telegram_historial` (JSONB), verificación endpoints webhook, flujo n8n ya construido en `gojulitofiles/agente_gojulito.json`
+- Calendario: vista de turnos de visa (v_turnos_semana) + fechas de seminarios en `/calendario`
+- Configuración: gestión de `precio_visa` y `precio_seminario` desde tabla `configuracion`, solo admin, en `/configuracion`
 
 ## Requirements
 
@@ -41,7 +53,17 @@ No known active bugs. Tech debt residual: algunos routes menores fuera del scope
 
 ### Active
 
-<!-- Current scope. Define with /gsd:new-milestone for v1.2 -->
+<!-- v1.2 scope — in progress -->
+
+- ✓ **SEM-01**: CRUD completo de seminarios con SEM-YYYY-NN IDs via RPC — Validated in Phase 04
+- ✓ **SEM-02**: Gestión de asistentes con campos nombre, teléfono, provincia, modalidad, estado_pago, monto — Validated in Phase 05
+- ✓ **SEM-03**: Campo `convirtio` (SI/NO/EN_SEGUIMIENTO) para trackear conversión a cliente de visa — Validated in Phase 05
+- ✓ **SEM-04**: Asistente puede vincularse a cliente existente (cliente_id nullable) — Validated in Phase 05
+- **BOT-01**: Migración `telegram_historial` con `message` JSONB para memoria de n8n
+- **BOT-02**: Endpoints webhook retornan shape correcto para el AI Agent (buscar, crear, actualizar)
+- **CAL-01**: Página `/calendario` con vista de turnos de visa (v_turnos_semana, próximos 7 días)
+- **CAL-02**: Página `/calendario` incluye fechas de próximos seminarios
+- **CFG-01**: Página `/configuracion` permite al admin ver y editar `precio_visa` y `precio_seminario`
 
 ### Out of Scope
 
@@ -98,4 +120,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-22 — v1.1 Core Hardening complete*
+*Last updated: 2026-03-23 — v1.2 Canales y Operación Avanzada started*

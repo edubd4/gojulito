@@ -5,6 +5,7 @@ import { formatFecha, formatPesos } from '@/lib/utils'
 import AgregarAsistenteModal from '@/components/seminarios/AgregarAsistenteModal'
 import type { ClienteOption } from '@/components/seminarios/AgregarAsistenteModal'
 import EditarSeminarioModal from '@/components/seminarios/EditarSeminarioModal'
+import InactivarSeminarioButton from '@/components/seminarios/InactivarSeminarioButton'
 import AsistentesTable from '@/components/seminarios/AsistentesTable'
 import type { AsistenteRow } from '@/components/seminarios/AsistentesTable'
 
@@ -108,6 +109,11 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
           <EditarSeminarioModal seminario={sem} />
           <AgregarAsistenteModal seminarioId={sem.id} seminarioModalidad={sem.modalidad} clientes={clienteOptions} />
+          <InactivarSeminarioButton
+            seminarioId={sem.id}
+            semId={sem.sem_id}
+            asistentesCount={asistentes.length}
+          />
         </div>
       </div>
 
@@ -123,6 +129,7 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
         initialAsistentes={asistentes}
         seminarioId={sem.id}
         seminarioModalidad={sem.modalidad}
+        clientes={clienteOptions}
       />
 
       {/* Notas del seminario */}

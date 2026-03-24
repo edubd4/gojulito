@@ -87,6 +87,22 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['pagos']['Row'], 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Database['public']['Tables']['pagos']['Insert']>
       }
+      seminarios: {
+        Row: {
+          id: string
+          sem_id: string
+          nombre: string
+          fecha: string
+          modalidad: string
+          precio: number
+          notas: string | null
+          activo: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['seminarios']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['seminarios']['Insert']>
+      }
       historial: {
         Row: {
           id: string
