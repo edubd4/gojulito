@@ -10,7 +10,7 @@ El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos
 
 ## Current State
 
-**v1.2 en progreso — Phase 05 complete (2026-03-24).** Gestión completa de asistentes de seminario implementada: agregar con todos los campos, editar incluyendo vincular/desvincular cliente post-creación, registrar conversión a visa (convirtio). SEM-01, SEM-02, SEM-03, SEM-04 satisfechos.
+**v1.2 en progreso — Phase 06 complete (2026-03-24).** Bot Telegram Alfred: migración SQL `telegram_historial` (BIGSERIAL + JSONB, índice en session_id) lista para ejecutar en Supabase + guía de setup en español con 8 pasos para importar el agente n8n, asignar credenciales y activar el workflow. BOT-01, BOT-03 satisfechos.
 
 **v1.1 shipped 2026-03-22.** Codebase hardened: todos los bugs de integridad de datos corregidos, validación Zod en todos los handlers, patrón `{ data, error }` unificado, y los formularios de edición muestran errores de servidor de forma visible.
 
