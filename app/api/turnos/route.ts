@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
   const supabase = await createServiceRoleClient()
 
-  const [{ data, error }, { data: rawPagos }] = await Promise.all([
+  const [{ data, error }, { data: rawPagos }, { data: rawSeminarios }] = await Promise.all([
     supabase
       .from('visas')
       .select('visa_id, cliente_id, fecha_turno, estado, clientes(id, nombre, gj_id, telefono)')
@@ -37,6 +37,13 @@ export async function GET(req: NextRequest) {
         `and(fecha_pago.gte.${inicio},fecha_pago.lte.${fin}),and(estado.eq.DEUDA,fecha_vencimiento_deuda.gte.${inicio},fecha_vencimiento_deuda.lte.${fin})`
       )
       .order('fecha_pago', { ascending: true }),
+    supabase
+      .from('seminarios')
+      .select('id, sem_id, fecha, modalidad')
+      .eq('activo', true)
+      .gte('fecha', inicio)
+      .lte('fecha', fin)
+      .order('fecha', { ascending: true }),
   ])
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -71,5 +78,12 @@ export async function GET(req: NextRequest) {
     }
   }).filter((p) => !!p.fecha)
 
-  return NextResponse.json({ turnos, pagos })
+  const seminarios = (rawSeminarios ?? []).map((s) => ({
+    id: s.id as string,
+    sem_id: s.sem_id as string,
+    fecha: s.fecha as string,
+    modalidad: s.modalidad as 'PRESENCIAL' | 'VIRTUAL',
+  }))
+
+  return NextResponse.json({ turnos, pagos, seminarios })
 }

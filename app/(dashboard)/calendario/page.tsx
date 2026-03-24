@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import CalendarioView from '@/components/calendario/CalendarioView'
-import type { TurnoItem, PagoCalItem } from '@/components/calendario/CalendarioView'
+import type { TurnoItem, PagoCalItem, SeminarioCalItem } from '@/components/calendario/CalendarioView'
 
 export default async function CalendarioPage() {
   const authClient = await createServerClient()
@@ -17,7 +17,7 @@ export default async function CalendarioPage() {
   const lastDay = new Date(anio, mes, 0).getDate()
   const fin = `${anio}-${String(mes).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
 
-  const [{ data: rawTurnos }, { data: rawSemana }, { data: rawPagos }] = await Promise.all([
+  const [{ data: rawTurnos }, { data: rawSemana }, { data: rawPagos }, { data: rawSeminarios }] = await Promise.all([
     supabase
       .from('visas')
       .select('visa_id, cliente_id, fecha_turno, estado, clientes(id, nombre, gj_id, telefono)')
@@ -36,6 +36,13 @@ export default async function CalendarioPage() {
         `and(fecha_pago.gte.${inicio},fecha_pago.lte.${fin}),and(estado.eq.DEUDA,fecha_vencimiento_deuda.gte.${inicio},fecha_vencimiento_deuda.lte.${fin})`
       )
       .order('fecha_pago', { ascending: true }),
+    supabase
+      .from('seminarios')
+      .select('id, sem_id, fecha, modalidad')
+      .eq('activo', true)
+      .gte('fecha', inicio)
+      .lte('fecha', fin)
+      .order('fecha', { ascending: true }),
   ])
 
   const turnos: TurnoItem[] = (rawTurnos ?? []).map((v) => {
@@ -78,6 +85,13 @@ export default async function CalendarioPage() {
     }
   }).filter((p) => !!p.fecha)
 
+  const seminarios: SeminarioCalItem[] = (rawSeminarios ?? []).map((s) => ({
+    id: s.id as string,
+    sem_id: s.sem_id as string,
+    fecha: s.fecha as string,
+    modalidad: s.modalidad as 'PRESENCIAL' | 'VIRTUAL',
+  }))
+
   return (
     <CalendarioView
       initialTurnos={turnos}
@@ -85,6 +99,7 @@ export default async function CalendarioPage() {
       initialAnio={anio}
       turnosSemana={turnosSemana}
       initialPagos={pagosCalendario}
+      initialSeminarios={seminarios}
     />
   )
 }
