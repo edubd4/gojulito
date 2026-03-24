@@ -98,5 +98,5 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 3. Error Feedback | v1.1 | 1/1 | Complete | 2026-03-22 |
 | 4. Seminarios — Core | v1.2 | 1/1 | Complete   | 2026-03-23 |
 | 5. Seminarios — Asistentes | v1.2 | 0/1 | Planning | - |
-| 6. Bot Telegram Alfred | v1.2 | 0/? | Not started | - |
+| 6. Bot Telegram Alfred | v1.2 | 0/1 | Planned    |  |
 | 7. Calendario y Configuracion | v1.2 | 0/? | Not started | - |

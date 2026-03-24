@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada
 status: Ready to plan
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-24T14:59:19.685Z"
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-24T21:44:46.726Z"
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 3
+  total_plans: 3
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 05 — seminarios-asistentes
+**Current focus:** Phase 06 — bot-telegram-alfred
 
 ## Current Position
 
-Phase: 6
+Phase: 7
 Plan: Not started
 
 ## Performance Metrics
@@ -45,6 +45,7 @@ Plan: Not started
 *Updated after each plan completion*
 | Phase 04-seminarios-core P01 | 15 | 2 tasks | 6 files |
 | Phase 05-seminarios-asistentes P01 | 8 | 2 tasks | 4 files |
+| Phase 06-bot-telegram-alfred P01 | 8 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Decisions relevant to v1.2:
 - [Phase 04-seminarios-core]: InactivarSeminarioButton as separate client component in components/seminarios/ — follows same pattern as EditarSeminarioModal
 - [Phase 05-01]: Use 'cliente_id' in body key-presence check to distinguish null (desvincular) from absent (unchanged)
 - [Phase 05-01]: Send cliente_id in PATCH only when changed from original to avoid unnecessary historial entries
+- [Phase 06-bot-telegram-alfred]: telegram_historial con exactamente 4 columnas sin adicionales — n8n gestiona la tabla directamente, columnas extra causan errores en memoryPostgresChat v1.3
+- [Phase 06-bot-telegram-alfred]: Credencial PostgreSQL nombrada gojulitotestev1 — coincide con id del JSON del agente que debe reasignarse al importar en n8n
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T21:45:16.474Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-24T21:41:12.787Z
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
