@@ -80,6 +80,22 @@ export async function POST(req: NextRequest) {
 
   const supabase = await createServiceRoleClient()
 
+  // Validar que el cliente no tenga ya una visa activa (no-terminal)
+  const { data: visaActiva } = await supabase
+    .from('visas')
+    .select('visa_id, estado')
+    .eq('cliente_id', body.cliente_id)
+    .not('estado', 'in', '(APROBADA,RECHAZADA,CANCELADA)')
+    .limit(1)
+    .maybeSingle()
+
+  if (visaActiva) {
+    return NextResponse.json(
+      { data: null, error: `El cliente ya tiene una visa activa (${(visaActiva as { visa_id: string; estado: string }).visa_id} — ${(visaActiva as { visa_id: string; estado: string }).estado}). Finalizá o cancelá el trámite actual antes de iniciar uno nuevo.` },
+      { status: 409 }
+    )
+  }
+
   // Generate next visa_id via atomic RPC function (no race condition)
   const { data: newVisaId, error: visaIdError } = await supabase.rpc('generate_readable_id', {
     prefix: 'VISA',

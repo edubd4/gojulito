@@ -127,5 +127,5 @@ export async function PATCH(
     }
   }
 
-  return NextResponse.json({ data: visaActualizada, error: null })
+  return NextResponse.json({ success: true, visa: visaActualizada })
 }
