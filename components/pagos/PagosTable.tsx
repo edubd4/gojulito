@@ -166,11 +166,10 @@ export default function PagosTable({ pagos }: Props) {
         body: JSON.stringify(body),
       })
       const json = await res.json() as {
-        success?: boolean
+        data?: { estado: string; fecha_pago: string | null; fecha_vencimiento_deuda: string | null; monto: number }
         error?: string
-        pago?: { estado: EstadoPago; fecha_pago: string | null; fecha_vencimiento_deuda: string | null; monto: number }
       }
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error) {
         setErrorMsg(json.error ?? 'Error al actualizar')
         return
       }
@@ -180,9 +179,9 @@ export default function PagosTable({ pagos }: Props) {
             ? {
                 ...r,
                 estado: nuevoEstado,
-                fecha_pago: json.pago?.fecha_pago ?? r.fecha_pago,
-                fecha_vencimiento_deuda: json.pago?.fecha_vencimiento_deuda ?? r.fecha_vencimiento_deuda,
-                monto: json.pago?.monto ?? r.monto,
+                fecha_pago: json.data?.fecha_pago ?? r.fecha_pago,
+                fecha_vencimiento_deuda: json.data?.fecha_vencimiento_deuda ?? r.fecha_vencimiento_deuda,
+                monto: json.data?.monto ?? r.monto,
               }
             : r
         )

@@ -5,6 +5,7 @@ import type { EstadoPago } from '@/lib/constants'
 
 interface ClienteOption { id: string; nombre: string; gj_id: string }
 interface VisaOption { id: string; visa_id: string; estado: string }
+interface PagoDeudaInfo { tipo: 'VISA' | 'SEMINARIO'; monto: number }
 
 interface Props {
   open: boolean
@@ -41,6 +42,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
   const [clienteId, setClienteId] = useState('')
   const [visas, setVisas] = useState<VisaOption[]>([])
   const [visaId, setVisaId] = useState('')
+  const [deudas, setDeudas] = useState<PagoDeudaInfo[]>([])
   const [tipo, setTipo] = useState<'VISA' | 'SEMINARIO'>('VISA')
   const [monto, setMonto] = useState('')
   const [fechaPago, setFechaPago] = useState(new Date().toISOString().slice(0, 10))
@@ -63,26 +65,31 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
     setFechaVenc('')
     setNotas('')
     setError('')
+    setDeudas([])
     void fetch('/api/clientes')
       .then((r) => r.json())
       .then((json: { clientes?: ClienteOption[] }) => setClientes(json.clientes ?? []))
       .catch(() => {})
   }, [open])
 
-  // Cargar visas cuando cambia el cliente o el tipo
+  // Cargar visas y deudas cuando cambia el cliente
   useEffect(() => {
-    if (!clienteId || tipo !== 'VISA') { setVisas([]); setVisaId(''); return }
+    if (!clienteId) { setVisas([]); setVisaId(''); setDeudas([]); return }
     void fetch(`/api/clientes/${clienteId}`)
       .then((r) => r.json())
-      .then((json: { visas?: VisaOption[] }) => {
+      .then((json: { visas?: VisaOption[]; pagos?: { tipo: string; estado: string; monto: number }[] }) => {
         const activas = (json.visas ?? []).filter(
           (v) => !['CANCELADA', 'RECHAZADA'].includes(v.estado)
         )
         setVisas(activas)
         setVisaId(activas[0]?.id ?? '')
+        const deudasActivas = (json.pagos ?? [])
+          .filter((p) => p.estado === 'DEUDA' || p.estado === 'PENDIENTE')
+          .map((p) => ({ tipo: p.tipo as 'VISA' | 'SEMINARIO', monto: p.monto }))
+        setDeudas(deudasActivas)
       })
       .catch(() => {})
-  }, [clienteId, tipo])
+  }, [clienteId])
 
   async function handleSubmit() {
     if (!clienteId) { setError('Seleccioná un cliente'); return }
@@ -109,8 +116,8 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      const json = await res.json() as { success?: boolean; error?: string }
-      if (!res.ok || !json.success) { setError(json.error ?? 'Error al registrar'); return }
+      const json = await res.json() as { data?: unknown; error?: string }
+      if (!res.ok || json.error) { setError(json.error ?? 'Error al registrar'); return }
       onSuccess()
       onOpenChange(false)
     } catch {
@@ -167,6 +174,38 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
             </select>
           </div>
 
+          {/* Deuda pendiente del cliente */}
+          {clienteId && deudas.length > 0 && (
+            <div style={{
+              backgroundColor: 'rgba(232,90,90,0.08)',
+              border: '1px solid rgba(232,90,90,0.25)',
+              borderRadius: 8,
+              padding: '10px 12px',
+              fontSize: 13,
+              fontFamily: 'DM Sans, sans-serif',
+            }}>
+              <div style={{ color: '#e85a5a', fontWeight: 600, marginBottom: 6 }}>Saldo pendiente</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {(['VISA', 'SEMINARIO'] as const).map((t) => {
+                  const total = deudas.filter((d) => d.tipo === t).reduce((s, d) => s + d.monto, 0)
+                  if (total === 0) return null
+                  return (
+                    <div key={t} style={{ display: 'flex', justifyContent: 'space-between', color: '#9ba8bb' }}>
+                      <span>{t === 'VISA' ? 'Visa' : 'Seminario'}</span>
+                      <span style={{ color: '#e85a5a', fontWeight: 600 }}>${total.toLocaleString('es-AR')}</span>
+                    </div>
+                  )
+                })}
+                {deudas.length > 1 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(232,90,90,0.2)', paddingTop: 4, marginTop: 2 }}>
+                    <span style={{ color: '#9ba8bb' }}>Total</span>
+                    <span style={{ color: '#e85a5a', fontWeight: 700 }}>${deudas.reduce((s, d) => s + d.monto, 0).toLocaleString('es-AR')}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Tipo */}
           <div>
             <label style={labelStyle}>Tipo de pago</label>
@@ -180,7 +219,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
             </select>
           </div>
 
-          {/* Visa — solo si tipo=VISA y hay cliente */}
+          {/* Visa — solo si tipo=VISA, hay cliente, y ya cargó */}
           {tipo === 'VISA' && clienteId && (
             <div>
               <label style={labelStyle}>Visa asociada *</label>
