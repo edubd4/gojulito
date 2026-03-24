@@ -70,7 +70,7 @@ Plans:
   4. Existe documentación con pasos para importar agente_gojulito.json en n8n y configurar credenciales
 **Plans**: 1 plan
 Plans:
-- [ ] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
+- [x] 06-01-PLAN.md — Bot Telegram Alfred migration, webhook endpoint, and n8n setup docs
 
 ### Phase 7: Calendario y Configuracion
 **Goal**: El admin puede ver turnos y seminarios próximos en una vista de calendario, y gestionar precios desde la app
@@ -81,9 +81,10 @@ Plans:
   2. La página /calendario muestra las fechas de los próximos seminarios
   3. El admin puede ver y editar precio_visa y precio_seminario desde la página /configuracion
   4. Un usuario con rol colaborador no puede acceder a /configuracion (redireccionado o bloqueado)
-**Plans**: 1 plan
+**Plans**: 2 plans
 Plans:
-- [ ] 05-01-PLAN.md — Vincular cliente post-creacion (PATCH API + EditarAsistenteModal + prop wiring)
+- [ ] 07-01-PLAN.md — Seminarios en el calendario (API + page + CalendarioView con chips purpura y popup)
+- [ ] 07-02-PLAN.md — Control de acceso a /configuracion (redirect admin-only + ocultar link sidebar)
 **UI hint**: yes
 
 ## Progress
@@ -97,6 +98,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 2. Validation Layer | v1.1 | 3/3 | Complete | 2026-03-22 |
 | 3. Error Feedback | v1.1 | 1/1 | Complete | 2026-03-22 |
 | 4. Seminarios — Core | v1.2 | 1/1 | Complete   | 2026-03-23 |
-| 5. Seminarios — Asistentes | v1.2 | 0/1 | Planning | - |
-| 6. Bot Telegram Alfred | v1.2 | 0/1 | Planned    |  |
-| 7. Calendario y Configuracion | v1.2 | 0/? | Not started | - |
+| 5. Seminarios — Asistentes | v1.2 | 1/1 | Complete | 2026-03-23 |
+| 6. Bot Telegram Alfred | v1.2 | 1/1 | Complete | 2026-03-24 |
+| 7. Calendario y Configuracion | v1.2 | 0/2 | Planning | - |
