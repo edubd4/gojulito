@@ -47,6 +47,10 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
     return pathname.startsWith(item.href)
   }
 
+  const visibleNavItems = rol === 'admin'
+    ? navItems
+    : navItems.filter((item) => item.href !== '/configuracion')
+
   const sidebarContent = (
     <>
       {/* Header */}
@@ -66,7 +70,7 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item)
           return (

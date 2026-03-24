@@ -32,6 +32,8 @@ export default async function ConfiguracionPage() {
 
   if (!perfil) redirect('/login')
 
+  if (perfil.rol !== 'admin') redirect('/')
+
   const esAdmin = perfil.rol === 'admin'
 
   let usuarios: Perfil[] = []
