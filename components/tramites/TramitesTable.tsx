@@ -86,6 +86,8 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 15
 
   useEffect(() => {
     if (errorMsg) {
@@ -95,6 +97,7 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
   }, [errorMsg])
 
   const filtrados = useMemo(() => {
+    setCurrentPage(1)
     return rows.filter((t) => {
       if (estadoFiltro && t.estado !== estadoFiltro) return false
       if (grupoFiltro && t.grupo_familiar_id !== grupoFiltro) return false
@@ -109,6 +112,9 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
       return true
     })
   }, [rows, estadoFiltro, grupoFiltro, busqueda])
+
+  const totalPages = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE))
+  const paginated = filtrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const grupoSeleccionado = grupoFiltro ? grupos.find((g) => g.id === grupoFiltro) ?? null : null
 
@@ -382,7 +388,7 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                 </tr>
               </thead>
               <tbody>
-                {filtrados.map((t) => {
+                {paginated.map((t) => {
                   const badge = BADGE_VISA[t.estado]
                   return (
                     <tr
@@ -640,6 +646,28 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+              {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtrados.length)} de {filtrados.length}
+            </span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
+                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === 1 ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                ← Anterior
+              </button>
+              <span style={{ padding: '5px 10px', fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+                {currentPage} / {totalPages}
+              </span>
+              <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === totalPages ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                Siguiente →
+              </button>
+            </div>
           </div>
         )}
       </div>

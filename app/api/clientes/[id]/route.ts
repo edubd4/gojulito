@@ -115,14 +115,13 @@ export async function GET(
     grupoNombre = grupo?.nombre ?? null
   }
 
-  const { data: visa } = await supabase
+  const { data: visasAll } = await supabase
     .from('visas')
     .select('*')
     .eq('cliente_id', id)
-    .neq('estado', 'CANCELADA')
     .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+
+  const visa = (visasAll ?? []).find((v) => v.estado !== 'CANCELADA') ?? null
 
   const { data: pagos } = await supabase
     .from('pagos')
@@ -139,6 +138,7 @@ export async function GET(
   return NextResponse.json({
     cliente: { ...cliente, grupo_familiar_nombre: grupoNombre },
     visa: visa ?? null,
+    visas: (visasAll ?? []).map((v) => ({ id: v.id as string, visa_id: v.visa_id as string, estado: v.estado as string })),
     pagos: pagos ?? [],
     historial: historial ?? [],
   })

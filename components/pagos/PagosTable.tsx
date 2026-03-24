@@ -98,11 +98,14 @@ export default function PagosTable({ pagos }: Props) {
   const [tipoFiltro, setTipoFiltro] = useState<'VISA' | 'SEMINARIO' | ''>('')
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [pendingDeuda, setPendingDeuda] = useState<{ id: string } | null>(null)
   const [pendingPagado, setPendingPagado] = useState<PagoRow | null>(null)
   const [selectedPago, setSelectedPago] = useState<PagoRow | null>(null)
   const [nuevoPagoOpen, setNuevoPagoOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 15
 
   useEffect(() => {
     setRows(pagos)
@@ -116,6 +119,7 @@ export default function PagosTable({ pagos }: Props) {
   }, [errorMsg])
 
   const filtrados = useMemo(() => {
+    setCurrentPage(1)
     return rows.filter((p) => {
       if (estadoFiltro && p.estado !== estadoFiltro) return false
       if (tipoFiltro && p.tipo !== tipoFiltro) return false
@@ -130,6 +134,9 @@ export default function PagosTable({ pagos }: Props) {
       return true
     })
   }, [rows, estadoFiltro, tipoFiltro, busqueda])
+
+  const totalPages = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE))
+  const paginated = filtrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const totalCobrado = useMemo(
     () => filtrados.filter((p) => p.estado === 'PAGADO').reduce((sum, p) => sum + p.monto, 0),
@@ -394,7 +401,7 @@ export default function PagosTable({ pagos }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {filtrados.map((p) => {
+                {paginated.map((p) => {
                   const badgeEstado = BADGE_ESTADO[p.estado]
                   const badgeTipo = BADGE_TIPO[p.tipo]
                   return (
@@ -431,7 +438,13 @@ export default function PagosTable({ pagos }: Props) {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
-                                setOpenDropdownId(openDropdownId === p.id ? null : p.id)
+                                if (openDropdownId === p.id) {
+                                  setOpenDropdownId(null)
+                                } else {
+                                  const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect()
+                                  setDropdownPos({ top: rect.bottom + 4, left: rect.left })
+                                  setOpenDropdownId(p.id)
+                                }
                               }}
                               style={{
                                 background: 'none',
@@ -456,9 +469,9 @@ export default function PagosTable({ pagos }: Props) {
                                 />
                                 <div
                                   style={{
-                                    position: 'absolute',
-                                    top: 'calc(100% + 4px)',
-                                    left: 0,
+                                    position: 'fixed',
+                                    top: dropdownPos.top,
+                                    left: dropdownPos.left,
                                     zIndex: 50,
                                     backgroundColor: '#111f38',
                                     border: '1px solid rgba(255,255,255,0.12)',
@@ -509,6 +522,28 @@ export default function PagosTable({ pagos }: Props) {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+              {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtrados.length)} de {filtrados.length}
+            </span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
+                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === 1 ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                ← Anterior
+              </button>
+              <span style={{ padding: '5px 10px', fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+                {currentPage} / {totalPages}
+              </span>
+              <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === totalPages ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                Siguiente →
+              </button>
+            </div>
           </div>
         )}
 

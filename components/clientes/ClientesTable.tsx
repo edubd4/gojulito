@@ -289,6 +289,8 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
   // Toasts
   const [toasts, setToasts] = useState<Toast[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 15
 
   const addToast = useCallback((message: string, kind: Toast['kind']) => {
     const id = Math.random().toString(36).slice(2)
@@ -306,6 +308,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
     filtroCanal !== 'TODOS'
 
   const clientesFiltrados = useMemo(() => {
+    setCurrentPage(1)
     const q = busqueda.toLowerCase().trim()
     return localRows.filter((c) => {
       if (q && !c.nombre.toLowerCase().includes(q) && !(c.telefono ?? '').includes(q) && !c.gj_id.toLowerCase().includes(q)) {
@@ -318,6 +321,9 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
       return true
     })
   }, [localRows, busqueda, filtroEstadoCliente, filtroEstadoVisa, filtroEstadoPago, filtroCanal])
+
+  const totalPages = Math.max(1, Math.ceil(clientesFiltrados.length / PAGE_SIZE))
+  const clientesPaginados = clientesFiltrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   // Deselect items no longer visible when filters change
   useEffect(() => {
@@ -590,7 +596,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
               </tr>
             </thead>
             <tbody>
-              {clientesFiltrados.map((c) => {
+              {clientesPaginados.map((c) => {
                 const isSelected = selectedIds.has(c.id)
                 return (
                   <tr
@@ -782,6 +788,28 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
               })}
             </tbody>
           </table>
+          </div>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+              {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, clientesFiltrados.length)} de {clientesFiltrados.length}
+            </span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
+                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === 1 ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                ← Anterior
+              </button>
+              <span style={{ padding: '5px 10px', fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+                {currentPage} / {totalPages}
+              </span>
+              <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === totalPages ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                Siguiente →
+              </button>
+            </div>
           </div>
         )}
       </div>
