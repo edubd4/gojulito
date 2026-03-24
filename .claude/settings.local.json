@@ -33,7 +33,8 @@
       "Bash(node:*)",
       "Skill(gsd:execute-phase)",
       "Skill(gsd:update)",
-      "Skill(gsd:plan-phase)"
+      "Skill(gsd:plan-phase)",
+      "Skill(gsd:discuss-phase)"
     ]
   }
 }
