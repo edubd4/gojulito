@@ -87,10 +87,28 @@ Plans:
 - [x] 07-02-PLAN.md — Control de acceso a /configuracion (redirect admin-only + ocultar link sidebar)
 **UI hint**: yes
 
+### Phase 8: Design System Hardening
+**Goal**: Todos los componentes usan exclusivamente clases Tailwind `gj-*` — cero hex hardcodeados, cero `style={}` inline, focus rings visibles en inputs, y el color púrpura de seminarios registrado como token oficial
+**Depends on**: Phase 7
+**Requirements**: DS-01, DS-02, DS-03, DS-04
+**Success Criteria** (what must be TRUE):
+  1. No existen ocurrencias de `style=` con valores de color hex en ningún componente (0 hex literals en style props)
+  2. Todos los colores usan clases `gj-*` de Tailwind: `text-gj-amber`, `bg-gj-card`, `border-gj-input`, etc.
+  3. El color `#a78bfa` está registrado como `gj-seminario` en `tailwind.config.ts`
+  4. Todos los inputs y textareas tienen `focus:ring-2 focus:ring-gj-amber` visible (sin `outline: none` sin reemplazo)
+**Plans**: 5 plans
+Plans:
+- [ ] 08-01-PLAN.md — Add gj-seminario token to tailwind.config.ts
+- [ ] 08-02-PLAN.md — Migrate components/pagos/ (5 files) — BADGE maps + inputStyle + focus rings
+- [ ] 08-03-PLAN.md — Migrate components/clientes/ (6 files) — BADGE maps + conditional error borders
+- [ ] 08-04-PLAN.md — Migrate components/seminarios/ + tramites/ + visas/ (11 files) — hover state refactor + accentColor
+- [ ] 08-05-PLAN.md — Migrate components/configuracion/ + grupos/ + calendario/ + dashboard + app pages
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 → 5 → 6 → 7
+Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -101,3 +119,4 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 5. Seminarios — Asistentes | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 6. Bot Telegram Alfred | v1.2 | 1/1 | Complete | 2026-03-24 |
 | 7. Calendario y Configuracion | v1.2 | 2/2 | Complete   | 2026-03-24 |
+| 8. Design System Hardening | v1.2 | 0/5 | Pending | — |
