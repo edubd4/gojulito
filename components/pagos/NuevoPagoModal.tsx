@@ -5,7 +5,7 @@ import type { EstadoPago } from '@/lib/constants'
 
 interface ClienteOption { id: string; nombre: string; gj_id: string }
 interface VisaOption { id: string; visa_id: string; estado: string }
-interface PagoDeudaInfo { tipo: 'VISA' | 'SEMINARIO'; monto: number }
+interface PagoDeudaInfo { id: string; pago_id: string; tipo: 'VISA' | 'SEMINARIO'; monto: number }
 
 interface Props {
   open: boolean
@@ -49,6 +49,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
   const [estado, setEstado] = useState<EstadoPago>('PAGADO')
   const [fechaVenc, setFechaVenc] = useState('')
   const [notas, setNotas] = useState('')
+  const [resolverDeuda, setResolverDeuda] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -66,6 +67,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
     setNotas('')
     setError('')
     setDeudas([])
+    setResolverDeuda(true)
     void fetch('/api/clientes')
       .then((r) => r.json())
       .then((json: { clientes?: ClienteOption[] }) => setClientes(json.clientes ?? []))
@@ -77,7 +79,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
     if (!clienteId) { setVisas([]); setVisaId(''); setDeudas([]); return }
     void fetch(`/api/clientes/${clienteId}`)
       .then((r) => r.json())
-      .then((json: { visas?: VisaOption[]; pagos?: { tipo: string; estado: string; monto: number }[] }) => {
+      .then((json: { visas?: VisaOption[]; pagos?: { id: string; pago_id: string; tipo: string; estado: string; monto: number }[] }) => {
         const activas = (json.visas ?? []).filter(
           (v) => !['CANCELADA', 'RECHAZADA'].includes(v.estado)
         )
@@ -85,8 +87,9 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
         setVisaId(activas[0]?.id ?? '')
         const deudasActivas = (json.pagos ?? [])
           .filter((p) => p.estado === 'DEUDA' || p.estado === 'PENDIENTE')
-          .map((p) => ({ tipo: p.tipo as 'VISA' | 'SEMINARIO', monto: p.monto }))
+          .map((p) => ({ id: p.id, pago_id: p.pago_id, tipo: p.tipo as 'VISA' | 'SEMINARIO', monto: p.monto }))
         setDeudas(deudasActivas)
+        setResolverDeuda(true)
       })
       .catch(() => {})
   }, [clienteId])
@@ -100,22 +103,40 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
     setLoading(true)
     setError('')
     try {
-      const body: Record<string, unknown> = {
-        cliente_id: clienteId,
-        tipo,
-        monto: montoNum,
-        fecha_pago: fechaPago,
-        estado,
-      }
-      if (tipo === 'VISA') body.visa_id = visaId
-      if (estado === 'DEUDA' && fechaVenc) body.fecha_vencimiento_deuda = fechaVenc
-      if (notas.trim()) body.notas = notas.trim()
+      const deudaDelTipo = deudas.find((d) => d.tipo === tipo)
+      const usarPatch = resolverDeuda && estado === 'PAGADO' && !!deudaDelTipo
 
-      const res = await fetch('/api/pagos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
+      let res: Response
+      if (usarPatch) {
+        res = await fetch(`/api/pagos/${deudaDelTipo!.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            estado: 'PAGADO',
+            monto: montoNum,
+            fecha_pago: fechaPago,
+            ...(notas.trim() ? { notas: notas.trim() } : {}),
+          }),
+        })
+      } else {
+        const body: Record<string, unknown> = {
+          cliente_id: clienteId,
+          tipo,
+          monto: montoNum,
+          fecha_pago: fechaPago,
+          estado,
+        }
+        if (tipo === 'VISA') body.visa_id = visaId
+        if (estado === 'DEUDA' && fechaVenc) body.fecha_vencimiento_deuda = fechaVenc
+        if (notas.trim()) body.notas = notas.trim()
+
+        res = await fetch('/api/pagos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+      }
+
       const json = await res.json() as { data?: unknown; error?: string }
       if (!res.ok || json.error) { setError(json.error ?? 'Error al registrar'); return }
       onSuccess()
@@ -175,36 +196,67 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           </div>
 
           {/* Deuda pendiente del cliente */}
-          {clienteId && deudas.length > 0 && (
-            <div style={{
-              backgroundColor: 'rgba(232,90,90,0.08)',
-              border: '1px solid rgba(232,90,90,0.25)',
-              borderRadius: 8,
-              padding: '10px 12px',
-              fontSize: 13,
-              fontFamily: 'DM Sans, sans-serif',
-            }}>
-              <div style={{ color: '#e85a5a', fontWeight: 600, marginBottom: 6 }}>Saldo pendiente</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {(['VISA', 'SEMINARIO'] as const).map((t) => {
-                  const total = deudas.filter((d) => d.tipo === t).reduce((s, d) => s + d.monto, 0)
-                  if (total === 0) return null
-                  return (
-                    <div key={t} style={{ display: 'flex', justifyContent: 'space-between', color: '#9ba8bb' }}>
-                      <span>{t === 'VISA' ? 'Visa' : 'Seminario'}</span>
-                      <span style={{ color: '#e85a5a', fontWeight: 600 }}>${total.toLocaleString('es-AR')}</span>
+          {clienteId && deudas.length > 0 && (() => {
+            const deudaDelTipo = deudas.find((d) => d.tipo === tipo)
+            const otrasDeudas = deudas.filter((d) => d.tipo !== tipo)
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {/* Panel de resolución de deuda del mismo tipo */}
+                {deudaDelTipo && estado === 'PAGADO' && (
+                  <div style={{
+                    backgroundColor: 'rgba(232,160,32,0.08)',
+                    border: '1px solid rgba(232,160,32,0.3)',
+                    borderRadius: 8,
+                    padding: '10px 12px',
+                    fontSize: 13,
+                    fontFamily: 'DM Sans, sans-serif',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                      <div>
+                        <div style={{ color: '#e8a020', fontWeight: 600, marginBottom: 2 }}>Deuda pendiente ({deudaDelTipo.pago_id})</div>
+                        <div style={{ color: '#9ba8bb' }}>
+                          ${deudaDelTipo.monto.toLocaleString('es-AR')} — {deudaDelTipo.tipo === 'VISA' ? 'Visa' : 'Seminario'}
+                        </div>
+                      </div>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', flexShrink: 0 }}>
+                        <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>Cancelar deuda</span>
+                        <input
+                          type="checkbox"
+                          checked={resolverDeuda}
+                          onChange={(e) => setResolverDeuda(e.target.checked)}
+                          style={{ width: 16, height: 16, accentColor: '#e8a020', cursor: 'pointer' }}
+                        />
+                      </label>
                     </div>
-                  )
-                })}
-                {deudas.length > 1 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(232,90,90,0.2)', paddingTop: 4, marginTop: 2 }}>
-                    <span style={{ color: '#9ba8bb' }}>Total</span>
-                    <span style={{ color: '#e85a5a', fontWeight: 700 }}>${deudas.reduce((s, d) => s + d.monto, 0).toLocaleString('es-AR')}</span>
+                    {resolverDeuda && (
+                      <div style={{ marginTop: 6, fontSize: 12, color: '#e8a020' }}>
+                        El pago actualizará {deudaDelTipo.pago_id} a PAGADO
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/* Otras deudas de distinto tipo */}
+                {otrasDeudas.length > 0 && (
+                  <div style={{
+                    backgroundColor: 'rgba(232,90,90,0.08)',
+                    border: '1px solid rgba(232,90,90,0.25)',
+                    borderRadius: 8,
+                    padding: '10px 12px',
+                    fontSize: 13,
+                    fontFamily: 'DM Sans, sans-serif',
+                  }}>
+                    <div style={{ color: '#e85a5a', fontWeight: 600, marginBottom: 4 }}>Otras deudas</div>
+                    {otrasDeudas.map((d) => (
+                      <div key={d.id} style={{ display: 'flex', justifyContent: 'space-between', color: '#9ba8bb' }}>
+                        <span>{d.pago_id} — {d.tipo === 'VISA' ? 'Visa' : 'Seminario'}</span>
+                        <span style={{ color: '#e85a5a', fontWeight: 600 }}>${d.monto.toLocaleString('es-AR')}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* Tipo */}
           <div>
