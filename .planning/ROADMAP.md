@@ -87,9 +87,28 @@ Plans:
 - [x] 07-02-PLAN.md — Control de acceso a /configuracion (redirect admin-only + ocultar link sidebar)
 **UI hint**: yes
 
-### Phase 8: Design System Hardening
-**Goal**: Todos los componentes usan exclusivamente clases Tailwind `gj-*` — cero hex hardcodeados, cero `style={}` inline, focus rings visibles en inputs, y el color púrpura de seminarios registrado como token oficial
+### Phase 8: Fixes Julito Feedback
+**Goal**: Corregir los problemas operativos reportados por Julito Correa tras el uso en producción — estado ACTIVO por defecto, validación real de pagos de visa, cards del dashboard navegables, registro en un paso desde VISA, y pago + deuda simultáneos
 **Depends on**: Phase 7
+**Requirements**: FIX-01, FIX-02, FIX-03, FIX-04, FIX-05, FIX-06
+**Success Criteria** (what must be TRUE):
+  1. Al crear un cliente (dashboard o bot), el estado siempre es ACTIVO — el bot nunca pregunta el estado
+  2. Un pago de tipo VISA falla con error descriptivo si el cliente no tiene visa registrada
+  3. Las 4 cards del dashboard son clickeables y navegan a la sección correspondiente
+  4. Desde /tramites se puede crear un cliente nuevo y su visa en un solo modal sin ir a /clientes
+  5. En NuevoPagoModal se puede registrar un pago PAGADO y una DEUDA en el mismo submit
+  6. Los dropdowns de estado de cliente solo muestran ACTIVO y FINALIZADO
+**Plans**: 4 plans
+Plans:
+- [x] 08-01-PLAN.md — FIX-01 + FIX-02: Estado ACTIVO default + validación real visa_id en pagos
+- [x] 08-02-PLAN.md — FIX-03 + FIX-04: Cards clickeables + simplificar estados de cliente en UI
+- [x] 08-03-PLAN.md — FIX-05: Registro en un paso desde sección VISA (IniciarVisaModal con modo nuevo cliente)
+- [x] 08-04-PLAN.md — FIX-06: Pago + Deuda simultáneos en NuevoPagoModal
+**UI hint**: yes
+
+### Phase 9: Design System Hardening
+**Goal**: Todos los componentes usan exclusivamente clases Tailwind `gj-*` — cero hex hardcodeados, cero `style={}` inline, focus rings visibles en inputs, y el color púrpura de seminarios registrado como token oficial
+**Depends on**: Phase 8
 **Requirements**: DS-01, DS-02, DS-03, DS-04
 **Success Criteria** (what must be TRUE):
   1. No existen ocurrencias de `style=` con valores de color hex en ningún componente (0 hex literals en style props)
@@ -98,11 +117,11 @@ Plans:
   4. Todos los inputs y textareas tienen `focus:ring-2 focus:ring-gj-amber` visible (sin `outline: none` sin reemplazo)
 **Plans**: 5 plans
 Plans:
-- [ ] 08-01-PLAN.md — Add gj-seminario token to tailwind.config.ts
-- [ ] 08-02-PLAN.md — Migrate components/pagos/ (5 files) — BADGE maps + inputStyle + focus rings
-- [ ] 08-03-PLAN.md — Migrate components/clientes/ (6 files) — BADGE maps + conditional error borders
-- [ ] 08-04-PLAN.md — Migrate components/seminarios/ + tramites/ + visas/ (11 files) — hover state refactor + accentColor
-- [ ] 08-05-PLAN.md — Migrate components/configuracion/ + grupos/ + calendario/ + dashboard + app pages
+- [ ] 09-01-PLAN.md — Add gj-seminario token to tailwind.config.ts
+- [ ] 09-02-PLAN.md — Migrate components/pagos/ (5 files) — BADGE maps + inputStyle + focus rings
+- [ ] 09-03-PLAN.md — Migrate components/clientes/ (6 files) — BADGE maps + conditional error borders
+- [ ] 09-04-PLAN.md — Migrate components/seminarios/ + tramites/ + visas/ (11 files) — hover state refactor + accentColor
+- [ ] 09-05-PLAN.md — Migrate components/configuracion/ + grupos/ + calendario/ + dashboard + app pages
 **UI hint**: yes
 
 ## Progress
@@ -115,8 +134,9 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 | 1. Data Integrity | v1.1 | 2/2 | Complete | 2026-03-21 |
 | 2. Validation Layer | v1.1 | 3/3 | Complete | 2026-03-22 |
 | 3. Error Feedback | v1.1 | 1/1 | Complete | 2026-03-22 |
-| 4. Seminarios — Core | v1.2 | 1/1 | Complete   | 2026-03-23 |
+| 4. Seminarios — Core | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 5. Seminarios — Asistentes | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 6. Bot Telegram Alfred | v1.2 | 1/1 | Complete | 2026-03-24 |
-| 7. Calendario y Configuracion | v1.2 | 2/2 | Complete   | 2026-03-24 |
-| 8. Design System Hardening | v1.2 | 0/5 | Pending | — |
+| 7. Calendario y Configuracion | v1.2 | 2/2 | Complete | 2026-03-24 |
+| 8. Fixes Julito Feedback | v1.2 | 4/4 | Complete | 2026-03-28 |
+| 9. Design System Hardening | v1.2 | 0/5 | Pending | — |
