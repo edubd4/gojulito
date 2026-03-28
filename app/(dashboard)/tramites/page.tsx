@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
 import TramitesTable, { type TramiteRow } from '@/components/tramites/TramitesTable'
+import { NuevoTramiteButton } from '@/components/visas/NuevoTramiteModal'
 import type { EstadoVisa } from '@/lib/constants'
 
 export default async function TramitesPage() {
@@ -68,21 +69,24 @@ export default async function TramitesPage() {
         fontFamily: 'DM Sans, sans-serif',
       }}
     >
-      <div style={{ marginBottom: 24 }}>
-        <h1
-          style={{
-            fontFamily: 'Fraunces, serif',
-            fontSize: 28,
-            fontWeight: 700,
-            color: '#e8e6e0',
-            margin: '0 0 4px',
-          }}
-        >
-          Trámites
-        </h1>
-        <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
-          {tramites.length} trámite{tramites.length !== 1 ? 's' : ''} en total
-        </p>
+      <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+        <div>
+          <h1
+            style={{
+              fontFamily: 'Fraunces, serif',
+              fontSize: 28,
+              fontWeight: 700,
+              color: '#e8e6e0',
+              margin: '0 0 4px',
+            }}
+          >
+            Trámites
+          </h1>
+          <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
+            {tramites.length} trámite{tramites.length !== 1 ? 's' : ''} en total
+          </p>
+        </div>
+        <NuevoTramiteButton />
       </div>
 
       <TramitesTable tramites={tramites} grupos={grupos} isAdmin={isAdmin} />

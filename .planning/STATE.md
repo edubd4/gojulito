@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada
-status: Milestone complete
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-03-24T23:06:33.669Z"
+status: In progress
+stopped_at: Completed 08-02-PLAN
+last_updated: "2026-03-28T00:00:00.000Z"
 progress:
-  total_phases: 4
+  total_phases: 6
   completed_phases: 4
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 9
+  completed_plans: 7
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 07 — calendario-y-configuracion
+**Current focus:** Phase 08 — fixes-julito
 
 ## Current Position
 
-Phase: 07
-Plan: Not started
+Phase: 08
+Plan: 03 (next)
 
 ## Performance Metrics
 
