@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import type { EstadoCliente, CanalIngreso } from '@/lib/constants'
+import type { CanalIngreso } from '@/lib/constants'
 import { PROVINCIAS_ARGENTINA } from '@/lib/provincias'
 
 interface ClienteDuplicado {
@@ -40,16 +40,8 @@ interface FormState {
   fecha_nac: string
   provincia: string
   canal: CanalIngreso | ''
-  estado: EstadoCliente
   grupo_familiar_id: string
   observaciones: string
-}
-
-const ESTADO_COLORS: Record<EstadoCliente, { color: string; bg: string }> = {
-  ACTIVO:     { color: '#22c97a', bg: 'rgba(34,201,122,0.2)'  },
-  PROSPECTO:  { color: '#e8a020', bg: 'rgba(232,160,32,0.2)'  },
-  FINALIZADO: { color: '#9ba8bb', bg: 'rgba(155,168,187,0.2)' },
-  INACTIVO:   { color: '#9ba8bb', bg: 'rgba(155,168,187,0.2)' },
 }
 
 const EMPTY_FORM: FormState = {
@@ -60,7 +52,6 @@ const EMPTY_FORM: FormState = {
   fecha_nac: '',
   provincia: '',
   canal: '',
-  estado: 'PROSPECTO',
   grupo_familiar_id: '',
   observaciones: '',
 }
@@ -144,7 +135,7 @@ export default function NuevoClienteModal({
         nombre: form.nombre.trim(),
         telefono: form.telefono.trim(),
         canal: form.canal as CanalIngreso,
-        estado: form.estado,
+        // estado no se envía — el server siempre crea como ACTIVO (FIX-01)
       }
       if (form.email.trim()) body.email = form.email.trim()
       if (form.dni.trim()) body.dni = form.dni.trim()
@@ -185,8 +176,6 @@ export default function NuevoClienteModal({
       setLoading(false)
     }
   }
-
-  const estadoActual = ESTADO_COLORS[form.estado]
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -431,40 +420,6 @@ export default function NuevoClienteModal({
                     {errors.canal}
                   </span>
                 )}
-              </div>
-
-              {/* Estado */}
-              <div>
-                <label style={labelStyle}>Estado cliente</label>
-                <div style={{ position: 'relative' }}>
-                  <span
-                    style={{
-                      position: 'absolute',
-                      left: 10,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      backgroundColor: estadoActual.color,
-                      pointerEvents: 'none',
-                    }}
-                  />
-                  <select
-                    style={{
-                      ...inputStyle,
-                      paddingLeft: 26,
-                      cursor: 'pointer',
-                    }}
-                    value={form.estado}
-                    onChange={(e) => set('estado', e.target.value as EstadoCliente)}
-                  >
-                    <option value="PROSPECTO">Prospecto</option>
-                    <option value="ACTIVO">Activo</option>
-                    <option value="FINALIZADO">Finalizado</option>
-                    <option value="INACTIVO">Inactivo</option>
-                  </select>
-                </div>
               </div>
 
               {/* Grupo familiar */}

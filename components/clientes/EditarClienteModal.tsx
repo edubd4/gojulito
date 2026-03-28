@@ -220,7 +220,7 @@ export default function EditarClienteModal({
     await submitPatch()
   }
 
-  const estadoColor = ESTADO_COLORS[form.estado]
+  const estadoColor = ESTADO_COLORS[form.estado] ?? ESTADO_COLORS['ACTIVO']
 
   return (
     <>
@@ -545,13 +545,15 @@ export default function EditarClienteModal({
                     />
                     <select
                       style={{ ...inputStyle, paddingLeft: 26, cursor: 'pointer' }}
-                      value={form.estado}
+                      value={form.estado === 'PROSPECTO' ? 'ACTIVO' : form.estado === 'INACTIVO' ? 'INACTIVO' : form.estado}
                       onChange={(e) => setField('estado', e.target.value as EstadoCliente)}
                     >
-                      <option value="PROSPECTO">Prospecto</option>
                       <option value="ACTIVO">Activo</option>
                       <option value="FINALIZADO">Finalizado</option>
-                      <option value="INACTIVO">Inactivo</option>
+                      {/* INACTIVO solo visible si el cliente ya es inactivo (soft-delete) */}
+                      {(form.estado === 'INACTIVO') && (
+                        <option value="INACTIVO" disabled>Inactivo</option>
+                      )}
                     </select>
                   </div>
                 </div>

@@ -194,6 +194,7 @@ export default async function DashboardPage() {
       label: 'Clientes activos',
       value: clientesActivos ?? 0,
       color: '#22c97a',
+      href: '/clientes',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
@@ -205,6 +206,7 @@ export default async function DashboardPage() {
       label: 'Visas en proceso',
       value: visasEnProceso,
       color: '#e8a020',
+      href: '/tramites',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
@@ -215,6 +217,7 @@ export default async function DashboardPage() {
       label: 'Turnos esta semana',
       value: turnos.length,
       color: '#4a9eff',
+      href: '/calendario',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
@@ -226,6 +229,7 @@ export default async function DashboardPage() {
       label: 'Deudas próximas',
       value: deudas.length,
       color: '#e85a5a',
+      href: '/pagos',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -267,15 +271,20 @@ export default async function DashboardPage() {
 
       {/* ── Métricas ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {METRIC_CARDS.map(({ label, value, color, icon }) => (
-          <div
+        {METRIC_CARDS.map(({ label, value, color, href, icon }) => (
+          <Link
             key={label}
+            href={href}
             style={{
               backgroundColor: '#111f38',
               borderRadius: 12,
               padding: '20px 24px',
               border: `1px solid ${color}28`,
+              textDecoration: 'none',
+              display: 'block',
+              transition: 'border-color 0.15s ease, background-color 0.15s ease',
             }}
+            className="hover:brightness-110"
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <span style={{ fontSize: 12, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -295,7 +304,7 @@ export default async function DashboardPage() {
             >
               {value}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
 
