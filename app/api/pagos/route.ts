@@ -26,6 +26,21 @@ export async function POST(req: NextRequest) {
 
   const supabase = await createServiceRoleClient()
 
+  // FIX-02: Validar que visa_id existe y pertenece al cliente
+  if (body.visa_id) {
+    const { data: visa } = await supabase
+      .from('visas')
+      .select('id, cliente_id')
+      .eq('id', body.visa_id)
+      .single()
+    if (!visa) {
+      return NextResponse.json({ data: null, error: 'La visa indicada no existe. Primero registrá el trámite de visa para este cliente.' }, { status: 404 })
+    }
+    if (visa.cliente_id !== body.cliente_id) {
+      return NextResponse.json({ data: null, error: 'La visa no pertenece a este cliente.' }, { status: 422 })
+    }
+  }
+
   // Generate next pago_id via atomic RPC function (no race condition)
   const { data: newId, error: idError } = await supabase.rpc('generate_readable_id', {
     prefix: 'PAG',

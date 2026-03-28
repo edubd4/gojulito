@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     nombre: body.nombre.trim(),
     telefono: body.telefono.trim(),
     canal: body.canal,
-    estado: body.estado,
+    estado: 'ACTIVO', // siempre ACTIVO al crear — FIX-01
   }
 
   if (body.email?.trim()) insert.email = body.email.trim()
