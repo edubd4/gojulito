@@ -492,10 +492,8 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado cliente</option>
-          <option value="PROSPECTO">Prospecto</option>
           <option value="ACTIVO">Activo</option>
           <option value="FINALIZADO">Finalizado</option>
-          <option value="INACTIVO">Inactivo</option>
         </select>
 
         <select
@@ -704,9 +702,14 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         onChange={(e) => void handleInlinePatch(c.id, 'estado', e.target.value)}
                         style={{ backgroundColor: BADGE_ESTADO_CLIENTE[c.estado].bg, color: BADGE_ESTADO_CLIENTE[c.estado].color, border: `1px solid ${BADGE_ESTADO_CLIENTE[c.estado].color}40`, borderRadius: 6, padding: '3px 6px', fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', outline: 'none' }}
                       >
-                        {(['ACTIVO', 'PROSPECTO', 'FINALIZADO', 'INACTIVO'] as const).map((opt) => (
+                        {/* Solo ACTIVO y FINALIZADO visibles — FIX-04 */}
+                        {(['ACTIVO', 'FINALIZADO'] as const).map((opt) => (
                           <option key={opt} value={opt} style={{ backgroundColor: '#172645', color: '#e8e6e0' }}>{BADGE_ESTADO_CLIENTE[opt].label}</option>
                         ))}
+                        {/* Mostrar estado actual si es PROSPECTO o INACTIVO (sólo lectura) */}
+                        {(c.estado === 'PROSPECTO' || c.estado === 'INACTIVO') && (
+                          <option value={c.estado} style={{ backgroundColor: '#172645', color: '#e8e6e0' }}>{BADGE_ESTADO_CLIENTE[c.estado].label}</option>
+                        )}
                       </select>
                     </td>
                     <td className="px-3 py-3">
@@ -856,10 +859,8 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Cambiar estado cliente</option>
-          <option value="PROSPECTO">Prospecto</option>
           <option value="ACTIVO">Activo</option>
           <option value="FINALIZADO">Finalizado</option>
-          <option value="INACTIVO">Inactivo</option>
         </select>
 
         {/* Cambiar estado pago */}
