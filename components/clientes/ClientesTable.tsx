@@ -55,35 +55,34 @@ interface Toast {
 
 // ─── Badge data ───────────────────────────────────────────────────────────────
 
-const BADGE_ESTADO_CLIENTE: Record<EstadoCliente, { label: string; color: string; bg: string }> = {
-  ACTIVO:    { label: 'Activo',     color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  PROSPECTO: { label: 'Prospecto',  color: '#e8a020', bg: 'rgba(232,160,32,0.15)' },
-  FINALIZADO:{ label: 'Finalizado', color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
-  INACTIVO:  { label: 'Inactivo',   color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_ESTADO_CLIENTE: Record<EstadoCliente, { label: string; classes: string }> = {
+  ACTIVO:     { label: 'Activo',     classes: 'text-gj-green bg-gj-green/15'       },
+  PROSPECTO:  { label: 'Prospecto',  classes: 'text-gj-secondary bg-gj-secondary/15' },
+  FINALIZADO: { label: 'Finalizado', classes: 'text-gj-blue bg-gj-blue/15'         },
+  INACTIVO:   { label: 'Inactivo',   classes: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
-const BADGE_ESTADO_VISA: Record<EstadoVisa, { label: string; color: string; bg: string }> = {
-  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  APROBADA:       { label: 'Aprobada',        color: '#22c97a', bg: 'rgba(34,201,122,0.15)' },
-  RECHAZADA:      { label: 'Rechazada',       color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'  },
-  PAUSADA:        { label: 'Pausada',         color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'  },
-  CANCELADA:      { label: 'Cancelada',       color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_ESTADO_VISA: Record<EstadoVisa, { label: string; classes: string }> = {
+  EN_PROCESO:     { label: 'En proceso',     classes: 'text-gj-amber bg-gj-amber/15'       },
+  TURNO_ASIGNADO: { label: 'Turno asignado', classes: 'text-gj-blue bg-gj-blue/15'         },
+  APROBADA:       { label: 'Aprobada',       classes: 'text-gj-green bg-gj-green/15'       },
+  RECHAZADA:      { label: 'Rechazada',      classes: 'text-gj-red bg-gj-red/15'           },
+  PAUSADA:        { label: 'Pausada',        classes: 'text-gj-red bg-gj-red/15'           },
+  CANCELADA:      { label: 'Cancelada',      classes: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
-const BADGE_ESTADO_PAGO: Record<EstadoPago, { label: string; color: string; bg: string }> = {
-  PAGADO:   { label: 'Pagado',   color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  DEUDA:    { label: 'Deuda',    color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'  },
-  PENDIENTE:{ label: 'Pendiente',color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_ESTADO_PAGO: Record<EstadoPago, { label: string; classes: string }> = {
+  PAGADO:    { label: 'Pagado',    classes: 'text-gj-green bg-gj-green/15'       },
+  DEUDA:     { label: 'Deuda',     classes: 'text-gj-red bg-gj-red/15'           },
+  PENDIENTE: { label: 'Pendiente', classes: 'text-gj-amber bg-gj-amber/15'       },
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function Badge({ color, bg, label }: { color: string; bg: string; label: string }) {
+function Badge({ classes, label }: { classes: string; label: string }) {
   return (
     <span
-      className="inline-block px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap"
-      style={{ color, backgroundColor: bg, fontFamily: 'DM Sans, sans-serif' }}
+      className={`inline-block px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap font-sans ${classes}`}
     >
       {label}
     </span>
@@ -92,33 +91,16 @@ function Badge({ color, bg, label }: { color: string; bg: string; label: string 
 
 function ToastContainer({ toasts }: { toasts: Toast[] }) {
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: 80,
-        right: 24,
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        pointerEvents: 'none',
-      }}
-    >
+    <div className="fixed bottom-20 right-6 z-[9999] flex flex-col gap-2 pointer-events-none">
       {toasts.map((t) => (
         <div
           key={t.id}
-          style={{
-            backgroundColor: '#111f38',
-            border: `1px solid ${t.kind === 'success' ? '#22c97a' : '#e85a5a'}`,
-            color: t.kind === 'success' ? '#22c97a' : '#e85a5a',
-            borderRadius: 8,
-            padding: '10px 16px',
-            fontSize: 13,
-            fontFamily: 'DM Sans, sans-serif',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-            maxWidth: 320,
-            pointerEvents: 'auto',
-          }}
+          className={`bg-gj-card rounded-lg px-4 py-2.5 text-[13px] font-sans max-w-[320px] pointer-events-auto ${
+            t.kind === 'success'
+              ? 'border border-gj-green text-gj-green'
+              : 'border border-gj-red text-gj-red'
+          }`}
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}
         >
           {t.message}
         </div>
@@ -153,69 +135,35 @@ function ConfirmModal({
     mensaje = `¿Eliminar a "${action.nombre}" permanentemente? Esta acción no se puede deshacer.`
   }
 
+  const isDelete = action.type === 'eliminar' || action.type === 'eliminar-individual'
+
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        zIndex: 10000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      className="fixed inset-0 bg-black/[60%] z-[10000] flex items-center justify-center"
       onClick={onCancel}
     >
       <div
-        style={{
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 12,
-          padding: '28px 32px',
-          maxWidth: 440,
-          width: '90%',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="bg-gj-card border border-white/10 rounded-xl px-8 py-7 max-w-[440px] w-[90%] font-sans"
+        style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <p style={{ color: '#e8e6e0', fontSize: 15, lineHeight: 1.6, marginBottom: 24 }}>
+        <p className="text-gj-text text-[15px] leading-relaxed mb-6">
           {mensaje}
         </p>
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+        <div className="flex gap-2.5 justify-end">
           <button
             onClick={onCancel}
             disabled={loading}
-            style={{
-              padding: '8px 18px',
-              borderRadius: 8,
-              border: '1px solid rgba(255,255,255,0.15)',
-              backgroundColor: 'transparent',
-              color: '#9ba8bb',
-              fontSize: 13,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className={`px-[18px] py-2 rounded-lg border border-white/[15%] bg-transparent text-gj-secondary text-[13px] font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
           >
             Cancelar
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            style={{
-              padding: '8px 18px',
-              borderRadius: 8,
-              border: 'none',
-              backgroundColor: action.type === 'eliminar' || action.type === 'eliminar-individual'
-                ? '#e85a5a'
-                : '#e8a020',
-              color: '#0b1628',
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className={`px-[18px] py-2 rounded-lg border-none text-gj-bg text-[13px] font-semibold font-sans ${
+              isDelete ? 'bg-gj-red' : 'bg-gj-amber'
+            } ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
           >
             {loading ? 'Procesando...' : 'Confirmar'}
           </button>
@@ -547,20 +495,19 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
       {/* Tabla */}
       <div
-        className="rounded-xl overflow-hidden"
-        style={{ backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.07)' }}
+        className="rounded-xl overflow-hidden bg-gj-card border border-white/[7%]"
       >
         {clientesFiltrados.length === 0 ? (
           <div className="py-16 text-center">
-            <p style={{ color: '#9ba8bb', fontSize: 14 }}>
+            <p className="text-gj-secondary text-sm">
               Sin clientes para los filtros seleccionados
             </p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm" style={{ minWidth: 600 }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <tr className="border-b border-white/[8%]">
                 <th className="w-10 px-4 py-3 text-left">
                   <input
                     type="checkbox"
@@ -569,7 +516,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       if (el) el.indeterminate = someVisibleSelected
                     }}
                     onChange={toggleSelectAll}
-                    style={{ cursor: 'pointer', accentColor: '#e8a020' }}
+                    className="cursor-pointer accent-gj-amber"
                   />
                 </th>
                 {[
@@ -585,8 +532,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                 ].map((col) => (
                   <th
                     key={col}
-                    className="px-3 py-3 text-left font-medium whitespace-nowrap"
-                    style={{ color: '#9ba8bb', fontSize: 12 }}
+                    className="px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs"
                   >
                     {col}
                   </th>
@@ -623,14 +569,14 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelectOne(c.id)}
-                        style={{ cursor: 'pointer', accentColor: '#e8a020' }}
+                        className="cursor-pointer accent-gj-amber"
                       />
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb', fontSize: 12 }}>
+                    <td className="px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
                       {c.gj_id}
                     </td>
                     {/* Nombre — editable inline */}
-                    <td className="px-3 py-3 font-medium" style={{ color: '#e8e6e0' }}
+                    <td className="px-3 py-3 font-medium text-gj-text"
                       onClick={(e) => {
                         e.stopPropagation()
                         setEditingCell({ id: c.id, field: 'nombre' })
@@ -650,14 +596,14 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                           }}
                           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
                           onClick={(e) => e.stopPropagation()}
-                          style={{ backgroundColor: '#172645', color: '#e8e6e0', border: '1px solid rgba(74,158,255,0.5)', borderRadius: 6, padding: '3px 8px', fontSize: 14, fontFamily: 'DM Sans, sans-serif', outline: 'none', minWidth: 120 }}
+                          className="bg-gj-input text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-sm font-sans outline-none min-w-[120px]"
                         />
                       ) : (
-                        <span style={{ borderBottom: '1px dashed rgba(255,255,255,0.2)', cursor: 'text' }}>{c.nombre}</span>
+                        <span className="border-b border-dashed border-white/20 cursor-text">{c.nombre}</span>
                       )}
                     </td>
                     {/* Teléfono — editable inline */}
-                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb' }}
+                    <td className="px-3 py-3 whitespace-nowrap text-gj-secondary"
                       onClick={(e) => {
                         e.stopPropagation()
                         setEditingCell({ id: c.id, field: 'telefono' })
@@ -677,10 +623,10 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                           }}
                           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
                           onClick={(e) => e.stopPropagation()}
-                          style={{ backgroundColor: '#172645', color: '#e8e6e0', border: '1px solid rgba(74,158,255,0.5)', borderRadius: 6, padding: '3px 8px', fontSize: 13, fontFamily: 'DM Sans, sans-serif', outline: 'none', minWidth: 110 }}
+                          className="bg-gj-input text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-[13px] font-sans outline-none min-w-[110px]"
                         />
                       ) : (
-                        <span style={{ borderBottom: '1px dashed rgba(255,255,255,0.2)', cursor: 'text' }}>{c.telefono ?? '—'}</span>
+                        <span className="border-b border-dashed border-white/20 cursor-text">{c.telefono ?? '—'}</span>
                       )}
                     </td>
                     {/* Canal — dropdown inline */}
@@ -688,7 +634,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       <select
                         value={c.canal}
                         onChange={(e) => void handleInlinePatch(c.id, 'canal', e.target.value)}
-                        style={{ backgroundColor: '#172645', color: '#9ba8bb', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, padding: '3px 6px', fontSize: 13, fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', outline: 'none' }}
+                        className="bg-gj-input text-gj-secondary border border-white/[8%] rounded-md px-1.5 py-[3px] text-[13px] font-sans cursor-pointer outline-none"
                       >
                         {(['SEMINARIO', 'WHATSAPP', 'INSTAGRAM', 'REFERIDO', 'CHARLA', 'OTRO'] as const).map((opt) => (
                           <option key={opt} value={opt}>{opt.charAt(0) + opt.slice(1).toLowerCase()}</option>
@@ -700,15 +646,15 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       <select
                         value={c.estado}
                         onChange={(e) => void handleInlinePatch(c.id, 'estado', e.target.value)}
-                        style={{ backgroundColor: BADGE_ESTADO_CLIENTE[c.estado].bg, color: BADGE_ESTADO_CLIENTE[c.estado].color, border: `1px solid ${BADGE_ESTADO_CLIENTE[c.estado].color}40`, borderRadius: 6, padding: '3px 6px', fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', outline: 'none' }}
+                        className="bg-gj-input text-gj-text border border-white/10 rounded-md px-1.5 py-0.5 text-xs font-semibold cursor-pointer font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                       >
                         {/* Solo ACTIVO y FINALIZADO visibles — FIX-04 */}
                         {(['ACTIVO', 'FINALIZADO'] as const).map((opt) => (
-                          <option key={opt} value={opt} style={{ backgroundColor: '#172645', color: '#e8e6e0' }}>{BADGE_ESTADO_CLIENTE[opt].label}</option>
+                          <option key={opt} value={opt} className="bg-gj-input text-gj-text">{BADGE_ESTADO_CLIENTE[opt].label}</option>
                         ))}
                         {/* Mostrar estado actual si es PROSPECTO o INACTIVO (sólo lectura) */}
                         {(c.estado === 'PROSPECTO' || c.estado === 'INACTIVO') && (
-                          <option value={c.estado} style={{ backgroundColor: '#172645', color: '#e8e6e0' }}>{BADGE_ESTADO_CLIENTE[c.estado].label}</option>
+                          <option value={c.estado} className="bg-gj-input text-gj-text">{BADGE_ESTADO_CLIENTE[c.estado].label}</option>
                         )}
                       </select>
                     </td>
@@ -716,17 +662,17 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       {c.estado_visa ? (
                         <Badge {...BADGE_ESTADO_VISA[c.estado_visa]} />
                       ) : (
-                        <span style={{ color: '#9ba8bb' }}>—</span>
+                        <span className="text-gj-secondary">—</span>
                       )}
                     </td>
                     <td className="px-3 py-3">
                       {c.estado_pago ? (
                         <Badge {...BADGE_ESTADO_PAGO[c.estado_pago]} />
                       ) : (
-                        <span style={{ color: '#9ba8bb' }}>—</span>
+                        <span className="text-gj-secondary">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: '#9ba8bb', fontSize: 12 }}>
+                    <td className="px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
                       {formatFecha(c.created_at)}
                     </td>
                     <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
@@ -734,7 +680,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         <Link
                           href={`/clientes/${c.id}`}
                           title="Ver detalle"
-                          style={{ color: '#4a9eff', textDecoration: 'none' }}
+                          className="text-gj-blue no-underline"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -745,15 +691,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                           title="Editar"
                           onClick={() => abrirEdicion(c.id)}
                           disabled={fetchingEdit}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: 0,
-                            cursor: fetchingEdit ? 'wait' : 'pointer',
-                            color: '#4a9eff',
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
+                          className={`bg-transparent border-none p-0 text-gj-blue flex items-center ${fetchingEdit ? 'cursor-wait' : 'cursor-pointer'}`}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -766,15 +704,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                             onClick={() =>
                               setPendingAction({ type: 'eliminar-individual', id: c.id, nombre: c.nombre })
                             }
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              padding: 0,
-                              cursor: 'pointer',
-                              color: '#e85a5a',
-                              display: 'flex',
-                              alignItems: 'center',
-                            }}
+                            className="bg-transparent border-none p-0 cursor-pointer text-gj-red flex items-center"
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="3 6 5 6 21 6" />
@@ -796,20 +726,20 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-            <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+          <div className="border-t border-white/[6%] px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+            <span className="text-xs text-gj-secondary font-sans">
               {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, clientesFiltrados.length)} de {clientesFiltrados.length}
             </span>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="flex gap-1.5">
               <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === 1 ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-3 py-[5px] rounded-md border border-white/[12%] bg-transparent text-[13px] font-sans ${currentPage === 1 ? 'text-[#4a5568] cursor-not-allowed' : 'text-gj-secondary cursor-pointer'}`}>
                 ← Anterior
               </button>
-              <span style={{ padding: '5px 10px', fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+              <span className="px-2.5 py-[5px] text-[13px] text-gj-text font-sans">
                 {currentPage} / {totalPages}
               </span>
               <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === totalPages ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-3 py-[5px] rounded-md border border-white/[12%] bg-transparent text-[13px] font-sans ${currentPage === totalPages ? 'text-[#4a5568] cursor-not-allowed' : 'text-gj-secondary cursor-pointer'}`}>
                 Siguiente →
               </button>
             </div>
@@ -819,25 +749,9 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
       {/* Barra de acciones masivas */}
       <div
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: '#111f38',
-          borderTop: '1px solid #e8a020',
-          padding: '12px 24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          flexWrap: 'wrap',
-          zIndex: 1000,
-          transform: showActionBar ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 0.25s ease',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className={`fixed bottom-0 left-0 right-0 bg-gj-card border-t border-gj-amber px-6 py-3 flex items-center gap-3 flex-wrap z-[1000] font-sans transition-transform duration-[250ms] ease-in-out ${showActionBar ? 'translate-y-0' : 'translate-y-full'}`}
       >
-        <span style={{ color: '#e8a020', fontWeight: 600, fontSize: 14, marginRight: 4 }}>
+        <span className="text-gj-amber font-semibold text-sm mr-1">
           {selectedCount} {selectedCount === 1 ? 'cliente seleccionado' : 'clientes seleccionados'}
         </span>
 
@@ -910,16 +824,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         {isAdmin && (
           <button
             onClick={() => setPendingAction({ type: 'eliminar' })}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 8,
-              border: '1px solid #e85a5a',
-              backgroundColor: 'transparent',
-              color: '#e85a5a',
-              fontSize: 12,
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="px-3.5 py-1.5 rounded-lg border border-gj-red bg-transparent text-gj-red text-xs cursor-pointer font-sans"
           >
             Eliminar
           </button>
@@ -928,17 +833,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         {/* Cancelar */}
         <button
           onClick={cancelarSeleccion}
-          style={{
-            padding: '6px 14px',
-            borderRadius: 8,
-            border: '1px solid rgba(255,255,255,0.15)',
-            backgroundColor: 'transparent',
-            color: '#9ba8bb',
-            fontSize: 12,
-            cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
-            marginLeft: 'auto',
-          }}
+          className="px-3.5 py-1.5 rounded-lg border border-white/[15%] bg-transparent text-gj-secondary text-xs cursor-pointer font-sans ml-auto"
         >
           Cancelar
         </button>

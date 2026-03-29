@@ -8,19 +8,6 @@ interface Props {
   clienteId: string
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
 export default function AgregarNotaModal({ clienteId }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -70,20 +57,7 @@ export default function AgregarNotaModal({ clienteId }: Props) {
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '8px 16px',
-          borderRadius: 8,
-          border: '1px solid rgba(155,168,187,0.35)',
-          backgroundColor: 'transparent',
-          color: '#9ba8bb',
-          fontSize: 14,
-          fontWeight: 500,
-          cursor: 'pointer',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gj-secondary/35 bg-transparent text-gj-secondary text-sm font-sans cursor-pointer"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -96,93 +70,40 @@ export default function AgregarNotaModal({ clienteId }: Props) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-md p-0 overflow-hidden"
-          style={{
-            backgroundColor: '#111f38',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 14,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="max-w-md p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
         >
           {/* Overlay: Éxito */}
           {saved && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundColor: 'rgba(11,22,40,0.97)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-                zIndex: 20,
-                borderRadius: 14,
-              }}
-            >
-              <div
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(34,201,122,0.15)',
-                  border: '2px solid #22c97a',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+            <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center gap-3 z-20 rounded-[14px]">
+              <div className="w-[52px] h-[52px] rounded-full bg-gj-green/15 border-2 border-gj-green flex items-center justify-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <p style={{ color: '#22c97a', fontSize: 16, fontWeight: 600, margin: 0, fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-gj-green text-base font-semibold font-sans">
                 ¡Nota guardada!
               </p>
             </div>
           )}
 
-          <DialogHeader
-            style={{
-              padding: '24px 28px 0',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
-              paddingBottom: 16,
-            }}
-          >
-            <DialogTitle
-              style={{
-                fontFamily: 'Fraunces, serif',
-                color: '#e8e6e0',
-                fontSize: 20,
-                fontWeight: 700,
-              }}
-            >
+          <DialogHeader className="px-7 pt-6 pb-4 border-b border-white/[7%]">
+            <DialogTitle className="font-display text-gj-text text-xl font-bold">
               Agregar nota
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div style={{ padding: '20px 28px' }}>
+            <div className="px-7 py-5">
               {error && (
-                <div
-                  style={{
-                    backgroundColor: 'rgba(232,90,90,0.12)',
-                    border: '1px solid rgba(232,90,90,0.3)',
-                    borderRadius: 8,
-                    padding: '10px 14px',
-                    color: '#e85a5a',
-                    fontSize: 13,
-                    marginBottom: 16,
-                  }}
-                >
+                <div className="bg-gj-red/[12%] border border-gj-red/25 rounded-lg px-3.5 py-2.5 text-gj-red text-[13px] mb-4">
                   {error}
                 </div>
               )}
-              <label style={{ display: 'block', fontSize: 12, color: '#9ba8bb', marginBottom: 4 }}>
+              <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
                 Nota *
               </label>
               <textarea
-                style={{ ...inputStyle, resize: 'vertical', minHeight: 100, lineHeight: 1.5, borderColor: error ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[100px] ${error ? 'border-gj-red' : 'border-white/10'}`}
                 value={texto}
                 onChange={(e) => {
                   setTexto(e.target.value)
@@ -193,47 +114,19 @@ export default function AgregarNotaModal({ clienteId }: Props) {
               />
             </div>
 
-            <div
-              style={{
-                padding: '16px 28px',
-                borderTop: '1px solid rgba(255,255,255,0.07)',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: 10,
-              }}
-            >
+            <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 disabled={loading}
-                style={{
-                  padding: '9px 20px',
-                  borderRadius: 8,
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  backgroundColor: 'transparent',
-                  color: '#9ba8bb',
-                  fontSize: 14,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-5 py-[9px] rounded-lg border border-white/[15%] bg-transparent text-gj-secondary text-sm font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  padding: '9px 24px',
-                  borderRadius: 8,
-                  border: 'none',
-                  backgroundColor: '#9ba8bb',
-                  color: '#0b1628',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-6 py-[9px] rounded-lg border-none bg-gj-secondary text-gj-bg text-sm font-semibold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
               >
                 {loading ? 'Guardando...' : 'Guardar nota'}
               </button>

@@ -56,32 +56,6 @@ const EMPTY_FORM: FormState = {
   observaciones: '',
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
-const requiredStar: React.CSSProperties = {
-  color: '#e8a020',
-  marginLeft: 2,
-}
-
 export default function NuevoClienteModal({
   open,
   onOpenChange,
@@ -180,102 +154,46 @@ export default function NuevoClienteModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-xl p-0 overflow-hidden"
-        style={{
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 14,
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="max-w-xl p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
       >
-        <DialogHeader
-          style={{
-            padding: '24px 28px 0',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            paddingBottom: 16,
-          }}
-        >
-          <DialogTitle
-            style={{
-              fontFamily: 'Fraunces, serif',
-              color: '#e8e6e0',
-              fontSize: 20,
-              fontWeight: 700,
-            }}
-          >
+        <DialogHeader className="px-7 pt-6 pb-4 border-b border-white/[7%]">
+          <DialogTitle className="font-display text-gj-text text-xl font-bold">
             Nuevo cliente
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div style={{ padding: '20px 28px', maxHeight: '65vh', overflowY: 'auto' }}>
+          <div className="px-7 py-5 max-h-[65vh] overflow-y-auto">
             {serverError && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(232,90,90,0.12)',
-                  border: '1px solid rgba(232,90,90,0.3)',
-                  borderRadius: 8,
-                  padding: '10px 14px',
-                  color: '#e85a5a',
-                  fontSize: 13,
-                  marginBottom: 16,
-                }}
-              >
+              <div className="bg-gj-red/[12%] border border-gj-red/25 rounded-lg px-3.5 py-2.5 text-gj-red text-[13px] mb-4">
                 {serverError}
               </div>
             )}
 
             {clienteDuplicado && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(232,160,32,0.1)',
-                  border: '1px solid rgba(232,160,32,0.35)',
-                  borderRadius: 8,
-                  padding: '12px 14px',
-                  marginBottom: 16,
-                }}
-              >
-                <p style={{ color: '#e8a020', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
+              <div className="bg-gj-amber/[8%] border border-gj-amber/30 rounded-lg px-3.5 py-3 mb-4">
+                <p className="text-gj-amber text-[13px] font-semibold mb-1">
                   Cliente duplicado detectado
                 </p>
-                <p style={{ color: '#e8e6e0', fontSize: 13, marginBottom: 12 }}>
+                <p className="text-gj-text text-[13px] mb-3">
                   {duplicadoMsg}. ¿Querés ir a la ficha de{' '}
                   <strong>{clienteDuplicado.nombre}</strong> ({clienteDuplicado.gj_id}) en lugar de crear uno nuevo?
                 </p>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => {
                       onOpenChange(false)
                       router.push(`/clientes/${clienteDuplicado.id}`)
                     }}
-                    style={{
-                      padding: '7px 16px',
-                      borderRadius: 7,
-                      border: 'none',
-                      backgroundColor: '#e8a020',
-                      color: '#0b1628',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      fontFamily: 'DM Sans, sans-serif',
-                    }}
+                    className="px-4 py-[7px] rounded-[7px] border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans"
                   >
                     Ver cliente existente
                   </button>
                   <button
                     type="button"
                     onClick={() => onOpenChange(false)}
-                    style={{
-                      padding: '7px 16px',
-                      borderRadius: 7,
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      backgroundColor: 'transparent',
-                      color: '#9ba8bb',
-                      fontSize: 13,
-                      cursor: 'pointer',
-                      fontFamily: 'DM Sans, sans-serif',
-                    }}
+                    className="px-4 py-[7px] rounded-[7px] border border-white/[15%] bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
                   >
                     Cancelar
                   </button>
@@ -283,24 +201,21 @@ export default function NuevoClienteModal({
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px' }}>
+            <div className="grid grid-cols-2 gap-x-5 gap-y-3.5">
               {/* Nombre */}
-              <div style={{ gridColumn: '1 / 2' }}>
-                <label style={labelStyle}>
-                  Nombre<span style={requiredStar}>*</span>
+              <div className="col-span-1">
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                  Nombre<span className="text-gj-amber ml-0.5">*</span>
                 </label>
                 <input
-                  style={{
-                    ...inputStyle,
-                    borderColor: errors.nombre ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                  }}
+                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                   value={form.nombre}
                   onChange={(e) => set('nombre', e.target.value)}
                   placeholder="Juan Pérez"
                   autoFocus
                 />
                 {errors.nombre && (
-                  <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>
+                  <span className="text-[11px] text-gj-red mt-0.5 block">
                     {errors.nombre}
                   </span>
                 )}
@@ -308,20 +223,17 @@ export default function NuevoClienteModal({
 
               {/* Teléfono */}
               <div>
-                <label style={labelStyle}>
-                  Teléfono<span style={requiredStar}>*</span>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                  Teléfono<span className="text-gj-amber ml-0.5">*</span>
                 </label>
                 <input
-                  style={{
-                    ...inputStyle,
-                    borderColor: errors.telefono ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                  }}
+                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.telefono ? 'border-gj-red' : 'border-white/10'}`}
                   value={form.telefono}
                   onChange={(e) => set('telefono', e.target.value)}
                   placeholder="+54 11 1234-5678"
                 />
                 {errors.telefono && (
-                  <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>
+                  <span className="text-[11px] text-gj-red mt-0.5 block">
                     {errors.telefono}
                   </span>
                 )}
@@ -329,10 +241,10 @@ export default function NuevoClienteModal({
 
               {/* Email */}
               <div>
-                <label style={labelStyle}>Email</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email</label>
                 <input
                   type="email"
-                  style={inputStyle}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={form.email}
                   onChange={(e) => set('email', e.target.value)}
                   placeholder="juan@email.com"
@@ -341,9 +253,9 @@ export default function NuevoClienteModal({
 
               {/* DNI */}
               <div>
-                <label style={labelStyle}>DNI</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">DNI</label>
                 <input
-                  style={inputStyle}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={form.dni}
                   onChange={(e) => set('dni', e.target.value)}
                   placeholder="12.345.678"
@@ -352,9 +264,9 @@ export default function NuevoClienteModal({
 
               {/* Provincia */}
               <div>
-                <label style={labelStyle}>Provincia / País</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Provincia / País</label>
                 <select
-                  style={{ ...inputStyle, cursor: 'pointer' }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                   value={provinciaSelect}
                   onChange={(e) => {
                     const val = e.target.value
@@ -371,7 +283,7 @@ export default function NuevoClienteModal({
                 </select>
                 {provinciaSelect === '__otro__' && (
                   <input
-                    style={{ ...inputStyle, marginTop: 6 }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none mt-1.5"
                     value={form.provincia}
                     onChange={(e) => set('provincia', e.target.value)}
                     placeholder="Ej: Chile, Uruguay..."
@@ -381,13 +293,11 @@ export default function NuevoClienteModal({
 
               {/* Fecha de nacimiento */}
               <div>
-                <label style={labelStyle}>Fecha de nacimiento</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de nacimiento</label>
                 <input
                   type="date"
-                  style={{
-                    ...inputStyle,
-                    colorScheme: 'dark',
-                  }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                  style={{ colorScheme: 'dark' }}
                   value={form.fecha_nac}
                   onChange={(e) => set('fecha_nac', e.target.value)}
                 />
@@ -395,15 +305,11 @@ export default function NuevoClienteModal({
 
               {/* Canal */}
               <div>
-                <label style={labelStyle}>
-                  Canal<span style={requiredStar}>*</span>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                  Canal<span className="text-gj-amber ml-0.5">*</span>
                 </label>
                 <select
-                  style={{
-                    ...inputStyle,
-                    borderColor: errors.canal ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                    cursor: 'pointer',
-                  }}
+                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
                   value={form.canal}
                   onChange={(e) => set('canal', e.target.value as CanalIngreso | '')}
                 >
@@ -416,7 +322,7 @@ export default function NuevoClienteModal({
                   <option value="OTRO">Otro</option>
                 </select>
                 {errors.canal && (
-                  <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>
+                  <span className="text-[11px] text-gj-red mt-0.5 block">
                     {errors.canal}
                   </span>
                 )}
@@ -424,9 +330,9 @@ export default function NuevoClienteModal({
 
               {/* Grupo familiar */}
               <div>
-                <label style={labelStyle}>Grupo familiar</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Grupo familiar</label>
                 <select
-                  style={{ ...inputStyle, cursor: 'pointer' }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                   value={form.grupo_familiar_id}
                   onChange={(e) => set('grupo_familiar_id', e.target.value)}
                 >
@@ -440,15 +346,10 @@ export default function NuevoClienteModal({
               </div>
 
               {/* Observaciones */}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Observaciones</label>
+              <div className="col-span-2">
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Observaciones</label>
                 <textarea
-                  style={{
-                    ...inputStyle,
-                    resize: 'vertical',
-                    minHeight: 72,
-                    lineHeight: 1.5,
-                  }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[72px]"
                   value={form.observaciones}
                   onChange={(e) => set('observaciones', e.target.value)}
                   placeholder="Notas adicionales..."
@@ -458,47 +359,19 @@ export default function NuevoClienteModal({
           </div>
 
           {/* Footer */}
-          <div
-            style={{
-              padding: '16px 28px',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 10,
-            }}
-          >
+          <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
             <button
               type="button"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              style={{
-                padding: '9px 20px',
-                borderRadius: 8,
-                border: '1px solid rgba(255,255,255,0.15)',
-                backgroundColor: 'transparent',
-                color: '#9ba8bb',
-                fontSize: 14,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontFamily: 'DM Sans, sans-serif',
-              }}
+              className={`px-5 py-[9px] rounded-lg border border-white/[15%] bg-transparent text-gj-secondary text-sm font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '9px 24px',
-                borderRadius: 8,
-                border: 'none',
-                backgroundColor: '#e8a020',
-                color: '#0b1628',
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                fontFamily: 'DM Sans, sans-serif',
-              }}
+              className={`px-6 py-[9px] rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
             >
               {loading ? 'Guardando...' : 'Crear cliente'}
             </button>
