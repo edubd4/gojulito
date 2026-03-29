@@ -13,29 +13,8 @@ interface Props {
   onSuccess: () => void
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 11,
-  fontWeight: 600,
-  color: '#9ba8bb',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
+const inputClass = "w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+const labelClass = "block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans"
 
 export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props) {
   const [clientes, setClientes] = useState<ClienteOption[]>([])
@@ -198,29 +177,22 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
   return (
     <>
       <div
-        style={{ position: 'fixed', inset: 0, zIndex: 60, backgroundColor: 'rgba(0,0,0,0.55)' }}
+        className="fixed inset-0 z-[60] bg-black/55"
         onClick={() => onOpenChange(false)}
       />
       <div
-        style={{
-          position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          zIndex: 70, backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 16, width: '90%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto',
-          fontFamily: 'DM Sans, sans-serif', boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
-        }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/10 rounded-2xl w-[90%] max-w-[480px] max-h-[90vh] overflow-y-auto font-sans"
+        style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.7)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: '#e8e6e0', fontFamily: 'Fraunces, serif' }}>
+        <div className="px-6 py-5 border-b border-white/[8%] flex items-center justify-between">
+          <span className="text-base font-bold text-gj-text font-display">
             Registrar pago
           </span>
           <button
             onClick={() => onOpenChange(false)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ba8bb', padding: 4 }}
+            className="bg-transparent border-none cursor-pointer text-gj-secondary p-1"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -228,11 +200,11 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           </button>
         </div>
 
-        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="px-6 py-5 flex flex-col gap-3.5">
           {/* Cliente */}
           <div>
-            <label style={labelStyle}>Cliente *</label>
-            <select style={{ ...inputStyle, cursor: 'pointer' }} value={clienteId} onChange={(e) => setClienteId(e.target.value)}>
+            <label className={labelClass}>Cliente *</label>
+            <select className={`${inputClass} cursor-pointer`} value={clienteId} onChange={(e) => setClienteId(e.target.value)}>
               <option value="">— Seleccionar cliente —</option>
               {clientes.map((c) => (
                 <option key={c.id} value={c.id}>{c.nombre} ({c.gj_id})</option>
@@ -245,36 +217,29 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
             const deudaDelTipo = deudas.find((d) => d.tipo === tipo)
             const otrasDeudas = deudas.filter((d) => d.tipo !== tipo)
             return (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="flex flex-col gap-2">
                 {/* Panel de resolución de deuda del mismo tipo */}
                 {deudaDelTipo && estado === 'PAGADO' && (
-                  <div style={{
-                    backgroundColor: 'rgba(232,160,32,0.08)',
-                    border: '1px solid rgba(232,160,32,0.3)',
-                    borderRadius: 8,
-                    padding: '10px 12px',
-                    fontSize: 13,
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                  <div className="bg-gj-amber/[8%] border border-gj-amber/30 rounded-lg px-3 py-2.5 text-[13px] font-sans">
+                    <div className="flex justify-between items-start gap-3">
                       <div>
-                        <div style={{ color: '#e8a020', fontWeight: 600, marginBottom: 2 }}>Deuda pendiente ({deudaDelTipo.pago_id})</div>
-                        <div style={{ color: '#9ba8bb' }}>
+                        <div className="text-gj-amber font-semibold mb-0.5">Deuda pendiente ({deudaDelTipo.pago_id})</div>
+                        <div className="text-gj-secondary">
                           ${deudaDelTipo.monto.toLocaleString('es-AR')} — {deudaDelTipo.tipo === 'VISA' ? 'Visa' : 'Seminario'}
                         </div>
                       </div>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', flexShrink: 0 }}>
-                        <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>Cancelar deuda</span>
+                      <label className="flex items-center gap-1.5 cursor-pointer shrink-0">
+                        <span className="text-xs text-gj-secondary font-sans">Cancelar deuda</span>
                         <input
                           type="checkbox"
                           checked={resolverDeuda}
                           onChange={(e) => setResolverDeuda(e.target.checked)}
-                          style={{ width: 16, height: 16, accentColor: '#e8a020', cursor: 'pointer' }}
+                          className="w-4 h-4 accent-gj-amber cursor-pointer"
                         />
                       </label>
                     </div>
                     {resolverDeuda && (
-                      <div style={{ marginTop: 6, fontSize: 12, color: '#e8a020' }}>
+                      <div className="mt-1.5 text-xs text-gj-amber">
                         El pago actualizará {deudaDelTipo.pago_id} a PAGADO
                       </div>
                     )}
@@ -282,19 +247,12 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
                 )}
                 {/* Otras deudas de distinto tipo */}
                 {otrasDeudas.length > 0 && (
-                  <div style={{
-                    backgroundColor: 'rgba(232,90,90,0.08)',
-                    border: '1px solid rgba(232,90,90,0.25)',
-                    borderRadius: 8,
-                    padding: '10px 12px',
-                    fontSize: 13,
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}>
-                    <div style={{ color: '#e85a5a', fontWeight: 600, marginBottom: 4 }}>Otras deudas</div>
+                  <div className="bg-gj-red/[8%] border border-gj-red/25 rounded-lg px-3 py-2.5 text-[13px] font-sans">
+                    <div className="text-gj-red font-semibold mb-1">Otras deudas</div>
                     {otrasDeudas.map((d) => (
-                      <div key={d.id} style={{ display: 'flex', justifyContent: 'space-between', color: '#9ba8bb' }}>
+                      <div key={d.id} className="flex justify-between text-gj-secondary">
                         <span>{d.pago_id} — {d.tipo === 'VISA' ? 'Visa' : 'Seminario'}</span>
-                        <span style={{ color: '#e85a5a', fontWeight: 600 }}>${d.monto.toLocaleString('es-AR')}</span>
+                        <span className="text-gj-red font-semibold">${d.monto.toLocaleString('es-AR')}</span>
                       </div>
                     ))}
                   </div>
@@ -305,9 +263,9 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
 
           {/* Tipo */}
           <div>
-            <label style={labelStyle}>Tipo de pago</label>
+            <label className={labelClass}>Tipo de pago</label>
             <select
-              style={{ ...inputStyle, cursor: 'pointer' }}
+              className={`${inputClass} cursor-pointer`}
               value={tipo}
               onChange={(e) => setTipo(e.target.value as 'VISA' | 'SEMINARIO')}
             >
@@ -319,13 +277,13 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           {/* Visa — solo si tipo=VISA, hay cliente, y ya cargó */}
           {tipo === 'VISA' && clienteId && (
             <div>
-              <label style={labelStyle}>Visa asociada *</label>
+              <label className={labelClass}>Visa asociada *</label>
               {visas.length === 0 ? (
-                <div style={{ fontSize: 13, color: '#e8a020', padding: '8px 0' }}>
+                <div className="text-[13px] text-gj-amber py-2">
                   El cliente no tiene visas activas
                 </div>
               ) : (
-                <select style={{ ...inputStyle, cursor: 'pointer' }} value={visaId} onChange={(e) => setVisaId(e.target.value)}>
+                <select className={`${inputClass} cursor-pointer`} value={visaId} onChange={(e) => setVisaId(e.target.value)}>
                   {visas.map((v) => (
                     <option key={v.id} value={v.id}>{v.visa_id} — {v.estado}</option>
                   ))}
@@ -337,10 +295,10 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           {/* Monto + Fecha */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
-              <label style={labelStyle}>Monto ($) *</label>
+              <label className={labelClass}>Monto ($) *</label>
               <input
                 type="number"
-                style={inputStyle}
+                className={inputClass}
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
                 min="1"
@@ -348,10 +306,11 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
               />
             </div>
             <div>
-              <label style={labelStyle}>Fecha de pago</label>
+              <label className={labelClass}>Fecha de pago</label>
               <input
                 type="date"
-                style={{ ...inputStyle, colorScheme: 'dark' }}
+                className={inputClass}
+                style={{ colorScheme: 'dark' }}
                 value={fechaPago}
                 onChange={(e) => setFechaPago(e.target.value)}
               />
@@ -360,8 +319,8 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
 
           {/* Estado */}
           <div>
-            <label style={labelStyle}>Estado</label>
-            <select style={{ ...inputStyle, cursor: 'pointer' }} value={estado} onChange={(e) => setEstado(e.target.value as EstadoPago)}>
+            <label className={labelClass}>Estado</label>
+            <select className={`${inputClass} cursor-pointer`} value={estado} onChange={(e) => setEstado(e.target.value as EstadoPago)}>
               <option value="PAGADO">Pagado</option>
               <option value="DEUDA">Deuda</option>
               <option value="PENDIENTE">Pendiente</option>
@@ -371,10 +330,11 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           {/* Vencimiento deuda */}
           {estado === 'DEUDA' && (
             <div>
-              <label style={labelStyle}>Vencimiento deuda</label>
+              <label className={labelClass}>Vencimiento deuda</label>
               <input
                 type="date"
-                style={{ ...inputStyle, colorScheme: 'dark' }}
+                className={inputClass}
+                style={{ colorScheme: 'dark' }}
                 value={fechaVenc}
                 onChange={(e) => setFechaVenc(e.target.value)}
               />
@@ -383,9 +343,9 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
 
           {/* Notas */}
           <div>
-            <label style={labelStyle}>Notas</label>
+            <label className={labelClass}>Notas</label>
             <textarea
-              style={{ ...inputStyle, resize: 'vertical', minHeight: 64 }}
+              className={`${inputClass} resize-y min-h-[64px]`}
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
               placeholder="Observaciones opcionales..."
@@ -394,32 +354,25 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
 
           {/* Registrar deuda adicional — solo cuando estado=PAGADO */}
           {estado === 'PAGADO' && (
-            <div style={{
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 8,
-              padding: '12px 14px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 10,
-            }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+            <div className="border border-white/[8%] rounded-lg px-3.5 py-3 flex flex-col gap-2.5">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={registrarDeuda}
                   onChange={(e) => setRegistrarDeuda(e.target.checked)}
-                  style={{ width: 16, height: 16, accentColor: '#4a9eff', cursor: 'pointer' }}
+                  className="w-4 h-4 accent-gj-amber cursor-pointer"
                 />
-                <span style={{ fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif', fontWeight: 600 }}>
+                <span className="text-[13px] text-gj-text font-sans font-semibold">
                   También registrar deuda pendiente
                 </span>
               </label>
               {registrarDeuda && (
                 <>
                   <div>
-                    <label style={labelStyle}>Monto deuda ($) *</label>
+                    <label className={labelClass}>Monto deuda ($) *</label>
                     <input
                       type="number"
-                      style={inputStyle}
+                      className={inputClass}
                       value={montoDeuda}
                       onChange={(e) => setMontoDeuda(e.target.value)}
                       min="1"
@@ -428,19 +381,20 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div>
-                      <label style={labelStyle}>Vencimiento deuda</label>
+                      <label className={labelClass}>Vencimiento deuda</label>
                       <input
                         type="date"
-                        style={{ ...inputStyle, colorScheme: 'dark' }}
+                        className={inputClass}
+                        style={{ colorScheme: 'dark' }}
                         value={fechaVencDeuda}
                         onChange={(e) => setFechaVencDeuda(e.target.value)}
                       />
                     </div>
                     <div>
-                      <label style={labelStyle}>Notas deuda</label>
+                      <label className={labelClass}>Notas deuda</label>
                       <input
                         type="text"
-                        style={inputStyle}
+                        className={inputClass}
                         value={notasDeuda}
                         onChange={(e) => setNotasDeuda(e.target.value)}
                         placeholder="Opcional..."
@@ -453,34 +407,22 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           )}
 
           {error && (
-            <div style={{
-              backgroundColor: 'rgba(232,90,90,0.12)', border: '1px solid rgba(232,90,90,0.3)',
-              borderRadius: 8, padding: '8px 12px', color: '#e85a5a', fontSize: 13,
-            }}>
+            <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3 py-2 text-gj-red text-[13px]">
               {error}
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
+          <div className="flex gap-2.5 justify-end mt-1">
             <button
               onClick={() => onOpenChange(false)}
-              style={{
-                padding: '9px 20px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)',
-                backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13, fontWeight: 600,
-                cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-              }}
+              className="px-5 py-2.5 rounded-lg border border-white/[12%] bg-transparent text-gj-secondary text-[13px] font-semibold cursor-pointer font-sans"
             >
               Cancelar
             </button>
             <button
               onClick={() => void handleSubmit()}
               disabled={loading}
-              style={{
-                padding: '9px 20px', borderRadius: 8, border: 'none',
-                backgroundColor: '#22c97a', color: '#0b1628', fontSize: 13, fontWeight: 700,
-                cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif',
-                opacity: loading ? 0.7 : 1,
-              }}
+              className={`px-5 py-2.5 rounded-lg border-none bg-gj-green text-gj-bg text-[13px] font-bold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
             >
               {loading ? 'Registrando...' : 'Registrar pago'}
             </button>

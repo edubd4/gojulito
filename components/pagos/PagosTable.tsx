@@ -27,43 +27,22 @@ interface Props {
   pagos: PagoRow[]
 }
 
-const BADGE_ESTADO: Record<EstadoPago, { label: string; color: string; bg: string }> = {
-  PAGADO:    { label: 'Pagado',    color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  DEUDA:     { label: 'Deuda',     color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PENDIENTE: { label: 'Pendiente', color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
+const BADGE_ESTADO: Record<EstadoPago, { classes: string; label: string }> = {
+  PAGADO:    { classes: 'text-gj-green bg-gj-green/15',            label: 'Pagado'    },
+  DEUDA:     { classes: 'text-gj-red bg-gj-red/15',               label: 'Deuda'     },
+  PENDIENTE: { classes: 'text-gj-amber bg-gj-amber/15',           label: 'Pendiente' },
 }
 
-const BADGE_TIPO: Record<'VISA' | 'SEMINARIO', { label: string; color: string; bg: string }> = {
-  VISA:      { label: 'Visa',      color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  SEMINARIO: { label: 'Seminario', color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
+const BADGE_TIPO: Record<'VISA' | 'SEMINARIO', { classes: string; label: string }> = {
+  VISA:      { classes: 'text-gj-blue bg-gj-blue/15',              label: 'Visa'      },
+  SEMINARIO: { classes: 'text-gj-seminario bg-gj-seminario/[18%]', label: 'Seminario' },
 }
 
-const inputStyle: React.CSSProperties = {
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-}
+const inputClass = "bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
 
-function SmallBadge({ color, bg, label }: { color: string; bg: string; label: string }) {
+function SmallBadge({ classes, label }: { classes: string; label: string }) {
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: '2px 9px',
-        borderRadius: 6,
-        fontSize: 12,
-        fontWeight: 600,
-        color,
-        backgroundColor: bg,
-        fontFamily: 'DM Sans, sans-serif',
-        whiteSpace: 'nowrap',
-      }}
-    >
+    <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap font-sans ${classes}`}>
       {label}
     </span>
   )
@@ -72,16 +51,8 @@ function SmallBadge({ color, bg, label }: { color: string; bg: string; label: st
 function Spinner() {
   return (
     <span
-      className="animate-spin"
-      style={{
-        display: 'inline-block',
-        width: 16,
-        height: 16,
-        border: '2px solid rgba(255,255,255,0.1)',
-        borderTopColor: '#e8a020',
-        borderRadius: '50%',
-        flexShrink: 0,
-      }}
+      className="animate-spin inline-block w-4 h-4 border-2 border-white/10 rounded-full shrink-0"
+      style={{ borderTopColor: '#e8a020' }}
     />
   )
 }
@@ -281,47 +252,22 @@ export default function PagosTable({ pagos }: Props) {
 
       {/* Error banner */}
       {errorMsg && (
-        <div
-          style={{
-            backgroundColor: 'rgba(232,90,90,0.12)',
-            border: '1px solid rgba(232,90,90,0.3)',
-            borderRadius: 8,
-            padding: '10px 14px',
-            color: '#e85a5a',
-            fontSize: 13,
-            marginBottom: 12,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
+        <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-[13px] mb-3 font-sans">
           {errorMsg}
         </div>
       )}
 
       {/* Filtros */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 12,
-          marginBottom: 20,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
+      <div className="flex gap-3 mb-5 flex-wrap items-center">
         <input
-          style={{ ...inputStyle, minWidth: 220 }}
+          className={`${inputClass} min-w-[220px]`}
           placeholder="Buscar cliente o pago..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
         <button
           onClick={() => setNuevoPagoOpen(true)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8, border: 'none',
-            backgroundColor: '#22c97a', color: '#0b1628',
-            fontSize: 13, fontWeight: 700, cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap',
-          }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg border-none bg-gj-green text-gj-bg text-[13px] font-bold cursor-pointer font-sans whitespace-nowrap"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -329,7 +275,7 @@ export default function PagosTable({ pagos }: Props) {
           Registrar pago
         </button>
         <select
-          style={{ ...inputStyle, cursor: 'pointer' }}
+          className={`${inputClass} cursor-pointer`}
           value={estadoFiltro}
           onChange={(e) => setEstadoFiltro(e.target.value as EstadoPago | '')}
         >
@@ -339,7 +285,7 @@ export default function PagosTable({ pagos }: Props) {
           <option value="PENDIENTE">Pendiente</option>
         </select>
         <select
-          style={{ ...inputStyle, cursor: 'pointer' }}
+          className={`${inputClass} cursor-pointer`}
           value={tipoFiltro}
           onChange={(e) => setTipoFiltro(e.target.value as 'VISA' | 'SEMINARIO' | '')}
         >
@@ -347,52 +293,26 @@ export default function PagosTable({ pagos }: Props) {
           <option value="VISA">Visa</option>
           <option value="SEMINARIO">Seminario</option>
         </select>
-        <span style={{ color: '#9ba8bb', fontSize: 13, fontFamily: 'DM Sans, sans-serif', marginLeft: 4 }}>
+        <span className="text-gj-secondary text-[13px] font-sans ml-1">
           {filtrados.length} pago{filtrados.length !== 1 ? 's' : ''}
         </span>
       </div>
 
       {/* Tabla */}
-      <div
-        style={{
-          backgroundColor: '#111f38',
-          borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
         {filtrados.length === 0 ? (
-          <div
-            style={{
-              padding: '48px 28px',
-              textAlign: 'center',
-              color: '#9ba8bb',
-              fontSize: 14,
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
+          <div className="px-7 py-12 text-center text-gj-secondary text-sm font-sans">
             Sin pagos para los filtros seleccionados
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', minWidth: 560 }}>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse font-sans min-w-[560px]">
               <thead>
                 <tr>
                   {['Pago ID', 'Cliente', 'Tipo', 'Monto', 'Fecha pago', 'Estado', 'Vencimiento'].map((col) => (
                     <th
                       key={col}
-                      style={{
-                        textAlign: 'left',
-                        padding: '12px 16px',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: '#9ba8bb',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        borderBottom: '1px solid rgba(255,255,255,0.08)',
-                        whiteSpace: 'nowrap',
-                        backgroundColor: '#111f38',
-                      }}
+                      className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[8%] whitespace-nowrap bg-gj-card"
                     >
                       {col}
                     </th>
@@ -406,34 +326,34 @@ export default function PagosTable({ pagos }: Props) {
                   return (
                     <tr
                       key={p.id}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                      className="border-b border-white/[4%] cursor-pointer"
                       onClick={() => setSelectedPago(p)}
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                     >
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <span style={{ fontSize: 12, color: '#9ba8bb' }}>{p.pago_id}</span>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="text-xs text-gj-secondary">{p.pago_id}</span>
                       </td>
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{p.cliente_nombre}</div>
-                        <div style={{ fontSize: 12, color: '#9ba8bb' }}>{p.cliente_gj_id}</div>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="text-sm text-gj-text font-medium">{p.cliente_nombre}</div>
+                        <div className="text-xs text-gj-secondary">{p.cliente_gj_id}</div>
                       </td>
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <SmallBadge {...badgeTipo} />
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-3 text-sm text-gj-text font-medium whitespace-nowrap">
                         {formatPesos(p.monto)}
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-3 text-[13px] text-gj-secondary whitespace-nowrap">
                         {p.fecha_pago ? formatFecha(p.fecha_pago) : '—'}
                       </td>
 
                       {/* Estado — dropdown inline */}
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
+                      <td className="px-4 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                         {loadingId === p.id ? (
                           <Spinner />
                         ) : (
-                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <div className="relative inline-block">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -445,15 +365,7 @@ export default function PagosTable({ pagos }: Props) {
                                   setOpenDropdownId(p.id)
                                 }
                               }}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                padding: 0,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                              }}
+                              className="bg-transparent border-none p-0 cursor-pointer inline-flex items-center gap-1"
                             >
                               <SmallBadge {...badgeEstado} />
                               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -463,7 +375,7 @@ export default function PagosTable({ pagos }: Props) {
                             {openDropdownId === p.id && (
                               <>
                                 <div
-                                  style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                                  className="fixed inset-0 z-40"
                                   onClick={() => setOpenDropdownId(null)}
                                 />
                                 <div
@@ -472,34 +384,15 @@ export default function PagosTable({ pagos }: Props) {
                                     top: dropdownPos.top,
                                     left: dropdownPos.left,
                                     zIndex: 50,
-                                    backgroundColor: '#111f38',
-                                    border: '1px solid rgba(255,255,255,0.12)',
-                                    borderRadius: 8,
-                                    padding: 4,
                                     boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
-                                    minWidth: 110,
                                   }}
+                                  className="bg-gj-card border border-white/[12%] rounded-lg p-1 min-w-[110px]"
                                 >
                                   {getOpciones(p.estado).map((opt) => (
                                     <button
                                       key={opt}
                                       onClick={() => handleCambiarEstado(p, opt)}
-                                      style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        width: '100%',
-                                        background: 'none',
-                                        border: 'none',
-                                        padding: '6px 10px',
-                                        cursor: 'pointer',
-                                        borderRadius: 6,
-                                      }}
-                                      onMouseEnter={(e) => {
-                                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.06)'
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
-                                      }}
+                                      className="flex items-center w-full bg-transparent border-none px-2.5 py-1.5 cursor-pointer rounded-md hover:bg-white/[6%]"
                                     >
                                       <SmallBadge {...BADGE_ESTADO[opt]} />
                                     </button>
@@ -511,7 +404,7 @@ export default function PagosTable({ pagos }: Props) {
                         )}
                       </td>
 
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-3 text-[13px] text-gj-secondary whitespace-nowrap">
                         {p.estado === 'DEUDA' && p.fecha_vencimiento_deuda
                           ? formatFecha(p.fecha_vencimiento_deuda)
                           : '—'}
@@ -526,20 +419,20 @@ export default function PagosTable({ pagos }: Props) {
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-            <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+          <div className="border-t border-white/[6%] px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+            <span className="text-xs text-gj-secondary font-sans">
               {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtrados.length)} de {filtrados.length}
             </span>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="flex gap-1.5">
               <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === 1 ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-3 py-1.5 rounded-md border border-white/[12%] bg-transparent text-[13px] font-sans ${currentPage === 1 ? 'text-[#4a5568] cursor-not-allowed' : 'text-gj-secondary cursor-pointer'}`}>
                 ← Anterior
               </button>
-              <span style={{ padding: '5px 10px', fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+              <span className="px-2.5 py-1.5 text-[13px] text-gj-text font-sans">
                 {currentPage} / {totalPages}
               </span>
               <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === totalPages ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-3 py-1.5 rounded-md border border-white/[12%] bg-transparent text-[13px] font-sans ${currentPage === totalPages ? 'text-[#4a5568] cursor-not-allowed' : 'text-gj-secondary cursor-pointer'}`}>
                 Siguiente →
               </button>
             </div>
@@ -548,54 +441,23 @@ export default function PagosTable({ pagos }: Props) {
 
         {/* Totales al pie */}
         {filtrados.length > 0 && (
-          <div
-            style={{
-              borderTop: '1px solid rgba(255,255,255,0.08)',
-              padding: '16px 20px',
-              display: 'flex',
-              gap: 12,
-              justifyContent: 'flex-end',
-              flexWrap: 'wrap',
-            }}
-          >
+          <div className="border-t border-white/[8%] px-5 py-4 flex gap-3 justify-end flex-wrap">
             {totalCobrado > 0 && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(34,201,122,0.10)',
-                  border: '1px solid rgba(34,201,122,0.2)',
-                  borderRadius: 8,
-                  padding: '10px 18px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  gap: 2,
-                }}
-              >
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: 'DM Sans, sans-serif' }}>
+              <div className="bg-gj-green/[12%] border border-gj-green/25 rounded-lg px-[18px] py-2.5 flex flex-col items-end gap-0.5">
+                <span className="text-[11px] font-semibold text-gj-secondary uppercase tracking-wide font-sans">
                   Total cobrado
                 </span>
-                <span style={{ fontSize: 18, fontWeight: 700, color: '#22c97a', fontFamily: 'Fraunces, serif' }}>
+                <span className="text-[18px] font-bold text-gj-green font-display">
                   {formatPesos(totalCobrado)}
                 </span>
               </div>
             )}
             {totalDeuda > 0 && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(232,90,90,0.10)',
-                  border: '1px solid rgba(232,90,90,0.2)',
-                  borderRadius: 8,
-                  padding: '10px 18px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  gap: 2,
-                }}
-              >
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: 'DM Sans, sans-serif' }}>
+              <div className="bg-gj-red/[12%] border border-gj-red/25 rounded-lg px-[18px] py-2.5 flex flex-col items-end gap-0.5">
+                <span className="text-[11px] font-semibold text-gj-secondary uppercase tracking-wide font-sans">
                   Total en deuda
                 </span>
-                <span style={{ fontSize: 18, fontWeight: 700, color: '#e85a5a', fontFamily: 'Fraunces, serif' }}>
+                <span className="text-[18px] font-bold text-gj-red font-display">
                   {formatPesos(totalDeuda)}
                 </span>
               </div>

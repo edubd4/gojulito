@@ -19,110 +19,43 @@ export default function FechaVencimientoDialog({ open, onConfirm, onCancel }: Pr
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel() }}>
       <DialogContent
-        className="max-w-sm p-0 overflow-hidden"
-        style={{
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 14,
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="max-w-sm p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
       >
-        <DialogHeader style={{ padding: '20px 24px 0' }}>
-          <DialogTitle
-            style={{
-              fontFamily: 'Fraunces, serif',
-              color: '#e8e6e0',
-              fontSize: 18,
-              fontWeight: 700,
-            }}
-          >
+        <DialogHeader className="px-6 pt-5 pb-0">
+          <DialogTitle className="font-display text-gj-text text-[18px] font-bold">
             Fecha de vencimiento de deuda
           </DialogTitle>
         </DialogHeader>
 
-        <div style={{ padding: '16px 24px' }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 12,
-              color: '#9ba8bb',
-              marginBottom: 6,
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
+        <div className="px-6 py-4">
+          <label className="block text-xs text-gj-secondary mb-1.5 font-sans">
             Fecha de vencimiento (opcional)
           </label>
           <input
             type="date"
-            style={{
-              width: '100%',
-              backgroundColor: '#172645',
-              color: '#e8e6e0',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 8,
-              padding: '8px 12px',
-              fontSize: 14,
-              fontFamily: 'DM Sans, sans-serif',
-              outline: 'none',
-              boxSizing: 'border-box',
-              colorScheme: 'dark',
-            }}
+            className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+            style={{ colorScheme: 'dark' }}
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
           />
         </div>
 
-        <div
-          style={{
-            padding: '12px 24px 20px',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: 8,
-          }}
-        >
+        <div className="px-6 pb-5 pt-3 flex justify-end gap-2">
           <button
             onClick={onCancel}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: '1px solid rgba(255,255,255,0.15)',
-              backgroundColor: 'transparent',
-              color: '#9ba8bb',
-              fontSize: 13,
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="px-4 py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
           >
             Cancelar
           </button>
           <button
             onClick={() => onConfirm(null)}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: '1px solid rgba(255,255,255,0.15)',
-              backgroundColor: 'transparent',
-              color: '#e8a020',
-              fontSize: 13,
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="px-4 py-2 rounded-lg border border-white/15 bg-transparent text-gj-amber text-[13px] cursor-pointer font-sans"
           >
             Sin fecha
           </button>
           <button
             onClick={() => onConfirm(fecha || null)}
-            style={{
-              padding: '8px 20px',
-              borderRadius: 8,
-              border: 'none',
-              backgroundColor: '#e85a5a',
-              color: '#ffffff',
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="px-5 py-2 rounded-lg border-none bg-gj-red text-white text-[13px] font-semibold cursor-pointer font-sans"
           >
             Confirmar
           </button>

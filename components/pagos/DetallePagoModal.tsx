@@ -22,48 +22,23 @@ interface PagoClienteRow {
   fecha_vencimiento_deuda: string | null
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
+const inputClass = "w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+const labelClass = "block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans"
+
+const BADGE_ESTADO: Record<EstadoPago, { classes: string; label: string }> = {
+  PAGADO:    { classes: 'text-gj-green bg-gj-green/15',            label: 'Pagado'    },
+  DEUDA:     { classes: 'text-gj-red bg-gj-red/15',               label: 'Deuda'     },
+  PENDIENTE: { classes: 'text-gj-amber bg-gj-amber/15',           label: 'Pendiente' },
 }
 
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 11,
-  fontWeight: 600,
-  color: '#9ba8bb',
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.05em',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
+const BADGE_TIPO: Record<'VISA' | 'SEMINARIO', { classes: string; label: string }> = {
+  VISA:      { classes: 'text-gj-blue bg-gj-blue/15',              label: 'Visa'      },
+  SEMINARIO: { classes: 'text-gj-seminario bg-gj-seminario/[18%]', label: 'Seminario' },
 }
 
-const BADGE_ESTADO: Record<EstadoPago, { label: string; color: string; bg: string }> = {
-  PAGADO:    { label: 'Pagado',    color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  DEUDA:     { label: 'Deuda',     color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PENDIENTE: { label: 'Pendiente', color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-}
-
-const BADGE_TIPO: Record<'VISA' | 'SEMINARIO', { label: string; color: string; bg: string }> = {
-  VISA:      { label: 'Visa',      color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  SEMINARIO: { label: 'Seminario', color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-}
-
-function SmallBadge({ color, bg, label }: { color: string; bg: string; label: string }) {
+function SmallBadge({ classes, label }: { classes: string; label: string }) {
   return (
-    <span style={{
-      display: 'inline-block', padding: '2px 9px', borderRadius: 6,
-      fontSize: 12, fontWeight: 600, color, backgroundColor: bg,
-      fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap',
-    }}>
+    <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap font-sans ${classes}`}>
       {label}
     </span>
   )
@@ -152,46 +127,25 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
     <>
       {/* Overlay */}
       <div
-        style={{ position: 'fixed', inset: 0, zIndex: 60, backgroundColor: 'rgba(0,0,0,0.55)' }}
+        className="fixed inset-0 z-[60] bg-black/55"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 70,
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 16,
-          width: '90%',
-          maxWidth: 600,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          fontFamily: 'DM Sans, sans-serif',
-          boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
-        }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/10 rounded-2xl w-[90%] max-w-[520px] max-h-[90vh] overflow-y-auto font-sans"
+        style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.7)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          padding: '20px 24px',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 12,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#9ba8bb' }}>{pago.pago_id}</span>
+        <div className="px-6 py-5 border-b border-white/[8%] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[13px] font-semibold text-gj-secondary">{pago.pago_id}</span>
             <SmallBadge {...badgeTipo} />
           </div>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ba8bb', padding: 4 }}
+            className="bg-transparent border-none cursor-pointer text-gj-secondary p-1"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -199,35 +153,35 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
           </button>
         </div>
 
-        <div style={{ padding: '20px 24px' }}>
+        <div className="px-6 py-5">
           {/* Cliente info */}
-          <div style={{ marginBottom: 20 }}>
+          <div className="mb-5">
             <Link
               href={`/clientes/${pago.cliente_id}`}
-              style={{ textDecoration: 'none' }}
+              className="no-underline"
               onClick={onClose}
             >
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#4a9eff' }}>{pago.cliente_nombre}</div>
-              <div style={{ fontSize: 12, color: '#9ba8bb', marginTop: 2 }}>{pago.cliente_gj_id}</div>
+              <div className="text-base font-bold text-gj-blue">{pago.cliente_nombre}</div>
+              <div className="text-xs text-gj-secondary mt-0.5">{pago.cliente_gj_id}</div>
             </Link>
           </div>
 
           {/* Campos editables */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="mb-4">
             <div>
-              <label style={labelStyle}>Monto ($)</label>
+              <label className={labelClass}>Monto ($)</label>
               <input
                 type="number"
-                style={inputStyle}
+                className={inputClass}
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
                 min="1"
               />
             </div>
             <div>
-              <label style={labelStyle}>Estado</label>
+              <label className={labelClass}>Estado</label>
               <select
-                style={{ ...inputStyle, cursor: 'pointer' }}
+                className={`${inputClass} cursor-pointer`}
                 value={estado}
                 onChange={(e) => setEstado(e.target.value as EstadoPago)}
               >
@@ -237,20 +191,22 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Fecha de pago</label>
+              <label className={labelClass}>Fecha de pago</label>
               <input
                 type="date"
-                style={{ ...inputStyle, colorScheme: 'dark' }}
+                className={inputClass}
+                style={{ colorScheme: 'dark' }}
                 value={fechaPago}
                 onChange={(e) => setFechaPago(e.target.value)}
               />
             </div>
             {estado === 'DEUDA' && (
               <div>
-                <label style={labelStyle}>Vencimiento deuda</label>
+                <label className={labelClass}>Vencimiento deuda</label>
                 <input
                   type="date"
-                  style={{ ...inputStyle, colorScheme: 'dark' }}
+                  className={inputClass}
+                  style={{ colorScheme: 'dark' }}
                   value={fechaVenc}
                   onChange={(e) => setFechaVenc(e.target.value)}
                 />
@@ -258,10 +214,10 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
             )}
           </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Notas</label>
+          <div className="mb-4">
+            <label className={labelClass}>Notas</label>
             <textarea
-              style={{ ...inputStyle, resize: 'vertical', minHeight: 72 }}
+              className={`${inputClass} resize-y min-h-[64px]`}
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
               placeholder="Observaciones sobre este pago..."
@@ -270,43 +226,28 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
 
           {/* Error / success */}
           {error && (
-            <div style={{
-              backgroundColor: 'rgba(232,90,90,0.12)', border: '1px solid rgba(232,90,90,0.3)',
-              borderRadius: 8, padding: '8px 12px', color: '#e85a5a', fontSize: 13, marginBottom: 12,
-            }}>
+            <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3 py-2 text-gj-red text-[13px] mb-3">
               {error}
             </div>
           )}
           {success && (
-            <div style={{
-              backgroundColor: 'rgba(34,201,122,0.12)', border: '1px solid rgba(34,201,122,0.3)',
-              borderRadius: 8, padding: '8px 12px', color: '#22c97a', fontSize: 13, marginBottom: 12,
-            }}>
+            <div className="bg-gj-green/[12%] border border-gj-green/25 rounded-lg px-3 py-2 text-gj-green text-[13px] mb-3">
               Cambios guardados correctamente
             </div>
           )}
 
           {/* Botones */}
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginBottom: 28 }}>
+          <div className="flex gap-2.5 justify-end mb-7">
             <button
               onClick={onClose}
-              style={{
-                padding: '9px 20px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)',
-                backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13, fontWeight: 600,
-                cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-              }}
+              className="px-5 py-2.5 rounded-lg border border-white/[12%] bg-transparent text-gj-secondary text-[13px] font-semibold cursor-pointer font-sans"
             >
               Cancelar
             </button>
             <button
               onClick={() => void handleGuardar()}
               disabled={loading}
-              style={{
-                padding: '9px 20px', borderRadius: 8, border: 'none',
-                backgroundColor: '#e8a020', color: '#0b1628', fontSize: 13, fontWeight: 700,
-                cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif',
-                opacity: loading ? 0.7 : 1,
-              }}
+              className={`px-5 py-2.5 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-bold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
             >
               {loading ? 'Guardando...' : 'Guardar cambios'}
             </button>
@@ -314,35 +255,25 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
 
           {/* Historial de pagos del cliente */}
           <div>
-            <div style={{
-              fontSize: 12, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase',
-              letterSpacing: '0.06em', marginBottom: 12, fontFamily: 'DM Sans, sans-serif',
-            }}>
+            <div className="text-xs font-semibold text-gj-secondary uppercase tracking-[0.06em] mb-3 font-sans">
               Historial de pagos del cliente
             </div>
 
             {loadingHistorial ? (
-              <div style={{ color: '#9ba8bb', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
+              <div className="text-gj-secondary text-[13px] text-center py-4">
                 Cargando...
               </div>
             ) : historialPagos.length === 0 ? (
-              <div style={{ color: '#9ba8bb', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
+              <div className="text-gj-secondary text-[13px] text-center py-4">
                 Sin pagos registrados
               </div>
             ) : (
-              <div style={{
-                backgroundColor: '#0b1628', borderRadius: 10,
-                border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden',
-              }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif' }}>
+              <div className="bg-gj-bg rounded-[10px] border border-white/[6%] overflow-hidden">
+                <table className="w-full border-collapse font-sans">
                   <thead>
                     <tr>
                       {['ID', 'Tipo', 'Monto', 'Fecha', 'Estado'].map((col) => (
-                        <th key={col} style={{
-                          textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 600,
-                          color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em',
-                          borderBottom: '1px solid rgba(255,255,255,0.07)',
-                        }}>
+                        <th key={col} className="text-left px-3.5 py-2.5 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[7%]">
                           {col}
                         </th>
                       ))}
@@ -356,27 +287,25 @@ export default function DetallePagoModal({ pago, onClose, onUpdated }: Props) {
                       return (
                         <tr
                           key={p.id}
-                          style={{
-                            borderBottom: '1px solid rgba(255,255,255,0.04)',
-                            backgroundColor: isCurrent ? 'rgba(232,160,32,0.06)' : 'transparent',
-                          }}
+                          className="border-b border-white/[4%]"
+                          style={{ backgroundColor: isCurrent ? 'rgba(232,160,32,0.06)' : 'transparent' }}
                         >
-                          <td style={{ padding: '10px 14px', fontSize: 12, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
+                          <td className="px-3.5 py-2.5 text-xs text-gj-secondary whitespace-nowrap">
                             {p.pago_id}
                             {isCurrent && (
-                              <span style={{ marginLeft: 6, fontSize: 10, color: '#e8a020' }}>← este</span>
+                              <span className="ml-1.5 text-[10px] text-gj-amber">← este</span>
                             )}
                           </td>
-                          <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                          <td className="px-3.5 py-2.5 whitespace-nowrap">
                             <SmallBadge {...bTipo} />
                           </td>
-                          <td style={{ padding: '10px 14px', fontSize: 13, color: '#e8e6e0', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                          <td className="px-3.5 py-2.5 text-[13px] text-gj-text font-semibold whitespace-nowrap">
                             {formatPesos(p.monto)}
                           </td>
-                          <td style={{ padding: '10px 14px', fontSize: 12, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
+                          <td className="px-3.5 py-2.5 text-xs text-gj-secondary whitespace-nowrap">
                             {p.fecha_pago ? formatFecha(p.fecha_pago) : '—'}
                           </td>
-                          <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                          <td className="px-3.5 py-2.5 whitespace-nowrap">
                             <SmallBadge {...bEstado} />
                           </td>
                         </tr>
