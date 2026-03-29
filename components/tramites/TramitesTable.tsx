@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { formatFecha } from '@/lib/utils'
 import type { EstadoVisa } from '@/lib/constants'
 import AccionLoteGrupoModal from '@/components/grupos/AccionLoteGrupoModal'
-import NuevoTramiteModal from '@/components/tramites/NuevoTramiteModal'
 
 export interface TramiteRow {
   id: string
@@ -78,8 +77,7 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [loteModalOpen, setLoteModalOpen] = useState(false)
-  const [nuevoTramiteOpen, setNuevoTramiteOpen] = useState(false)
-  const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({})
+const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({})
   const [fechaAprobEdits, setFechaAprobEdits] = useState<Record<string, string>>({})
   const [fechaVencEdits, setFechaVencEdits] = useState<Record<string, string>>({})
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
@@ -239,12 +237,6 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
           </div>
         </>
       )}
-      <NuevoTramiteModal
-        open={nuevoTramiteOpen}
-        onOpenChange={setNuevoTramiteOpen}
-        onSuccess={() => { setNuevoTramiteOpen(false); router.refresh() }}
-      />
-
       {/* Error banner */}
       {errorMsg && (
         <div
@@ -320,21 +312,6 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false }: Pro
             Actualizar todas las visas del grupo
           </button>
         )}
-        <button
-          onClick={() => setNuevoTramiteOpen(true)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8, border: 'none',
-            backgroundColor: '#4a9eff', color: '#fff',
-            fontSize: 13, fontWeight: 700, cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap',
-          }}
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          Nuevo trámite
-        </button>
         <span style={{ color: '#9ba8bb', fontSize: 13, fontFamily: 'DM Sans, sans-serif', marginLeft: 4 }}>
           {filtrados.length} trámite{filtrados.length !== 1 ? 's' : ''}
         </span>

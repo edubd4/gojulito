@@ -76,6 +76,10 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
 
   // Visa
   const [estadoVisa, setEstadoVisa] = useState<EstadoVisa>('EN_PROCESO')
+  const [ds160, setDs160] = useState('')
+  const [emailPortal, setEmailPortal] = useState('')
+  const [ordenAtencion, setOrdenAtencion] = useState('')
+  const [fechaTurno, setFechaTurno] = useState('')
   const [notas, setNotas] = useState('')
 
   // Control
@@ -97,6 +101,10 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
       setBusqueda('')
       setClienteId('')
       setEstadoVisa('EN_PROCESO')
+      setDs160('')
+      setEmailPortal('')
+      setOrdenAtencion('')
+      setFechaTurno('')
       setNotas('')
       setErrors({})
       setServerError('')
@@ -189,6 +197,10 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
         cliente_id: resolvedClienteId,
         estado: estadoVisa,
       }
+      if (ds160.trim()) bodyVisa.ds160 = ds160.trim()
+      if (emailPortal.trim()) bodyVisa.email_portal = emailPortal.trim()
+      if (ordenAtencion.trim()) bodyVisa.orden_atencion = ordenAtencion.trim()
+      if (estadoVisa === 'TURNO_ASIGNADO' && fechaTurno) bodyVisa.fecha_turno = fechaTurno
       if (notas.trim()) bodyVisa.notas = notas.trim()
 
       const resVisa = await fetch('/api/visas', {
@@ -335,6 +347,10 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                           cliente_id: clienteDuplicado.id,
                           estado: estadoVisa,
                         }
+                        if (ds160.trim()) bodyVisa.ds160 = ds160.trim()
+                        if (emailPortal.trim()) bodyVisa.email_portal = emailPortal.trim()
+                        if (ordenAtencion.trim()) bodyVisa.orden_atencion = ordenAtencion.trim()
+                        if (estadoVisa === 'TURNO_ASIGNADO' && fechaTurno) bodyVisa.fecha_turno = fechaTurno
                         if (notas.trim()) bodyVisa.notas = notas.trim()
                         const resVisa = await fetch('/api/visas', {
                           method: 'POST',
@@ -484,6 +500,52 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                   <option value="TURNO_ASIGNADO">Turno asignado</option>
                   <option value="PAUSADA">Pausada</option>
                 </select>
+              </div>
+
+              {/* Fecha turno — solo si TURNO_ASIGNADO */}
+              {estadoVisa === 'TURNO_ASIGNADO' && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label style={labelStyle}>Fecha de turno</label>
+                  <input
+                    type="date"
+                    style={{ ...inputStyle, colorScheme: 'dark' }}
+                    value={fechaTurno}
+                    onChange={(e) => setFechaTurno(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {/* DS-160 + Email portal */}
+              <div>
+                <label style={labelStyle}>DS-160</label>
+                <input
+                  style={inputStyle}
+                  value={ds160}
+                  onChange={(e) => setDs160(e.target.value)}
+                  placeholder="Número de caso (opcional)"
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Email portal</label>
+                <input
+                  type="email"
+                  style={inputStyle}
+                  value={emailPortal}
+                  onChange={(e) => setEmailPortal(e.target.value)}
+                  placeholder="Email del portal (opcional)"
+                />
+              </div>
+
+              {/* Orden de atención */}
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={labelStyle}>Orden de atención</label>
+                <input
+                  style={inputStyle}
+                  value={ordenAtencion}
+                  onChange={(e) => setOrdenAtencion(e.target.value)}
+                  placeholder="Número de orden (opcional)"
+                />
               </div>
 
               {/* Notas */}
