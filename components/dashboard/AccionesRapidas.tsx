@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import NuevoClienteModal from '@/components/clientes/NuevoClienteModal'
-import NuevoTramiteModal from '@/components/tramites/NuevoTramiteModal'
+import NuevoTramiteModal from '@/components/visas/NuevoTramiteModal'
 import NuevoPagoModal from '@/components/pagos/NuevoPagoModal'
 import type { GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
 

@@ -54,6 +54,7 @@ const config: Config = {
           blue: "#4a9eff",
           text: "#e8e6e0",
           secondary: "#9ba8bb",
+          seminario: "#a78bfa", // purple — chips de seminario en calendario
         },
       },
       borderRadius: {
