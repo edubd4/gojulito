@@ -41,87 +41,41 @@ export default function InactivarSeminarioButton({ seminarioId, semId, asistente
     <>
       <button
         onClick={() => setShowConfirm(true)}
-        style={{
-          padding: '8px 16px',
-          borderRadius: 8,
-          border: '1px solid rgba(232,90,90,0.4)',
-          backgroundColor: 'transparent',
-          color: '#e85a5a',
-          fontSize: 13,
-          fontWeight: 500,
-          cursor: 'pointer',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="px-4 py-2 rounded-lg border border-gj-red/40 bg-transparent text-gj-red text-[13px] font-medium cursor-pointer font-sans"
       >
         Marcar inactivo
       </button>
 
       {showConfirm && (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            zIndex: 10000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className="fixed inset-0 bg-black/60 z-[10000] flex items-center justify-center"
           onClick={() => { if (!loading) setShowConfirm(false) }}
         >
           <div
-            style={{
-              backgroundColor: '#111f38',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 12,
-              padding: '28px 32px',
-              maxWidth: 440,
-              width: '90%',
-              boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="bg-gj-card border border-white/10 rounded-xl px-8 py-7 max-w-[440px] w-[90%] font-sans"
+            style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <p style={{ color: '#e8e6e0', fontSize: 15, lineHeight: 1.6, marginBottom: 24 }}>
+            <p className="text-gj-text text-[15px] leading-relaxed mb-6">
               {`¿Marcar este seminario (${semId}) como inactivo? Tiene ${asistentesCount} asistente${asistentesCount !== 1 ? 's' : ''} registrado${asistentesCount !== 1 ? 's' : ''}. No aparecerá más en la lista.`}
             </p>
             {error && (
-              <div style={{ backgroundColor: 'rgba(232,90,90,0.1)', border: '1px solid rgba(232,90,90,0.3)', borderRadius: 8, padding: '8px 14px', color: '#e85a5a', fontSize: 13, marginBottom: 16 }}>
+              <div className="bg-gj-red/10 border border-gj-red/30 rounded-lg px-3.5 py-2 text-gj-red text-sm mb-4">
                 {error}
               </div>
             )}
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <div className="flex gap-2.5 justify-end">
               <button
                 onClick={() => setShowConfirm(false)}
                 disabled={loading}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 8,
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  backgroundColor: 'transparent',
-                  color: '#9ba8bb',
-                  fontSize: 13,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-[18px] py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-[13px] font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 Cancelar
               </button>
               <button
                 onClick={handleConfirm}
                 disabled={loading}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 8,
-                  border: 'none',
-                  backgroundColor: '#e85a5a',
-                  color: '#0b1628',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-[18px] py-2 rounded-lg border-none bg-gj-red text-gj-bg text-[13px] font-semibold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
               >
                 {loading ? 'Procesando...' : 'Confirmar'}
               </button>

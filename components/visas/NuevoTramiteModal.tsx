@@ -30,34 +30,6 @@ interface Props {
   onSuccess: () => void
 }
 
-// ─── Estilos ──────────────────────────────────────────────────────────────────
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
-const requiredStar: React.CSSProperties = {
-  color: '#e8a020',
-  marginLeft: 2,
-}
-
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
 export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Props) {
@@ -228,80 +200,43 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-lg p-0 overflow-hidden"
-        style={{
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 14,
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="max-w-lg p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
       >
         {/* Overlay éxito */}
         {saved && (
-          <div
-            style={{
-              position: 'absolute', inset: 0, zIndex: 20, borderRadius: 14,
-              backgroundColor: 'rgba(11,22,40,0.97)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
-            }}
-          >
-            <div
-              style={{
-                width: 52, height: 52, borderRadius: '50%',
-                backgroundColor: 'rgba(232,160,32,0.15)', border: '2px solid #e8a020',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e8a020" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="absolute inset-0 z-20 rounded-[14px] bg-black/[97%] flex flex-col items-center justify-center gap-3">
+            <div className="w-[52px] h-[52px] rounded-full bg-gj-amber/15 border-2 border-gj-amber flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gj-amber">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p style={{ color: '#e8a020', fontSize: 16, fontWeight: 600, margin: 0, fontFamily: 'DM Sans, sans-serif' }}>
+            <p className="text-gj-amber text-base font-semibold m-0 font-sans">
               ¡Trámite creado!
             </p>
-            <p style={{ color: '#9ba8bb', fontSize: 13, margin: 0, fontFamily: 'DM Sans, sans-serif' }}>
+            <p className="text-gj-secondary text-[13px] m-0 font-sans">
               El trámite de visa fue registrado exitosamente.
             </p>
           </div>
         )}
 
         {/* Header */}
-        <DialogHeader
-          style={{
-            padding: '24px 28px 0',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            paddingBottom: 16,
-          }}
-        >
-          <DialogTitle
-            style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0', fontSize: 20, fontWeight: 700 }}
-          >
+        <DialogHeader className="px-7 pt-6 pb-4 border-b border-white/[7%]">
+          <DialogTitle className="font-display text-gj-text text-xl font-bold">
             Nuevo trámite de visa
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div style={{ padding: '20px 28px', maxHeight: '75vh', overflowY: 'auto' }}>
+          <div className="px-7 py-5 max-h-[75vh] overflow-y-auto">
 
             {/* Toggle de modo */}
-            <div
-              style={{
-                display: 'flex', gap: 0, marginBottom: 20,
-                border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, overflow: 'hidden',
-              }}
-            >
+            <div className="flex gap-0 mb-5 border border-white/10 rounded-lg overflow-hidden">
               {(['nuevo', 'existente'] as Modo[]).map((m) => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => cambiarModo(m)}
-                  style={{
-                    flex: 1, padding: '8px 0', border: 'none', cursor: 'pointer',
-                    fontSize: 13, fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
-                    backgroundColor: modo === m ? '#e8a020' : 'transparent',
-                    color: modo === m ? '#0b1628' : '#9ba8bb',
-                    transition: 'background-color 0.15s ease, color 0.15s ease',
-                  }}
+                  className={`flex-1 py-2 border-none cursor-pointer text-[13px] font-semibold font-sans transition-colors ${modo === m ? 'bg-gj-amber text-gj-bg' : 'bg-transparent text-gj-secondary'}`}
                 >
                   {m === 'nuevo' ? 'Nuevo cliente' : 'Cliente existente'}
                 </button>
@@ -310,32 +245,22 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
 
             {/* Error servidor */}
             {serverError && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(232,90,90,0.12)', border: '1px solid rgba(232,90,90,0.3)',
-                  borderRadius: 8, padding: '10px 14px', color: '#e85a5a', fontSize: 13, marginBottom: 16,
-                }}
-              >
+              <div className="bg-gj-red/[8%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-sm mb-4">
                 {serverError}
               </div>
             )}
 
             {/* Card duplicado */}
             {clienteDuplicado && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(232,160,32,0.1)', border: '1px solid rgba(232,160,32,0.35)',
-                  borderRadius: 8, padding: '12px 14px', marginBottom: 16,
-                }}
-              >
-                <p style={{ color: '#e8a020', fontSize: 13, fontWeight: 600, margin: '0 0 4px', fontFamily: 'DM Sans, sans-serif' }}>
+              <div className="bg-gj-amber/10 border border-gj-amber/35 rounded-lg px-3.5 py-3 mb-4">
+                <p className="text-gj-amber text-[13px] font-semibold m-0 mb-1 font-sans">
                   Cliente duplicado detectado
                 </p>
-                <p style={{ color: '#e8e6e0', fontSize: 13, margin: '0 0 12px', fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-gj-text text-[13px] m-0 mb-3 font-sans">
                   {duplicadoMsg}. ¿Querés usar a{' '}
                   <strong>{clienteDuplicado.nombre}</strong> ({clienteDuplicado.gj_id}) para este trámite?
                 </p>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={async () => {
@@ -371,22 +296,14 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                         setLoading(false)
                       }
                     }}
-                    style={{
-                      padding: '7px 16px', borderRadius: 7, border: 'none',
-                      backgroundColor: '#e8a020', color: '#0b1628',
-                      fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-                    }}
+                    className="px-4 py-1.5 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans"
                   >
                     Usar cliente existente
                   </button>
                   <button
                     type="button"
                     onClick={() => setClienteDuplicado(null)}
-                    style={{
-                      padding: '7px 16px', borderRadius: 7,
-                      border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent',
-                      color: '#9ba8bb', fontSize: 13, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-                    }}
+                    className="px-4 py-1.5 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
                   >
                     Cancelar
                   </button>
@@ -394,38 +311,44 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px' }}>
+            <div className="grid gap-3.5" style={{ gridTemplateColumns: '1fr 1fr', columnGap: 20 }}>
 
               {/* ── Modo nuevo cliente ── */}
               {modo === 'nuevo' && (
                 <>
                   <div>
-                    <label style={labelStyle}>Nombre<span style={requiredStar}>*</span></label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                      Nombre<span className="text-gj-amber ml-0.5">*</span>
+                    </label>
                     <input
-                      style={{ ...inputStyle, borderColor: errors.nombre ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                       value={nombre}
                       onChange={(e) => { setNombre(e.target.value); if (errors.nombre) setErrors((p) => ({ ...p, nombre: '' })) }}
                       placeholder="Juan Pérez"
                       autoFocus
                     />
-                    {errors.nombre && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.nombre}</span>}
+                    {errors.nombre && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.nombre}</span>}
                   </div>
 
                   <div>
-                    <label style={labelStyle}>Teléfono<span style={requiredStar}>*</span></label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                      Teléfono<span className="text-gj-amber ml-0.5">*</span>
+                    </label>
                     <input
-                      style={{ ...inputStyle, borderColor: errors.telefono ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.telefono ? 'border-gj-red' : 'border-white/10'}`}
                       value={telefono}
                       onChange={(e) => { setTelefono(e.target.value); if (errors.telefono) setErrors((p) => ({ ...p, telefono: '' })) }}
                       placeholder="+54 11 1234-5678"
                     />
-                    {errors.telefono && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.telefono}</span>}
+                    {errors.telefono && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.telefono}</span>}
                   </div>
 
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={labelStyle}>Canal de ingreso<span style={requiredStar}>*</span></label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                      Canal de ingreso<span className="text-gj-amber ml-0.5">*</span>
+                    </label>
                     <select
-                      style={{ ...inputStyle, cursor: 'pointer', borderColor: errors.canal ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
                       value={canal}
                       onChange={(e) => { setCanal(e.target.value as CanalIngreso | ''); if (errors.canal) setErrors((p) => ({ ...p, canal: '' })) }}
                     >
@@ -437,7 +360,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       <option value="CHARLA">Charla</option>
                       <option value="OTRO">Otro</option>
                     </select>
-                    {errors.canal && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.canal}</span>}
+                    {errors.canal && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.canal}</span>}
                   </div>
                 </>
               )}
@@ -445,19 +368,21 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               {/* ── Modo cliente existente ── */}
               {modo === 'existente' && (
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={labelStyle}>Buscar cliente<span style={requiredStar}>*</span></label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                    Buscar cliente<span className="text-gj-amber ml-0.5">*</span>
+                  </label>
                   <input
-                    style={{ ...inputStyle, marginBottom: 8 }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none mb-2"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Nombre o ID (ej: GJ-0001)..."
                     autoFocus
                   />
                   {cargandoClientes ? (
-                    <p style={{ color: '#9ba8bb', fontSize: 13, fontFamily: 'DM Sans, sans-serif' }}>Cargando clientes...</p>
+                    <p className="text-gj-secondary text-[13px] font-sans">Cargando clientes...</p>
                   ) : (
                     <select
-                      style={{ ...inputStyle, cursor: 'pointer', borderColor: errors.clienteId ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.clienteId ? 'border-gj-red' : 'border-white/10'}`}
                       value={clienteId}
                       onChange={(e) => { setClienteId(e.target.value); if (errors.clienteId) setErrors((p) => ({ ...p, clienteId: '' })) }}
                       size={Math.min(5, clientesFiltrados.length + 1)}
@@ -470,29 +395,22 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       ))}
                     </select>
                   )}
-                  {errors.clienteId && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.clienteId}</span>}
+                  {errors.clienteId && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.clienteId}</span>}
                 </div>
               )}
 
               {/* ── Separador ── */}
-              <div
-                style={{
-                  gridColumn: '1 / -1',
-                  borderTop: '1px solid rgba(255,255,255,0.08)',
-                  paddingTop: 16,
-                  marginTop: 4,
-                }}
-              >
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, fontFamily: 'DM Sans, sans-serif' }}>
+              <div style={{ gridColumn: '1 / -1' }} className="border-t border-white/[8%] pt-4 mt-1">
+                <div className="text-xs font-semibold text-gj-secondary uppercase tracking-[0.06em] mb-3 font-sans">
                   Datos del trámite
                 </div>
               </div>
 
               {/* Estado visa */}
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Estado inicial</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Estado inicial</label>
                 <select
-                  style={{ ...inputStyle, cursor: 'pointer' }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                   value={estadoVisa}
                   onChange={(e) => setEstadoVisa(e.target.value as EstadoVisa)}
                 >
@@ -505,10 +423,11 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               {/* Fecha turno — solo si TURNO_ASIGNADO */}
               {estadoVisa === 'TURNO_ASIGNADO' && (
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={labelStyle}>Fecha de turno</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de turno</label>
                   <input
                     type="date"
-                    style={{ ...inputStyle, colorScheme: 'dark' }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    style={{ colorScheme: 'dark' }}
                     value={fechaTurno}
                     onChange={(e) => setFechaTurno(e.target.value)}
                   />
@@ -517,9 +436,9 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
 
               {/* DS-160 + Email portal */}
               <div>
-                <label style={labelStyle}>DS-160</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">DS-160</label>
                 <input
-                  style={inputStyle}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={ds160}
                   onChange={(e) => setDs160(e.target.value)}
                   placeholder="Número de caso (opcional)"
@@ -527,10 +446,10 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               </div>
 
               <div>
-                <label style={labelStyle}>Email portal</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email portal</label>
                 <input
                   type="email"
-                  style={inputStyle}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={emailPortal}
                   onChange={(e) => setEmailPortal(e.target.value)}
                   placeholder="Email del portal (opcional)"
@@ -539,9 +458,9 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
 
               {/* Orden de atención */}
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Orden de atención</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Orden de atención</label>
                 <input
-                  style={inputStyle}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={ordenAtencion}
                   onChange={(e) => setOrdenAtencion(e.target.value)}
                   placeholder="Número de orden (opcional)"
@@ -550,9 +469,10 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
 
               {/* Notas */}
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={labelStyle}>Notas</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Notas</label>
                 <textarea
-                  style={{ ...inputStyle, resize: 'vertical', minHeight: 68, lineHeight: 1.5 }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y leading-relaxed"
+                  style={{ minHeight: 68 }}
                   value={notas}
                   onChange={(e) => setNotas(e.target.value)}
                   placeholder="Notas opcionales..."
@@ -563,36 +483,19 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
           </div>
 
           {/* Footer */}
-          <div
-            style={{
-              padding: '16px 28px',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              display: 'flex', justifyContent: 'flex-end', gap: 10,
-            }}
-          >
+          <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
             <button
               type="button"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              style={{
-                padding: '9px 20px', borderRadius: 8,
-                border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent',
-                color: '#9ba8bb', fontSize: 14,
-                cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif',
-              }}
+              className={`px-5 py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-sm font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '9px 24px', borderRadius: 8, border: 'none',
-                backgroundColor: '#e8a020', color: '#0b1628',
-                fontSize: 14, fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif',
-              }}
+              className={`px-6 py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
             >
               {loading ? 'Creando...' : 'Crear trámite'}
             </button>
@@ -613,12 +516,7 @@ export function NuevoTramiteButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '8px 18px', borderRadius: 8, border: 'none',
-          backgroundColor: '#e8a020', color: '#0b1628',
-          fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="inline-flex items-center gap-1.5 px-[18px] py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold cursor-pointer font-sans"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />

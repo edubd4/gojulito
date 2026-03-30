@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
 import { formatFecha, formatPesos } from '@/lib/utils'
 
 interface SeminarioCardProps {
@@ -14,10 +13,10 @@ interface SeminarioCardProps {
   totalRecaudado: number
 }
 
-const BADGE_MODALIDAD: Record<string, { label: string; color: string; bg: string }> = {
-  PRESENCIAL: { label: 'Presencial',           color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  VIRTUAL:    { label: 'Virtual',              color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  AMBAS:      { label: 'Presencial + Virtual', color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
+const BADGE_MODALIDAD: Record<string, { classes: string; label: string }> = {
+  PRESENCIAL: { classes: 'text-gj-blue bg-gj-blue/15',   label: 'Presencial'           },
+  VIRTUAL:    { classes: 'text-gj-amber bg-gj-amber/15', label: 'Virtual'              },
+  AMBAS:      { classes: 'text-gj-green bg-gj-green/15', label: 'Presencial + Virtual' },
 }
 
 export default function SeminarioCard({
@@ -29,64 +28,47 @@ export default function SeminarioCard({
   asistentesCount,
   totalRecaudado,
 }: SeminarioCardProps) {
-  const [hovered, setHovered] = useState(false)
   const badge = BADGE_MODALIDAD[modalidad] ?? BADGE_MODALIDAD.PRESENCIAL
 
   return (
-    <Link href={`/seminarios/${id}`} style={{ textDecoration: 'none', display: 'block' }}>
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          backgroundColor: '#111f38',
-          borderRadius: 12,
-          border: `1px solid ${hovered ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.06)'}`,
-          padding: '20px 24px',
-          transition: 'border-color 0.15s',
-          cursor: 'pointer',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+    <Link href={`/seminarios/${id}`} className="no-underline block">
+      <div className="border border-white/[6%] hover:border-white/[14%] transition-colors cursor-pointer bg-gj-card rounded-xl p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           {/* Info principal */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 700, color: '#e8e6e0' }}>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+              <span className="font-display text-lg font-bold text-gj-text">
                 {nombre}
               </span>
-              <span
-                style={{
-                  display: 'inline-block', padding: '2px 9px', borderRadius: 6,
-                  fontSize: 11, fontWeight: 600, color: badge.color, backgroundColor: badge.bg,
-                }}
-              >
+              <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${badge.classes}`}>
                 {badge.label}
               </span>
             </div>
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, color: '#9ba8bb' }}>
-                <span style={{ marginRight: 4 }}>ID:</span>
-                <span style={{ color: '#e8e6e0' }}>{sem_id}</span>
+            <div className="flex gap-5 flex-wrap">
+              <span className="text-[13px] text-gj-secondary">
+                <span className="mr-1">ID:</span>
+                <span className="text-gj-text">{sem_id}</span>
               </span>
-              <span style={{ fontSize: 13, color: '#9ba8bb' }}>
-                <span style={{ marginRight: 4 }}>Fecha:</span>
-                <span style={{ color: '#e8e6e0' }}>{formatFecha(fecha)}</span>
+              <span className="text-[13px] text-gj-secondary">
+                <span className="mr-1">Fecha:</span>
+                <span className="text-gj-text">{formatFecha(fecha)}</span>
               </span>
             </div>
           </div>
 
           {/* Stats */}
-          <div style={{ display: 'flex', gap: 24, flexShrink: 0 }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#e8e6e0', fontFamily: 'Fraunces, serif', lineHeight: 1 }}>
+          <div className="flex gap-6 flex-shrink-0">
+            <div className="text-right">
+              <div className="text-[22px] font-bold text-gj-text font-display leading-none">
                 {asistentesCount}
               </div>
-              <div style={{ fontSize: 11, color: '#9ba8bb', marginTop: 3 }}>asistentes</div>
+              <div className="text-[11px] text-gj-secondary mt-0.5">asistentes</div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#22c97a', fontFamily: 'Fraunces, serif', lineHeight: 1 }}>
+            <div className="text-right">
+              <div className="text-[22px] font-bold text-gj-green font-display leading-none">
                 {formatPesos(totalRecaudado)}
               </div>
-              <div style={{ fontSize: 11, color: '#9ba8bb', marginTop: 3 }}>recaudado</div>
+              <div className="text-[11px] text-gj-secondary mt-0.5">recaudado</div>
             </div>
           </div>
         </div>

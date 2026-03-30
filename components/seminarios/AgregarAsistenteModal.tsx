@@ -19,27 +19,6 @@ interface Props {
   clientes: ClienteOption[]
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
 interface FormState {
   nombre: string
   telefono: string
@@ -192,12 +171,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '8px 18px', borderRadius: 8, border: 'none',
-          backgroundColor: '#22c97a', color: '#0b1628',
-          fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="inline-flex items-center gap-1.5 px-[18px] py-2 rounded-lg bg-gj-green text-gj-bg text-sm font-semibold font-sans cursor-pointer border-none"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -207,37 +181,36 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-lg p-0 overflow-hidden"
-          style={{ backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, fontFamily: 'DM Sans, sans-serif' }}
+          className="max-w-lg p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
         >
           {saved && (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 20, borderRadius: 14, backgroundColor: 'rgba(11,22,40,0.97)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-              <div style={{ width: 52, height: 52, borderRadius: '50%', backgroundColor: 'rgba(34,201,122,0.15)', border: '2px solid #22c97a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <div className="absolute inset-0 z-20 rounded-[14px] bg-black/[97%] flex flex-col items-center justify-center gap-3">
+              <div className="w-[52px] h-[52px] rounded-full bg-gj-green/15 border-2 border-gj-green flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gj-green"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <p style={{ color: '#22c97a', fontSize: 16, fontWeight: 600, margin: 0, fontFamily: 'DM Sans, sans-serif' }}>¡Asistente agregado!</p>
+              <p className="text-gj-green text-base font-semibold m-0 font-sans">¡Asistente agregado!</p>
             </div>
           )}
 
-          <DialogHeader style={{ padding: '24px 28px 0', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: 16 }}>
-            <DialogTitle style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0', fontSize: 20, fontWeight: 700 }}>
+          <DialogHeader className="px-7 pt-6 pb-4 border-b border-white/[7%]">
+            <DialogTitle className="font-display text-gj-text text-xl font-bold">
               Agregar asistente
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div style={{ padding: '20px 28px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div className="px-7 py-5 max-h-[90vh] overflow-y-auto">
               {serverError && (
-                <div style={{ backgroundColor: 'rgba(232,90,90,0.12)', border: '1px solid rgba(232,90,90,0.3)', borderRadius: 8, padding: '10px 14px', color: '#e85a5a', fontSize: 13, marginBottom: 16 }}>
+                <div className="bg-gj-red/[8%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-sm mb-4">
                   {serverError}
                 </div>
               )}
 
               {/* Cliente vinculado */}
-              <div style={{ marginBottom: 16 }}>
-                <label style={labelStyle}>Cliente existente (opcional)</label>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Cliente existente (opcional)</label>
                 <select
-                  style={{ ...inputStyle, cursor: 'pointer' }}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                   value={form.cliente_id}
                   onChange={(e) => handleClienteChange(e.target.value)}
                 >
@@ -249,57 +222,57 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
               </div>
 
               {tieneCliente && (
-                <div style={{ backgroundColor: 'rgba(74,158,255,0.08)', border: '1px solid rgba(74,158,255,0.2)', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#4a9eff', fontFamily: 'DM Sans, sans-serif' }}>
+                <div className="bg-gj-blue/[8%] border border-gj-blue/20 rounded-lg px-3.5 py-2.5 mb-4 text-sm text-gj-blue font-sans">
                   Nombre y teléfono cargados desde el perfil del cliente.
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px' }}>
+              <div className="grid gap-3.5" style={{ gridTemplateColumns: '1fr 1fr', columnGap: 20 }}>
 
                 {/* Nombre — solo editable si no hay cliente */}
                 {!tieneCliente && (
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={labelStyle}>Nombre *</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nombre *</label>
                     <input
-                      style={{ ...inputStyle, borderColor: errors.nombre ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                       value={form.nombre}
                       onChange={(e) => setField('nombre', e.target.value)}
                     />
-                    {errors.nombre && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.nombre}</span>}
+                    {errors.nombre && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.nombre}</span>}
                   </div>
                 )}
 
                 {/* Teléfono — solo si no hay cliente */}
                 {!tieneCliente && (
                   <div>
-                    <label style={labelStyle}>Teléfono *</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Teléfono *</label>
                     <input
-                      style={{ ...inputStyle, borderColor: errors.telefono ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.telefono ? 'border-gj-red' : 'border-white/10'}`}
                       value={form.telefono}
                       onChange={(e) => setField('telefono', e.target.value)}
                     />
-                    {errors.telefono && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.telefono}</span>}
+                    {errors.telefono && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.telefono}</span>}
                   </div>
                 )}
 
                 {/* Provincia — siempre visible */}
                 <div>
-                  <label style={labelStyle}>Provincia</label>
-                  <input style={inputStyle} value={form.provincia} onChange={(e) => setField('provincia', e.target.value)} placeholder="Buenos Aires" />
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Provincia</label>
+                  <input className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none" value={form.provincia} onChange={(e) => setField('provincia', e.target.value)} placeholder="Buenos Aires" />
                 </div>
 
                 {/* Modalidad */}
                 <div>
-                  <label style={labelStyle}>Modalidad *</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Modalidad *</label>
                   {seminarioModalidad !== 'AMBAS' ? (
                     <input
-                      style={{ ...inputStyle, color: '#9ba8bb', cursor: 'not-allowed' }}
+                      className="w-full bg-gj-input text-gj-secondary border border-white/10 rounded-lg px-3 py-2 text-sm font-sans cursor-not-allowed"
                       value={seminarioModalidad === 'PRESENCIAL' ? 'Presencial' : 'Virtual'}
                       readOnly
                     />
                   ) : (
                     <select
-                      style={{ ...inputStyle, cursor: 'pointer', borderColor: errors.modalidad ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.modalidad ? 'border-gj-red' : 'border-white/10'}`}
                       value={form.modalidad}
                       onChange={(e) => setField('modalidad', e.target.value as FormState['modalidad'])}
                     >
@@ -308,14 +281,14 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
                       <option value="VIRTUAL">Virtual</option>
                     </select>
                   )}
-                  {errors.modalidad && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.modalidad}</span>}
+                  {errors.modalidad && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.modalidad}</span>}
                 </div>
 
                 {/* Estado pago — solo PAGADO o DEUDA */}
                 <div>
-                  <label style={labelStyle}>Estado de pago *</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Estado de pago *</label>
                   <select
-                    style={{ ...inputStyle, cursor: 'pointer' }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     value={form.estado_pago}
                     onChange={(e) => setField('estado_pago', e.target.value as FormState['estado_pago'])}
                   >
@@ -326,27 +299,28 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
 
                 {/* Monto */}
                 <div>
-                  <label style={labelStyle}>Monto *</label>
-                  <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#9ba8bb', fontSize: 14, pointerEvents: 'none' }}>$</span>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Monto *</label>
+                  <div className="relative">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gj-secondary text-sm pointer-events-none">$</span>
                     <input
                       type="number" min="0" step="1"
-                      style={{ ...inputStyle, paddingLeft: 22, borderColor: errors.monto ? '#e85a5a' : 'rgba(255,255,255,0.1)' }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg pl-[22px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.monto ? 'border-gj-red' : 'border-white/10'}`}
                       value={form.monto}
                       onChange={(e) => setField('monto', e.target.value)}
                       placeholder="0"
                     />
                   </div>
-                  {errors.monto && <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.monto}</span>}
+                  {errors.monto && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.monto}</span>}
                 </div>
 
                 {/* Fecha vencimiento deuda — solo si DEUDA */}
                 {form.estado_pago === 'DEUDA' && (
                   <div>
-                    <label style={labelStyle}>Vencimiento de deuda</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Vencimiento de deuda</label>
                     <input
                       type="date"
-                      style={{ ...inputStyle, colorScheme: 'dark' }}
+                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                       value={form.fecha_vencimiento_deuda}
                       onChange={(e) => setField('fecha_vencimiento_deuda', e.target.value)}
                     />
@@ -355,9 +329,9 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
 
                 {/* Convirtió */}
                 <div>
-                  <label style={labelStyle}>¿Convirtió a visa?</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">¿Convirtió a visa?</label>
                   <select
-                    style={{ ...inputStyle, cursor: 'pointer' }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     value={form.convirtio}
                     onChange={(e) => setField('convirtio', e.target.value as FormState['convirtio'])}
                   >
@@ -369,11 +343,11 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
 
                 {/* Precio de grupo — solo si hay cliente con grupo familiar */}
                 {tieneCliente && tieneGrupoFamiliar && (
-                  <div style={{ gridColumn: '1 / -1', borderRadius: 8, border: '1px solid rgba(74,158,255,0.2)', backgroundColor: 'rgba(74,158,255,0.06)', padding: '12px 14px' }}>
-                    <p style={{ margin: '0 0 10px', fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+                  <div style={{ gridColumn: '1 / -1' }} className="rounded-lg border border-gj-blue/20 bg-gj-blue/[6%] px-3.5 py-3">
+                    <p className="m-0 mb-2.5 text-xs text-gj-secondary font-sans">
                       Este cliente pertenece a un grupo familiar. Podés aplicar un precio especial.
                     </p>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginBottom: usePrecioGrupo ? 12 : 0 }}>
+                    <label className={`flex items-center gap-2 cursor-pointer ${usePrecioGrupo ? 'mb-3' : ''}`}>
                       <input
                         type="checkbox"
                         checked={usePrecioGrupo}
@@ -381,16 +355,16 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
                           setUsePrecioGrupo(e.target.checked)
                           if (e.target.checked) setPrecioGrupo(form.monto)
                         }}
-                        style={{ accentColor: '#4a9eff', width: 15, height: 15, flexShrink: 0 }}
+                        className="accent-gj-blue w-[15px] h-[15px] flex-shrink-0"
                       />
-                      <span style={{ fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>Aplicar precio especial de grupo</span>
+                      <span className="text-[13px] text-gj-text font-sans">Aplicar precio especial de grupo</span>
                     </label>
                     {usePrecioGrupo && (
-                      <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#9ba8bb', fontSize: 14, pointerEvents: 'none' }}>$</span>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gj-secondary text-sm pointer-events-none">$</span>
                         <input
                           type="number" min="0" step="1"
-                          style={{ ...inputStyle, paddingLeft: 22 }}
+                          className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg pl-[22px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                           value={precioGrupo}
                           onChange={(e) => setPrecioGrupo(e.target.value)}
                         />
@@ -402,13 +376,13 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
               </div>
             </div>
 
-            <div style={{ padding: '16px 28px', borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+            <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
               <button type="button" onClick={() => setOpen(false)} disabled={loading}
-                style={{ padding: '9px 20px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-5 py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-sm font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                 Cancelar
               </button>
               <button type="submit" disabled={loading}
-                style={{ padding: '9px 24px', borderRadius: 8, border: 'none', backgroundColor: '#22c97a', color: '#0b1628', fontSize: 14, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-6 py-2 rounded-lg border-none bg-gj-green text-gj-bg text-sm font-semibold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}>
                 {loading ? 'Agregando...' : 'Agregar asistente'}
               </button>
             </div>

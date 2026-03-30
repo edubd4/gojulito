@@ -46,34 +46,13 @@ function buildInitialForm(v: VisaEditableData): FormState {
   }
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
-const ESTADO_COLORS: Record<EstadoVisa, string> = {
-  EN_PROCESO:     '#e8a020',
-  TURNO_ASIGNADO: '#4a9eff',
-  APROBADA:       '#22c97a',
-  RECHAZADA:      '#e85a5a',
-  PAUSADA:        '#e85a5a',
-  CANCELADA:      '#9ba8bb',
+const ESTADO_DOT: Record<EstadoVisa, string> = {
+  EN_PROCESO:     'bg-gj-amber',
+  TURNO_ASIGNADO: 'bg-gj-blue',
+  APROBADA:       'bg-gj-green',
+  RECHAZADA:      'bg-gj-red',
+  PAUSADA:        'bg-gj-red',
+  CANCELADA:      'bg-gj-secondary',
 }
 
 export default function EditarVisaModal({ visa }: Props) {
@@ -160,26 +139,13 @@ export default function EditarVisaModal({ visa }: Props) {
     }
   }
 
-  const estadoColor = ESTADO_COLORS[form.estado]
+  const estadoDotClass = ESTADO_DOT[form.estado]
 
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '6px 14px',
-          borderRadius: 8,
-          border: '1px solid #4a9eff',
-          backgroundColor: 'transparent',
-          color: '#4a9eff',
-          fontSize: 13,
-          fontWeight: 500,
-          cursor: 'pointer',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-gj-blue bg-transparent text-gj-blue text-[13px] font-medium cursor-pointer font-sans"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -190,111 +156,48 @@ export default function EditarVisaModal({ visa }: Props) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-lg p-0 overflow-hidden"
-          style={{
-            backgroundColor: '#111f38',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 14,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="max-w-lg p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
         >
           {/* Overlay: Éxito */}
           {saved && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundColor: 'rgba(11,22,40,0.97)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-                zIndex: 20,
-                borderRadius: 14,
-              }}
-            >
-              <div
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(34,201,122,0.15)',
-                  border: '2px solid #22c97a',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="absolute inset-0 bg-black/[97%] flex flex-col items-center justify-center gap-3 z-20 rounded-[14px]">
+              <div className="w-[52px] h-[52px] rounded-full bg-gj-green/15 border-2 border-gj-green flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gj-green">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <p style={{ color: '#22c97a', fontSize: 16, fontWeight: 600, margin: 0, fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-gj-green text-base font-semibold m-0 font-sans">
                 ¡Trámite actualizado!
               </p>
             </div>
           )}
 
-          <DialogHeader
-            style={{
-              padding: '24px 28px 0',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
-              paddingBottom: 16,
-            }}
-          >
-            <DialogTitle
-              style={{
-                fontFamily: 'Fraunces, serif',
-                color: '#e8e6e0',
-                fontSize: 20,
-                fontWeight: 700,
-              }}
-            >
+          <DialogHeader className="px-7 pt-6 pb-4 border-b border-white/[7%]">
+            <DialogTitle className="font-display text-gj-text text-xl font-bold">
               Editar trámite — {visa.visa_id}
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div style={{ padding: '20px 28px', maxHeight: '65vh', overflowY: 'auto' }}>
+            <div className="px-7 py-5 max-h-[65vh] overflow-y-auto">
 
               {serverError && (
-                <div
-                  style={{
-                    backgroundColor: 'rgba(232,90,90,0.12)',
-                    border: '1px solid rgba(232,90,90,0.3)',
-                    borderRadius: 8,
-                    padding: '10px 14px',
-                    color: '#e85a5a',
-                    fontSize: 13,
-                    marginBottom: 16,
-                  }}
-                >
+                <div className="bg-gj-red/[8%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-sm mb-4">
                   {serverError}
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px' }}>
+              <div className="grid gap-3.5" style={{ gridTemplateColumns: '1fr 1fr', columnGap: 20 }}>
 
                 {/* Estado */}
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={labelStyle}>Estado *</label>
-                  <div style={{ position: 'relative' }}>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Estado *</label>
+                  <div className="relative">
                     <span
-                      style={{
-                        position: 'absolute',
-                        left: 10,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        backgroundColor: estadoColor,
-                        pointerEvents: 'none',
-                      }}
+                      className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full pointer-events-none ${estadoDotClass}`}
                     />
                     <select
-                      style={{ ...inputStyle, paddingLeft: 26, cursor: 'pointer' }}
+                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg pl-[26px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                       value={form.estado}
                       onChange={(e) => setField('estado', e.target.value as EstadoVisa)}
                     >
@@ -311,19 +214,16 @@ export default function EditarVisaModal({ visa }: Props) {
                 {/* Fecha turno — solo si TURNO_ASIGNADO */}
                 {form.estado === 'TURNO_ASIGNADO' && (
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={labelStyle}>Fecha de turno *</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de turno *</label>
                     <input
                       type="date"
-                      style={{
-                        ...inputStyle,
-                        colorScheme: 'dark',
-                        borderColor: errors.fecha_turno ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                      }}
+                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.fecha_turno ? 'border-gj-red' : 'border-white/10'}`}
+                      style={{ colorScheme: 'dark' }}
                       value={form.fecha_turno}
                       onChange={(e) => setField('fecha_turno', e.target.value)}
                     />
                     {errors.fecha_turno && (
-                      <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>
+                      <span className="text-[11px] text-gj-red mt-0.5 block">
                         {errors.fecha_turno}
                       </span>
                     )}
@@ -333,10 +233,11 @@ export default function EditarVisaModal({ visa }: Props) {
                 {/* Fecha aprobación — solo si APROBADA */}
                 {form.estado === 'APROBADA' && (
                   <div>
-                    <label style={labelStyle}>Fecha de aprobación</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de aprobación</label>
                     <input
                       type="date"
-                      style={{ ...inputStyle, colorScheme: 'dark' }}
+                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                       value={form.fecha_aprobacion}
                       onChange={(e) => setField('fecha_aprobacion', e.target.value)}
                     />
@@ -346,10 +247,11 @@ export default function EditarVisaModal({ visa }: Props) {
                 {/* Fecha vencimiento — solo si APROBADA */}
                 {form.estado === 'APROBADA' && (
                   <div>
-                    <label style={labelStyle}>Fecha de vencimiento</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de vencimiento</label>
                     <input
                       type="date"
-                      style={{ ...inputStyle, colorScheme: 'dark' }}
+                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                       value={form.fecha_vencimiento}
                       onChange={(e) => setField('fecha_vencimiento', e.target.value)}
                     />
@@ -358,9 +260,9 @@ export default function EditarVisaModal({ visa }: Props) {
 
                 {/* DS-160 */}
                 <div>
-                  <label style={labelStyle}>DS-160</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">DS-160</label>
                   <input
-                    style={inputStyle}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.ds160}
                     onChange={(e) => setField('ds160', e.target.value)}
                   />
@@ -368,10 +270,10 @@ export default function EditarVisaModal({ visa }: Props) {
 
                 {/* Email portal */}
                 <div>
-                  <label style={labelStyle}>Email portal consular</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email portal consular</label>
                   <input
                     type="email"
-                    style={inputStyle}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.email_portal}
                     onChange={(e) => setField('email_portal', e.target.value)}
                   />
@@ -379,9 +281,9 @@ export default function EditarVisaModal({ visa }: Props) {
 
                 {/* Orden de atención */}
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={labelStyle}>Orden de atención</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Orden de atención</label>
                   <input
-                    style={inputStyle}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.orden_atencion}
                     onChange={(e) => setField('orden_atencion', e.target.value)}
                   />
@@ -389,9 +291,10 @@ export default function EditarVisaModal({ visa }: Props) {
 
                 {/* Notas */}
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={labelStyle}>Notas</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Notas</label>
                   <textarea
-                    style={{ ...inputStyle, resize: 'vertical', minHeight: 72, lineHeight: 1.5 }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y leading-relaxed"
+                    style={{ minHeight: 72 }}
                     value={form.notas}
                     onChange={(e) => setField('notas', e.target.value)}
                   />
@@ -400,47 +303,19 @@ export default function EditarVisaModal({ visa }: Props) {
               </div>
             </div>
 
-            <div
-              style={{
-                padding: '16px 28px',
-                borderTop: '1px solid rgba(255,255,255,0.07)',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: 10,
-              }}
-            >
+            <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 disabled={loading}
-                style={{
-                  padding: '9px 20px',
-                  borderRadius: 8,
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  backgroundColor: 'transparent',
-                  color: '#9ba8bb',
-                  fontSize: 14,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-5 py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-sm font-sans ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  padding: '9px 24px',
-                  borderRadius: 8,
-                  border: 'none',
-                  backgroundColor: '#4a9eff',
-                  color: '#0b1628',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-6 py-2 rounded-lg border-none bg-gj-blue text-gj-bg text-sm font-semibold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
               >
                 {loading ? 'Guardando...' : 'Guardar cambios'}
               </button>

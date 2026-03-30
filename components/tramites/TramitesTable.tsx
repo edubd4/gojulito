@@ -28,42 +28,20 @@ interface Props {
   isAdmin?: boolean
 }
 
-const BADGE_VISA: Record<EstadoVisa, { label: string; color: string; bg: string }> = {
-  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  APROBADA:       { label: 'Aprobada',       color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_VISA: Record<EstadoVisa, { classes: string; label: string }> = {
+  EN_PROCESO:     { classes: 'text-gj-amber bg-gj-amber/15',       label: 'En proceso'     },
+  TURNO_ASIGNADO: { classes: 'text-gj-blue bg-gj-blue/15',         label: 'Turno asignado' },
+  APROBADA:       { classes: 'text-gj-green bg-gj-green/15',       label: 'Aprobada'       },
+  RECHAZADA:      { classes: 'text-gj-red bg-gj-red/15',           label: 'Rechazada'      },
+  PAUSADA:        { classes: 'text-gj-red bg-gj-red/15',           label: 'Pausada'        },
+  CANCELADA:      { classes: 'text-gj-secondary bg-gj-secondary/15', label: 'Cancelada'    },
 }
 
 const ESTADOS: EstadoVisa[] = ['EN_PROCESO', 'TURNO_ASIGNADO', 'APROBADA', 'RECHAZADA', 'PAUSADA', 'CANCELADA']
 
-const inputStyle: React.CSSProperties = {
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-}
-
 function Spinner() {
   return (
-    <span
-      className="animate-spin"
-      style={{
-        display: 'inline-block',
-        width: 16,
-        height: 16,
-        border: '2px solid rgba(255,255,255,0.1)',
-        borderTopColor: '#4a9eff',
-        borderRadius: '50%',
-        flexShrink: 0,
-      }}
-    />
+    <span className="animate-spin inline-block flex-shrink-0 w-4 h-4 rounded-full border-2 border-white/10 border-t-gj-blue" />
   )
 }
 
@@ -204,32 +182,28 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
       {confirmDeleteId && (
         <>
           <div
-            style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10000 }}
+            className="fixed inset-0 bg-black/60 z-[10000]"
             onClick={() => !deleteLoading && setConfirmDeleteId(null)}
           />
           <div
-            style={{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-              zIndex: 10001, backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 12, padding: '28px 32px', maxWidth: 420, width: '90%',
-              fontFamily: 'DM Sans, sans-serif', boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
-            }}
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[10001] bg-gj-card border border-white/10 rounded-xl px-8 py-7 max-w-[420px] w-[90%] font-sans"
+            style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}
           >
-            <p style={{ color: '#e8e6e0', fontSize: 15, lineHeight: 1.6, marginBottom: 24 }}>
+            <p className="text-gj-text text-[15px] leading-relaxed mb-6">
               ¿Eliminar este trámite permanentemente? Esta acción no se puede deshacer.
             </p>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <div className="flex gap-2.5 justify-end">
               <button
                 onClick={() => setConfirmDeleteId(null)}
                 disabled={deleteLoading}
-                style={{ padding: '8px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13, cursor: deleteLoading ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}
+                className={`px-[18px] py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-[13px] font-sans ${deleteLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 Cancelar
               </button>
               <button
                 onClick={() => void handleEliminar(confirmDeleteId)}
                 disabled={deleteLoading}
-                style={{ padding: '8px 18px', borderRadius: 8, border: 'none', backgroundColor: '#e85a5a', color: '#fff', fontSize: 13, fontWeight: 600, cursor: deleteLoading ? 'not-allowed' : 'pointer', opacity: deleteLoading ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}
+                className={`px-[18px] py-2 rounded-lg border-none bg-gj-red text-white text-[13px] font-semibold font-sans ${deleteLoading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
               >
                 {deleteLoading ? 'Eliminando...' : 'Eliminar'}
               </button>
@@ -239,40 +213,21 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
       )}
       {/* Error banner */}
       {errorMsg && (
-        <div
-          style={{
-            backgroundColor: 'rgba(232,90,90,0.12)',
-            border: '1px solid rgba(232,90,90,0.3)',
-            borderRadius: 8,
-            padding: '10px 14px',
-            color: '#e85a5a',
-            fontSize: 13,
-            marginBottom: 12,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
+        <div className="bg-gj-red/[8%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-sm mb-3 font-sans">
           {errorMsg}
         </div>
       )}
 
       {/* Filtros */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 12,
-          marginBottom: 20,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
+      <div className="flex gap-3 mb-5 flex-wrap items-center">
         <input
-          style={{ ...inputStyle, minWidth: 220 }}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none min-w-[220px]"
           placeholder="Buscar cliente o visa..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
         <select
-          style={{ ...inputStyle, cursor: 'pointer' }}
+          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
           value={estadoFiltro}
           onChange={(e) => setEstadoFiltro(e.target.value as EstadoVisa | '')}
         >
@@ -283,7 +238,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
         </select>
         {grupos.length > 0 && (
           <select
-            style={{ ...inputStyle, cursor: 'pointer' }}
+            className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
             value={grupoFiltro}
             onChange={(e) => setGrupoFiltro(e.target.value)}
           >
@@ -296,68 +251,31 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
         {grupoSeleccionado && (
           <button
             onClick={() => setLoteModalOpen(true)}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: 'none',
-              backgroundColor: '#e8a020',
-              color: '#0b1628',
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-              whiteSpace: 'nowrap',
-            }}
+            className="px-4 py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans whitespace-nowrap"
           >
             Actualizar todas las visas del grupo
           </button>
         )}
-        <span style={{ color: '#9ba8bb', fontSize: 13, fontFamily: 'DM Sans, sans-serif', marginLeft: 4 }}>
+        <span className="text-gj-secondary text-[13px] font-sans ml-1">
           {filtrados.length} trámite{filtrados.length !== 1 ? 's' : ''}
         </span>
       </div>
 
       {/* Tabla */}
-      <div
-        style={{
-          backgroundColor: '#111f38',
-          borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
         {filtrados.length === 0 ? (
-          <div
-            style={{
-              padding: '48px 28px',
-              textAlign: 'center',
-              color: '#9ba8bb',
-              fontSize: 14,
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
+          <div className="px-7 py-12 text-center text-gj-secondary text-sm font-sans">
             Sin trámites para los filtros seleccionados
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', minWidth: 580 }}>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse font-sans" style={{ minWidth: 580 }}>
               <thead>
                 <tr>
                   {['Visa ID', 'Cliente', 'Estado', 'DS-160', 'Fecha turno', 'Aprobación', 'Vencimiento', ...(isAdmin ? [''] : [])].map((col) => (
                     <th
                       key={col}
-                      style={{
-                        textAlign: 'left',
-                        padding: '12px 16px',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: '#9ba8bb',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        borderBottom: '1px solid rgba(255,255,255,0.08)',
-                        whiteSpace: 'nowrap',
-                        backgroundColor: '#111f38',
-                      }}
+                      className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] border-b border-white/[8%] whitespace-nowrap bg-gj-card"
                     >
                       {col}
                     </th>
@@ -370,37 +288,31 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                   return (
                     <tr
                       key={t.id}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent'
-                      }}
+                      className="border-b border-white/[4%] hover:bg-white/[3%]"
                     >
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', display: 'block' }}>
-                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>{t.visa_id}</span>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <Link href={`/clientes/${t.cliente_id}`} className="no-underline block">
+                          <span className="text-[13px] text-gj-secondary">{t.visa_id}</span>
                         </Link>
                       </td>
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none' }}>
-                          <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{t.cliente_nombre}</div>
-                          <div style={{ fontSize: 12, color: '#9ba8bb' }}>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <Link href={`/clientes/${t.cliente_id}`} className="no-underline">
+                          <div className="text-sm text-gj-text font-medium">{t.cliente_nombre}</div>
+                          <div className="text-xs text-gj-secondary">
                             {t.cliente_gj_id}
                             {t.grupo_familiar_nombre && (
-                              <span style={{ marginLeft: 6, color: '#4a9eff' }}>· {t.grupo_familiar_nombre}</span>
+                              <span className="ml-1.5 text-gj-blue">· {t.grupo_familiar_nombre}</span>
                             )}
                           </div>
                         </Link>
                       </td>
 
                       {/* Estado — dropdown inline */}
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-3 whitespace-nowrap">
                         {loadingId === t.id ? (
                           <Spinner />
                         ) : (
-                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <div className="relative inline-block">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -412,27 +324,9 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                                   setOpenDropdownId(t.id)
                                 }
                               }}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                padding: 0,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                              }}
+                              className="bg-transparent border-none p-0 cursor-pointer inline-flex items-center gap-1"
                             >
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '3px 10px',
-                                  borderRadius: 6,
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                  color: badge.color,
-                                  backgroundColor: badge.bg,
-                                }}
-                              >
+                              <span className={`inline-block px-2.5 py-0.5 rounded text-xs font-semibold ${badge.classes}`}>
                                 {badge.label}
                               </span>
                               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -442,22 +336,12 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                             {openDropdownId === t.id && (
                               <>
                                 <div
-                                  style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                                  className="fixed inset-0 z-40"
                                   onClick={() => setOpenDropdownId(null)}
                                 />
                                 <div
-                                  style={{
-                                    position: 'fixed',
-                                    top: dropdownPos.top,
-                                    left: dropdownPos.left,
-                                    zIndex: 50,
-                                    backgroundColor: '#111f38',
-                                    border: '1px solid rgba(255,255,255,0.12)',
-                                    borderRadius: 8,
-                                    padding: 4,
-                                    boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
-                                    minWidth: 145,
-                                  }}
+                                  className="fixed z-50 bg-gj-card border border-white/[12%] rounded-lg p-1 min-w-[145px]"
+                                  style={{ top: dropdownPos.top, left: dropdownPos.left, boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
                                 >
                                   {ESTADOS.filter((e) => e !== t.estado).map((opt) => {
                                     const optBadge = BADGE_VISA[opt]
@@ -465,34 +349,9 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                                       <button
                                         key={opt}
                                         onClick={() => handleCambiarEstado(t.id, opt)}
-                                        style={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          width: '100%',
-                                          background: 'none',
-                                          border: 'none',
-                                          padding: '6px 10px',
-                                          cursor: 'pointer',
-                                          borderRadius: 6,
-                                        }}
-                                        onMouseEnter={(e) => {
-                                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.06)'
-                                        }}
-                                        onMouseLeave={(e) => {
-                                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
-                                        }}
+                                        className="flex items-center w-full bg-transparent border-none px-2.5 py-1.5 cursor-pointer rounded-md hover:bg-white/[6%]"
                                       >
-                                        <span
-                                          style={{
-                                            display: 'inline-block',
-                                            padding: '3px 10px',
-                                            borderRadius: 6,
-                                            fontSize: 12,
-                                            fontWeight: 600,
-                                            color: optBadge.color,
-                                            backgroundColor: optBadge.bg,
-                                          }}
-                                        >
+                                        <span className={`inline-block px-2.5 py-0.5 rounded text-xs font-semibold ${optBadge.classes}`}>
                                           {optBadge.label}
                                         </span>
                                       </button>
@@ -505,18 +364,19 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                         )}
                       </td>
 
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={`/clientes/${t.cliente_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <td className="px-4 py-3 text-[13px] text-gj-secondary whitespace-nowrap">
+                        <Link href={`/clientes/${t.cliente_id}`} className="no-underline text-inherit">
                           {t.ds160 ?? '—'}
                         </Link>
                       </td>
                       {/* Fecha turno */}
-                      <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-2 whitespace-nowrap">
                         {t.estado === 'TURNO_ASIGNADO' ? (
                           <div>
                             <input
                               type="date"
-                              style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                              className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
+                              style={{ colorScheme: 'dark' }}
                               value={fechaTurnoEdits[t.id] ?? (t.fecha_turno ?? '')}
                               onChange={(e) =>
                                 setFechaTurnoEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
@@ -528,26 +388,27 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                               }}
                             />
                             {!t.fecha_turno && !(fechaTurnoEdits[t.id]) && touchedFields.has(t.id + '_turno') && (
-                              <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <div className="text-[11px] text-gj-amber mt-0.5 flex items-center gap-1">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 Completá la fecha
                               </div>
                             )}
                           </div>
                         ) : (
-                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>
+                          <span className="text-[13px] text-gj-secondary">
                             {t.fecha_turno ? formatFecha(t.fecha_turno) : '—'}
                           </span>
                         )}
                       </td>
 
                       {/* Fecha aprobación */}
-                      <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-2 whitespace-nowrap">
                         {t.estado === 'APROBADA' ? (
                           <div>
                             <input
                               type="date"
-                              style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                              className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
+                              style={{ colorScheme: 'dark' }}
                               value={fechaAprobEdits[t.id] ?? (t.fecha_aprobacion ?? '')}
                               onChange={(e) =>
                                 setFechaAprobEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
@@ -559,26 +420,27 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                               }}
                             />
                             {!t.fecha_aprobacion && !(fechaAprobEdits[t.id]) && touchedFields.has(t.id + '_aprob') && (
-                              <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <div className="text-[11px] text-gj-amber mt-0.5 flex items-center gap-1">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 Completá la fecha
                               </div>
                             )}
                           </div>
                         ) : (
-                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>
+                          <span className="text-[13px] text-gj-secondary">
                             {t.fecha_aprobacion ? formatFecha(t.fecha_aprobacion) : '—'}
                           </span>
                         )}
                       </td>
 
                       {/* Fecha vencimiento */}
-                      <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-2 whitespace-nowrap">
                         {t.estado === 'APROBADA' ? (
                           <div>
                             <input
                               type="date"
-                              style={{ ...inputStyle, colorScheme: 'dark', width: 150 }}
+                              className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
+                              style={{ colorScheme: 'dark' }}
                               value={fechaVencEdits[t.id] ?? (t.fecha_vencimiento ?? '')}
                               onChange={(e) =>
                                 setFechaVencEdits((prev) => ({ ...prev, [t.id]: e.target.value }))
@@ -590,24 +452,24 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                               }}
                             />
                             {!t.fecha_vencimiento && !(fechaVencEdits[t.id]) && touchedFields.has(t.id + '_venc') && (
-                              <div style={{ fontSize: 11, color: '#e8a020', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <div className="text-[11px] text-gj-amber mt-0.5 flex items-center gap-1">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 Completá la fecha
                               </div>
                             )}
                           </div>
                         ) : (
-                          <span style={{ fontSize: 13, color: '#9ba8bb' }}>
+                          <span className="text-[13px] text-gj-secondary">
                             {t.fecha_vencimiento ? formatFecha(t.fecha_vencimiento) : '—'}
                           </span>
                         )}
                       </td>
                       {isAdmin && (
-                        <td style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+                        <td className="px-4 py-2 whitespace-nowrap">
                           <button
                             title="Eliminar trámite"
                             onClick={() => setConfirmDeleteId(t.id)}
-                            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#e85a5a', display: 'flex', alignItems: 'center' }}
+                            className="bg-transparent border-none p-0 cursor-pointer text-gj-red flex items-center"
                           >
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="3 6 5 6 21 6"/>
@@ -628,20 +490,20 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-            <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+          <div className="border-t border-white/[6%] px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+            <span className="text-xs text-gj-secondary font-sans">
               {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtrados.length)} de {filtrados.length}
             </span>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="flex gap-1.5">
               <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === 1 ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-3 py-1 rounded-md border border-white/[12%] bg-transparent text-[13px] font-sans ${currentPage === 1 ? 'text-[#4a5568] cursor-not-allowed' : 'text-gj-secondary cursor-pointer'}`}>
                 ← Anterior
               </button>
-              <span style={{ padding: '5px 10px', fontSize: 13, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+              <span className="px-2.5 py-1 text-[13px] text-gj-text font-sans">
                 {currentPage} / {totalPages}
               </span>
               <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.12)', backgroundColor: 'transparent', color: currentPage === totalPages ? '#4a5568' : '#9ba8bb', fontSize: 13, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                className={`px-3 py-1 rounded-md border border-white/[12%] bg-transparent text-[13px] font-sans ${currentPage === totalPages ? 'text-[#4a5568] cursor-not-allowed' : 'text-gj-secondary cursor-pointer'}`}>
                 Siguiente →
               </button>
             </div>
