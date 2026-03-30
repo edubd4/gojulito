@@ -7,19 +7,6 @@ interface Props {
   nombreActual: string
 }
 
-const inputStyle: React.CSSProperties = {
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  width: '100%',
-  boxSizing: 'border-box',
-}
-
 export default function EditarNombreForm({ nombreActual }: Props) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
@@ -59,20 +46,16 @@ export default function EditarNombreForm({ nombreActual }: Props) {
 
   if (!editing) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 15, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif', fontWeight: 500 }}>
+      <div className="flex items-center gap-3">
+        <span className="text-[15px] text-gj-text font-sans font-medium">
           {nombre}
         </span>
         {saved && (
-          <span style={{ fontSize: 12, color: '#22c97a', fontFamily: 'DM Sans, sans-serif' }}>✓ Guardado</span>
+          <span className="text-xs text-gj-green font-sans">✓ Guardado</span>
         )}
         <button
           onClick={() => setEditing(true)}
-          style={{
-            padding: '5px 14px', borderRadius: 7, border: '1px solid rgba(255,255,255,0.15)',
-            backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13,
-            cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="px-3.5 py-[5px] rounded-[7px] border border-white/15 bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
         >
           Editar
         </button>
@@ -81,35 +64,26 @@ export default function EditarNombreForm({ nombreActual }: Props) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 360 }}>
+    <div className="flex flex-col gap-2 max-w-[360px]">
       <input
-        style={inputStyle}
+        className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
         value={nombre}
         onChange={(e) => { setNombre(e.target.value); if (error) setError('') }}
         onKeyDown={(e) => { if (e.key === 'Enter') { void handleSave() } if (e.key === 'Escape') handleCancel() }}
         autoFocus
       />
-      {error && <span style={{ fontSize: 12, color: '#e85a5a', fontFamily: 'DM Sans, sans-serif' }}>{error}</span>}
-      <div style={{ display: 'flex', gap: 8 }}>
+      {error && <span className="text-xs text-gj-red font-sans">{error}</span>}
+      <div className="flex gap-2">
         <button
           onClick={handleCancel}
-          style={{
-            padding: '7px 16px', borderRadius: 7, border: '1px solid rgba(255,255,255,0.15)',
-            backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13,
-            cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="px-4 py-[7px] rounded-[7px] border border-white/15 bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
         >
           Cancelar
         </button>
         <button
           onClick={() => { void handleSave() }}
           disabled={loading}
-          style={{
-            padding: '7px 18px', borderRadius: 7, border: 'none',
-            backgroundColor: '#e8a020', color: '#0b1628', fontSize: 13, fontWeight: 600,
-            cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className={`px-[18px] py-[7px] rounded-[7px] border-none bg-gj-amber text-gj-bg text-[13px] font-semibold font-sans transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           {loading ? 'Guardando...' : 'Guardar'}
         </button>

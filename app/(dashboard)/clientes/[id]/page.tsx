@@ -58,38 +58,27 @@ interface HistorialEvento {
 
 // ─── Badge configs ────────────────────────────────────────────────────────────
 
-const BADGE_CLIENTE: Record<EstadoCliente, { label: string; color: string; bg: string }> = {
-  ACTIVO:     { label: 'Activo',     color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  PROSPECTO:  { label: 'Prospecto',  color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  FINALIZADO: { label: 'Finalizado', color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
-  INACTIVO:   { label: 'Inactivo',   color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_CLIENTE: Record<EstadoCliente, { label: string; classes: string }> = {
+  ACTIVO:     { label: 'Activo',     classes: 'text-gj-green bg-gj-green/15'         },
+  PROSPECTO:  { label: 'Prospecto',  classes: 'text-gj-amber bg-gj-amber/15'         },
+  FINALIZADO: { label: 'Finalizado', classes: 'text-gj-secondary bg-gj-secondary/15' },
+  INACTIVO:   { label: 'Inactivo',   classes: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
-const BADGE_VISA: Record<EstadoVisa, { label: string; color: string; bg: string }> = {
-  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  APROBADA:       { label: 'Aprobada',       color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_VISA: Record<EstadoVisa, { label: string; classes: string }> = {
+  EN_PROCESO:     { label: 'En proceso',     classes: 'text-gj-amber bg-gj-amber/15'         },
+  TURNO_ASIGNADO: { label: 'Turno asignado', classes: 'text-gj-blue bg-gj-blue/15'           },
+  APROBADA:       { label: 'Aprobada',       classes: 'text-gj-green bg-gj-green/15'         },
+  RECHAZADA:      { label: 'Rechazada',      classes: 'text-gj-red bg-gj-red/15'             },
+  PAUSADA:        { label: 'Pausada',        classes: 'text-gj-red bg-gj-red/15'             },
+  CANCELADA:      { label: 'Cancelada',      classes: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function Badge({ color, bg, label }: { color: string; bg: string; label: string }) {
+function Badge({ classes, label }: { classes: string; label: string }) {
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: '3px 10px',
-        borderRadius: 6,
-        fontSize: 12,
-        fontWeight: 600,
-        color,
-        backgroundColor: bg,
-        fontFamily: 'DM Sans, sans-serif',
-      }}
-    >
+    <span className={`inline-block px-2.5 py-0.5 rounded-md text-xs font-semibold font-sans ${classes}`}>
       {label}
     </span>
   )
@@ -97,14 +86,7 @@ function Badge({ color, bg, label }: { color: string; bg: string; label: string 
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        backgroundColor: '#111f38',
-        borderRadius: 12,
-        padding: '24px 28px',
-        border: '1px solid rgba(255,255,255,0.06)',
-      }}
-    >
+    <div className="bg-gj-card rounded-xl px-7 py-6 border border-white/[6%]">
       {children}
     </div>
   )
@@ -112,17 +94,7 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function CardTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2
-      style={{
-        fontFamily: 'DM Sans, sans-serif',
-        fontSize: 13,
-        fontWeight: 600,
-        color: '#9ba8bb',
-        textTransform: 'uppercase',
-        letterSpacing: '0.06em',
-        marginBottom: 20,
-      }}
-    >
+    <h2 className="font-sans text-[13px] font-semibold text-gj-secondary uppercase tracking-[0.06em] mb-5">
       {children}
     </h2>
   )
@@ -131,10 +103,10 @@ function CardTitle({ children }: { children: React.ReactNode }) {
 function GridField({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
-      <div style={{ fontSize: 11, color: '#9ba8bb', marginBottom: 4, fontFamily: 'DM Sans, sans-serif' }}>
+      <div className="text-[11px] text-gj-secondary mb-1 font-sans">
         {label}
       </div>
-      <div style={{ fontSize: 14, color: value ? '#e8e6e0' : '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+      <div className={`text-sm font-sans ${value ? 'text-gj-text' : 'text-gj-secondary'}`}>
         {value ?? '—'}
       </div>
     </div>
@@ -152,19 +124,17 @@ function formatFechaHora(dateStr: string): string {
 }
 
 function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
-  const iconStyle = { width: 16, height: 16, flexShrink: 0 }
-
   switch (tipo) {
     case 'CAMBIO_ESTADO':
       return (
-        <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#e8a020" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#e8a020" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 2l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" />
           <path d="M7 22l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" />
         </svg>
       )
     case 'PAGO':
       return (
-        <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 6v2m0 8v2m-4-6h8" />
           <path d="M9.5 9a3 3 0 0 1 5 0c0 2-3 3-3 5" />
@@ -172,7 +142,7 @@ function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
       )
     case 'NOTA':
       return (
-        <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <polyline points="14 2 14 8 20 8" />
           <line x1="16" y1="13" x2="8" y2="13" />
@@ -182,7 +152,7 @@ function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
       )
     case 'TURNO_ASIGNADO':
       return (
-        <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#4a9eff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />
           <line x1="8" y1="2" x2="8" y2="6" />
@@ -191,7 +161,7 @@ function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
       )
     case 'NUEVO_CLIENTE':
       return (
-        <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
           <circle cx="8.5" cy="7" r="4" />
           <line x1="20" y1="8" x2="20" y2="14" />
@@ -200,7 +170,7 @@ function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
       )
     case 'ALERTA':
       return (
-        <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#e85a5a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#e85a5a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
@@ -294,27 +264,12 @@ export default async function ClienteDetallePage({
   const estadoBadge = BADGE_CLIENTE[cliente.estado]
 
   return (
-    <div
-      className="p-4 sm:p-6 lg:p-8"
-      style={{
-        backgroundColor: '#0b1628',
-        minHeight: '100%',
-        fontFamily: 'DM Sans, sans-serif',
-      }}
-    >
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
       {/* Back + header */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="mb-6">
         <Link
           href="/clientes"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            color: '#9ba8bb',
-            textDecoration: 'none',
-            fontSize: 13,
-            marginBottom: 20,
-          }}
+          className="inline-flex items-center gap-1.5 text-gj-secondary no-underline text-[13px] mb-5"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
@@ -323,23 +278,15 @@ export default async function ClienteDetallePage({
           Volver a clientes
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-            <h1
-              style={{
-                fontFamily: 'Fraunces, serif',
-                fontSize: 28,
-                fontWeight: 700,
-                color: '#e8e6e0',
-                margin: 0,
-              }}
-            >
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3.5 flex-wrap">
+            <h1 className="font-display text-[28px] font-bold text-gj-text m-0">
               {cliente.nombre}
             </h1>
             <Badge {...estadoBadge} />
-            <span style={{ color: '#9ba8bb', fontSize: 13 }}>{cliente.gj_id}</span>
+            <span className="text-gj-secondary text-[13px]">{cliente.gj_id}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div className="flex items-center gap-2.5 flex-wrap">
             <AgregarNotaModal clienteId={cliente.id} />
             <RegistrarPagoModal clienteId={cliente.id} visaId={visa?.id} />
             <EditarClienteModal
@@ -363,7 +310,7 @@ export default async function ClienteDetallePage({
       </div>
 
       {/* Blocks */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div className="flex flex-col gap-5">
 
         {/* ── Bloque 1: Datos ── */}
         <Card>
@@ -388,15 +335,9 @@ export default async function ClienteDetallePage({
           </div>
 
           {cliente.observaciones && (
-            <div
-              style={{
-                marginTop: 20,
-                paddingTop: 20,
-                borderTop: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
-              <div style={{ fontSize: 11, color: '#9ba8bb', marginBottom: 6 }}>Observaciones</div>
-              <p style={{ fontSize: 14, color: '#e8e6e0', margin: 0, lineHeight: 1.6 }}>
+            <div className="mt-5 pt-5 border-t border-white/[6%]">
+              <div className="text-[11px] text-gj-secondary mb-1.5">Observaciones</div>
+              <p className="text-sm text-gj-text m-0 leading-relaxed">
                 {cliente.observaciones}
               </p>
             </div>
@@ -407,17 +348,17 @@ export default async function ClienteDetallePage({
         <Card>
           <CardTitle>Visa activa</CardTitle>
           {!visa ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 14 }}>
-              <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
+            <div className="flex flex-col items-start gap-3.5">
+              <p className="text-gj-secondary text-sm m-0">
                 Este cliente no tiene un trámite de visa activo.
               </p>
               <IniciarVisaModal clienteId={cliente.id} />
             </div>
           ) : (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 12, flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, color: '#e8e6e0' }}>
+              <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <span className="font-sans text-[15px] font-semibold text-gj-text">
                     {visa.visa_id}
                   </span>
                   <Badge {...BADGE_VISA[visa.estado]} />
@@ -460,15 +401,15 @@ export default async function ClienteDetallePage({
                 />
               </div>
               {visa.notas && (
-                <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div style={{ fontSize: 11, color: '#9ba8bb', marginBottom: 6 }}>Notas</div>
-                  <p style={{ fontSize: 14, color: '#e8e6e0', margin: 0, lineHeight: 1.6 }}>
+                <div className="mt-4 pt-4 border-t border-white/[6%]">
+                  <div className="text-[11px] text-gj-secondary mb-1.5">Notas</div>
+                  <p className="text-sm text-gj-text m-0 leading-relaxed">
                     {visa.notas}
                   </p>
                 </div>
               )}
               {puedeIniciarNueva && (
-                <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="mt-5 pt-4 border-t border-white/[6%]">
                   <IniciarVisaModal clienteId={cliente.id} />
                 </div>
               )}
@@ -486,39 +427,22 @@ export default async function ClienteDetallePage({
         <Card>
           <CardTitle>Historial de eventos</CardTitle>
           {historial.length === 0 ? (
-            <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>Sin eventos registrados</p>
+            <p className="text-gj-secondary text-sm m-0">Sin eventos registrados</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <div className="flex flex-col">
               {historial.map((evento, idx) => (
                 <div
                   key={evento.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 14,
-                    padding: '12px 0',
-                    borderBottom: idx < historial.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                  }}
+                  className={`flex items-start gap-3.5 py-3 ${idx < historial.length - 1 ? 'border-b border-white/[4%]' : ''}`}
                 >
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 8,
-                      backgroundColor: '#172645',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <div className="w-8 h-8 rounded-lg bg-gj-input flex items-center justify-center shrink-0">
                     <HistorialIcon tipo={evento.tipo} />
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ margin: 0, fontSize: 14, color: '#e8e6e0', lineHeight: 1.4 }}>
+                  <div className="flex-1 min-w-0">
+                    <p className="m-0 text-sm text-gj-text leading-snug">
                       {evento.descripcion}
                     </p>
-                    <p style={{ margin: '3px 0 0', fontSize: 12, color: '#9ba8bb' }}>
+                    <p className="m-0 mt-0.5 text-xs text-gj-secondary">
                       {formatFechaHora(evento.created_at)}
                     </p>
                   </div>

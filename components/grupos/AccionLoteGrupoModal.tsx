@@ -47,34 +47,13 @@ const ESTADOS_VISA: { value: EstadoVisa; label: string }[] = [
   { value: 'CANCELADA', label: 'Cancelada' },
 ]
 
-const BADGE_VISA: Record<string, { color: string; bg: string; label: string }> = {
-  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  APROBADA:       { label: 'Aprobada',       color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
+const BADGE_VISA: Record<string, { classes: string; label: string }> = {
+  EN_PROCESO:     { label: 'En proceso',     classes: 'text-gj-amber bg-gj-amber/15'     },
+  TURNO_ASIGNADO: { label: 'Turno asignado', classes: 'text-gj-blue bg-gj-blue/15'       },
+  APROBADA:       { label: 'Aprobada',       classes: 'text-gj-green bg-gj-green/15'     },
+  RECHAZADA:      { label: 'Rechazada',      classes: 'text-gj-red bg-gj-red/15'         },
+  PAUSADA:        { label: 'Pausada',        classes: 'text-gj-red bg-gj-red/15'         },
+  CANCELADA:      { label: 'Cancelada',      classes: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
 export default function AccionLoteGrupoModal({
@@ -172,89 +151,53 @@ export default function AccionLoteGrupoModal({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
-        className="max-w-lg p-0 overflow-hidden"
-        style={{
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 14,
-          fontFamily: 'DM Sans, sans-serif',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
+        className="max-w-lg p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader
-          style={{
-            padding: '24px 28px 0',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            paddingBottom: 16,
-          }}
+          className="px-7 pt-6 pb-4 border-b border-white/[7%]"
         >
-          <DialogTitle
-            style={{
-              fontFamily: 'Fraunces, serif',
-              color: '#e8e6e0',
-              fontSize: 18,
-              fontWeight: 700,
-            }}
-          >
+          <DialogTitle className="font-display text-gj-text text-lg font-bold">
             Actualizar visas del grupo{' '}
-            <span style={{ color: '#e8a020' }}>{grupoNombre}</span>
+            <span className="text-gj-amber">{grupoNombre}</span>
           </DialogTitle>
         </DialogHeader>
 
         {view === 'form' ? (
           <form onSubmit={handleSubmit} noValidate>
-            <div style={{ padding: '20px 28px' }}>
+            <div className="px-7 py-5">
               {/* Client list */}
-              <div style={{ marginBottom: 20 }}>
-                <p style={{ fontSize: 12, color: '#9ba8bb', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+              <div className="mb-5">
+                <p className="text-xs text-gj-secondary mb-2.5 uppercase tracking-[0.05em] font-semibold">
                   Integrantes del grupo
                 </p>
                 {fetchLoading ? (
-                  <p style={{ fontSize: 13, color: '#9ba8bb' }}>Cargando...</p>
+                  <p className="text-[13px] text-gj-secondary">Cargando...</p>
                 ) : fetchError ? (
-                  <p style={{ fontSize: 13, color: '#e85a5a' }}>{fetchError}</p>
+                  <p className="text-[13px] text-gj-red">{fetchError}</p>
                 ) : clientes.length === 0 ? (
-                  <p style={{ fontSize: 13, color: '#9ba8bb' }}>Sin integrantes</p>
+                  <p className="text-[13px] text-gj-secondary">Sin integrantes</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <div className="flex flex-col gap-1.5">
                     {clientes.map((c) => {
                       const badge = c.visa ? (BADGE_VISA[c.visa.estado] ?? null) : null
                       return (
                         <div
                           key={c.cliente_id}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            backgroundColor: '#172645',
-                            borderRadius: 8,
-                            padding: '8px 12px',
-                          }}
+                          className="flex items-center justify-between bg-gj-input rounded-lg px-3 py-2"
                         >
                           <div>
-                            <span style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{c.nombre}</span>
-                            <span style={{ fontSize: 12, color: '#9ba8bb', marginLeft: 8 }}>{c.gj_id}</span>
+                            <span className="text-sm text-gj-text font-medium">{c.nombre}</span>
+                            <span className="text-xs text-gj-secondary ml-2">{c.gj_id}</span>
                           </div>
                           {c.visa && badge ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <span style={{ fontSize: 11, color: '#9ba8bb' }}>{c.visa.visa_id}</span>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '2px 8px',
-                                  borderRadius: 5,
-                                  fontSize: 11,
-                                  fontWeight: 600,
-                                  color: badge.color,
-                                  backgroundColor: badge.bg,
-                                }}
-                              >
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[11px] text-gj-secondary">{c.visa.visa_id}</span>
+                              <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${badge.classes}`}>
                                 {badge.label}
                               </span>
                             </div>
                           ) : (
-                            <span style={{ fontSize: 11, color: '#9ba8bb' }}>Sin visa activa</span>
+                            <span className="text-[11px] text-gj-secondary">Sin visa activa</span>
                           )}
                         </div>
                       )
@@ -264,11 +207,11 @@ export default function AccionLoteGrupoModal({
               </div>
 
               {/* Form fields */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="flex flex-col gap-3.5">
                 <div>
-                  <label style={labelStyle}>Nuevo estado *</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nuevo estado *</label>
                   <select
-                    style={{ ...inputStyle, cursor: 'pointer' }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     value={estado}
                     onChange={(e) => {
                       setEstado(e.target.value as EstadoVisa | '')
@@ -284,10 +227,11 @@ export default function AccionLoteGrupoModal({
 
                 {estado === 'TURNO_ASIGNADO' && (
                   <div>
-                    <label style={labelStyle}>Fecha de turno *</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de turno *</label>
                     <input
                       type="date"
-                      style={{ ...inputStyle, colorScheme: 'dark' }}
+                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                       value={fechaTurno}
                       onChange={(e) => setFechaTurno(e.target.value)}
                     />
@@ -296,10 +240,11 @@ export default function AccionLoteGrupoModal({
 
                 {estado === 'APROBADA' && (
                   <div>
-                    <label style={labelStyle}>Fecha de aprobación</label>
+                    <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de aprobación</label>
                     <input
                       type="date"
-                      style={{ ...inputStyle, colorScheme: 'dark' }}
+                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                       value={fechaAprobacion}
                       onChange={(e) => setFechaAprobacion(e.target.value)}
                     />
@@ -307,9 +252,9 @@ export default function AccionLoteGrupoModal({
                 )}
 
                 <div>
-                  <label style={labelStyle}>Notas (opcional)</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Notas (opcional)</label>
                   <textarea
-                    style={{ ...inputStyle, resize: 'vertical', minHeight: 64, lineHeight: 1.5 }}
+                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-16 leading-relaxed"
                     value={notas}
                     onChange={(e) => setNotas(e.target.value)}
                     placeholder="Notas adicionales..."
@@ -318,139 +263,67 @@ export default function AccionLoteGrupoModal({
               </div>
 
               {formError && (
-                <div
-                  style={{
-                    marginTop: 12,
-                    backgroundColor: 'rgba(232,90,90,0.12)',
-                    border: '1px solid rgba(232,90,90,0.3)',
-                    borderRadius: 8,
-                    padding: '10px 14px',
-                    color: '#e85a5a',
-                    fontSize: 13,
-                  }}
-                >
+                <div className="mt-3 bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-[13px]">
                   {formError}
                 </div>
               )}
             </div>
 
-            <div
-              style={{
-                padding: '16px 28px',
-                borderTop: '1px solid rgba(255,255,255,0.07)',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: 10,
-              }}
-            >
+            <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={submitting}
-                style={{
-                  padding: '9px 20px',
-                  borderRadius: 8,
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  backgroundColor: 'transparent',
-                  color: '#9ba8bb',
-                  fontSize: 14,
-                  cursor: submitting ? 'not-allowed' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="px-5 py-[9px] rounded-lg border border-white/15 bg-transparent text-gj-secondary text-sm font-sans cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={submitting || fetchLoading || clientes.length === 0}
-                style={{
-                  padding: '9px 24px',
-                  borderRadius: 8,
-                  border: 'none',
-                  backgroundColor: '#e8a020',
-                  color: '#0b1628',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: (submitting || fetchLoading || clientes.length === 0) ? 'not-allowed' : 'pointer',
-                  opacity: (submitting || fetchLoading || clientes.length === 0) ? 0.7 : 1,
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-6 py-[9px] rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold font-sans transition-opacity ${(submitting || fetchLoading || clientes.length === 0) ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 {submitting ? 'Actualizando...' : 'Actualizar todas las visas'}
               </button>
             </div>
           </form>
         ) : (
-          <div style={{ padding: '20px 28px' }}>
-            <div
-              style={{
-                backgroundColor: 'rgba(34,201,122,0.1)',
-                border: '1px solid rgba(34,201,122,0.3)',
-                borderRadius: 8,
-                padding: '10px 14px',
-                color: '#22c97a',
-                fontSize: 13,
-                fontWeight: 600,
-                marginBottom: 16,
-              }}
-            >
+          <div className="px-7 py-5">
+            <div className="bg-gj-green/10 border border-gj-green/30 rounded-lg px-3.5 py-2.5 text-gj-green text-[13px] font-semibold mb-4">
               {okCount} visa{okCount !== 1 ? 's' : ''} actualizada{okCount !== 1 ? 's' : ''} correctamente
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div className="flex flex-col gap-1.5">
               {resultados.map((r) => (
                 <div
                   key={r.cliente_id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: '#172645',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                  }}
+                  className="flex items-center justify-between bg-gj-input rounded-lg px-3 py-2"
                 >
                   <div>
-                    <span style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{r.nombre}</span>
-                    <span style={{ fontSize: 12, color: '#9ba8bb', marginLeft: 8 }}>{r.gj_id}</span>
+                    <span className="text-sm text-gj-text font-medium">{r.nombre}</span>
+                    <span className="text-xs text-gj-secondary ml-2">{r.gj_id}</span>
                     {r.visa_id && (
-                      <span style={{ fontSize: 12, color: '#9ba8bb', marginLeft: 6 }}>— {r.visa_id}</span>
+                      <span className="text-xs text-gj-secondary ml-1.5">— {r.visa_id}</span>
                     )}
                   </div>
                   {r.resultado === 'ok' && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#22c97a' }}>✓ Actualizada</span>
+                    <span className="text-xs font-semibold text-gj-green">✓ Actualizada</span>
                   )}
                   {r.resultado === 'sin_visa' && (
-                    <span style={{ fontSize: 12, color: '#9ba8bb' }}>Sin visa activa</span>
+                    <span className="text-xs text-gj-secondary">Sin visa activa</span>
                   )}
                   {r.resultado === 'error' && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#e85a5a' }}>Error</span>
+                    <span className="text-xs font-semibold text-gj-red">Error</span>
                   )}
                 </div>
               ))}
             </div>
 
-            <div
-              style={{
-                marginTop: 20,
-                display: 'flex',
-                justifyContent: 'flex-end',
-              }}
-            >
+            <div className="mt-5 flex justify-end">
               <button
                 type="button"
                 onClick={handleClose}
-                style={{
-                  padding: '9px 24px',
-                  borderRadius: 8,
-                  border: 'none',
-                  backgroundColor: '#e8a020',
-                  color: '#0b1628',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="px-6 py-[9px] rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold cursor-pointer font-sans"
               >
                 Cerrar
               </button>

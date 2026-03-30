@@ -9,27 +9,6 @@ interface Props {
   esMismaCuenta: boolean
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
 export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -75,12 +54,7 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
       <button
         onClick={handleOpen}
         title="Editar usuario"
-        style={{
-          padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)',
-          backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 12,
-          cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-        }}
+        className="px-2.5 py-[5px] rounded-md border border-white/15 bg-transparent text-gj-secondary text-xs cursor-pointer font-sans inline-flex items-center gap-1"
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -91,58 +65,44 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-sm p-0 overflow-hidden"
-          style={{
-            backgroundColor: '#111f38',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 14,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="max-w-sm p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
         >
           {saved && (
-            <div style={{
-              position: 'absolute', inset: 0, backgroundColor: 'rgba(11,22,40,0.97)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center',
-              justifyContent: 'center', gap: 12, zIndex: 20, borderRadius: 14,
-            }}>
-              <div style={{
-                width: 48, height: 48, borderRadius: '50%',
-                backgroundColor: 'rgba(34,201,122,0.15)', border: '2px solid #22c97a',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div className="absolute inset-0 bg-gj-bg/[97%] flex flex-col items-center justify-center gap-3 z-20 rounded-[14px]">
+              <div className="w-12 h-12 rounded-full bg-gj-green/15 border-2 border-gj-green flex items-center justify-center">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
-              <p style={{ color: '#22c97a', fontSize: 15, fontWeight: 600, margin: 0 }}>Cambios guardados</p>
+              <p className="text-gj-green text-[15px] font-semibold m-0">Cambios guardados</p>
             </div>
           )}
 
-          <DialogHeader style={{ padding: '20px 24px 0', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: 14 }}>
-            <DialogTitle style={{ fontFamily: 'Fraunces, serif', color: '#e8e6e0', fontSize: 18, fontWeight: 700 }}>
+          <DialogHeader className="px-6 pt-5 pb-3.5 border-b border-white/[7%]">
+            <DialogTitle className="font-display text-gj-text text-lg font-bold">
               Editar usuario
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div style={{ padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div className="flex flex-col gap-3.5 px-6 py-[18px]">
               <div>
-                <label style={labelStyle}>Email (no editable)</label>
-                <input style={{ ...inputStyle, opacity: 0.5, cursor: 'not-allowed' }} value={usuario.email} disabled />
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email (no editable)</label>
+                <input className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none opacity-50 cursor-not-allowed" value={usuario.email} disabled />
               </div>
               <div>
-                <label style={labelStyle}>Nombre *</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nombre *</label>
                 <input
-                  style={inputStyle}
+                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   placeholder="Nombre del usuario"
                 />
               </div>
               <div>
-                <label style={labelStyle}>Rol *</label>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Rol *</label>
                 <select
-                  style={{ ...inputStyle, cursor: esMismaCuenta ? 'not-allowed' : 'pointer', opacity: esMismaCuenta ? 0.5 : 1 }}
+                  className={`w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${esMismaCuenta ? 'opacity-50 cursor-not-allowed' : ''}`}
                   value={rol}
                   onChange={(e) => setRol(e.target.value)}
                   disabled={esMismaCuenta}
@@ -151,47 +111,32 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
                   <option value="colaborador">Colaborador</option>
                 </select>
                 {esMismaCuenta && (
-                  <span style={{ fontSize: 11, color: '#9ba8bb', marginTop: 4, display: 'block' }}>
+                  <span className="text-[11px] text-gj-secondary mt-1 block">
                     No podés cambiar tu propio rol
                   </span>
                 )}
               </div>
 
               {error && (
-                <div style={{
-                  backgroundColor: 'rgba(232,90,90,0.12)', border: '1px solid rgba(232,90,90,0.3)',
-                  borderRadius: 8, padding: '8px 12px', color: '#e85a5a', fontSize: 13,
-                }}>
+                <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3 py-2 text-gj-red text-[13px]">
                   {error}
                 </div>
               )}
             </div>
 
-            <div style={{
-              padding: '14px 24px', borderTop: '1px solid rgba(255,255,255,0.07)',
-              display: 'flex', justifyContent: 'flex-end', gap: 8,
-            }}>
+            <div className="border-t border-white/[7%] flex justify-end gap-2 px-6 py-3.5">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 disabled={loading}
-                style={{
-                  padding: '8px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
-                  backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 13,
-                  cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="px-[18px] py-2 rounded-lg border border-white/15 bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  padding: '8px 20px', borderRadius: 8, border: 'none',
-                  backgroundColor: '#e8a020', color: '#0b1628', fontSize: 13,
-                  fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif',
-                }}
+                className={`px-5 py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold font-sans transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 {loading ? 'Guardando...' : 'Guardar'}
               </button>

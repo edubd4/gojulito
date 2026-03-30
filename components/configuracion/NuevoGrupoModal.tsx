@@ -14,27 +14,6 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
 export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
   const router = useRouter()
   const [nombre, setNombre] = useState('')
@@ -95,67 +74,30 @@ export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-md p-0 overflow-hidden"
-        style={{
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 14,
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="max-w-md p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
       >
         <DialogHeader
-          style={{
-            padding: '24px 28px 16px',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-          }}
+          className="px-7 pt-6 pb-4 border-b border-white/[7%]"
         >
-          <DialogTitle
-            style={{
-              fontFamily: 'Fraunces, serif',
-              color: '#e8e6e0',
-              fontSize: 20,
-              fontWeight: 700,
-            }}
-          >
+          <DialogTitle className="font-display text-gj-text text-xl font-bold">
             Nuevo grupo familiar
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div
-            style={{
-              padding: '20px 28px',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 16,
-            }}
-          >
+          <div className="px-7 py-5 max-h-[90vh] overflow-y-auto flex flex-col gap-4">
             {serverError && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(232,90,90,0.12)',
-                  border: '1px solid rgba(232,90,90,0.3)',
-                  borderRadius: 8,
-                  padding: '10px 14px',
-                  color: '#e85a5a',
-                  fontSize: 13,
-                }}
-              >
+              <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-[13px]">
                 {serverError}
               </div>
             )}
 
             <div>
-              <label style={labelStyle}>
-                Nombre<span style={{ color: '#e8a020', marginLeft: 2 }}>*</span>
+              <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                Nombre<span className="text-gj-amber ml-0.5">*</span>
               </label>
               <input
-                style={{
-                  ...inputStyle,
-                  borderColor: errorNombre ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                }}
+                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errorNombre ? 'border-gj-red' : 'border-white/10'}`}
                 value={nombre}
                 onChange={(e) => {
                   setNombre(e.target.value)
@@ -165,21 +107,18 @@ export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
                 autoFocus
               />
               {errorNombre && (
-                <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>
+                <span className="text-[11px] text-gj-red mt-0.5 block">
                   {errorNombre}
                 </span>
               )}
             </div>
 
             <div>
-              <label style={labelStyle}>Notas</label>
+              <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                Notas
+              </label>
               <textarea
-                style={{
-                  ...inputStyle,
-                  resize: 'vertical',
-                  minHeight: 80,
-                  lineHeight: 1.5,
-                }}
+                className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[80px] leading-relaxed"
                 value={notas}
                 onChange={(e) => setNotas(e.target.value)}
                 placeholder="Observaciones opcionales..."
@@ -187,47 +126,19 @@ export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
             </div>
           </div>
 
-          <div
-            style={{
-              padding: '16px 28px',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 10,
-            }}
-          >
+          <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">
             <button
               type="button"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              style={{
-                padding: '9px 20px',
-                borderRadius: 8,
-                border: '1px solid rgba(255,255,255,0.15)',
-                backgroundColor: 'transparent',
-                color: '#9ba8bb',
-                fontSize: 14,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontFamily: 'DM Sans, sans-serif',
-              }}
+              className="px-5 py-[9px] rounded-lg border border-white/15 bg-transparent text-gj-secondary text-sm cursor-pointer font-sans"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '9px 24px',
-                borderRadius: 8,
-                border: 'none',
-                backgroundColor: '#e8a020',
-                color: '#0b1628',
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                fontFamily: 'DM Sans, sans-serif',
-              }}
+              className={`px-6 py-[9px] rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold font-sans transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               {loading ? 'Creando...' : 'Crear grupo'}
             </button>

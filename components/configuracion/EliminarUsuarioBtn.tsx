@@ -29,31 +29,21 @@ export default function EliminarUsuarioBtn({ userId, nombreUsuario, esMismaCuent
 
   if (confirmando) {
     return (
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ fontSize: 12, color: '#e85a5a', fontFamily: 'DM Sans, sans-serif' }}>
+      <span className="inline-flex items-center gap-1.5">
+        <span className="text-xs text-gj-red font-sans">
           ¿Eliminar?
         </span>
         <button
           onClick={() => { void handleEliminar() }}
           disabled={loading}
-          style={{
-            padding: '4px 10px', borderRadius: 6, border: 'none',
-            backgroundColor: '#e85a5a', color: '#fff', fontSize: 12,
-            fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
-            fontFamily: 'DM Sans, sans-serif', opacity: loading ? 0.7 : 1,
-          }}
+          className={`px-2.5 py-1 rounded-md border-none bg-gj-red text-white text-xs font-semibold font-sans transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           {loading ? '...' : 'Sí'}
         </button>
         <button
           onClick={() => setConfirmando(false)}
           disabled={loading}
-          style={{
-            padding: '4px 10px', borderRadius: 6,
-            border: '1px solid rgba(255,255,255,0.15)',
-            backgroundColor: 'transparent', color: '#9ba8bb', fontSize: 12,
-            cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="px-2.5 py-1 rounded-md border border-white/15 bg-transparent text-gj-secondary text-xs cursor-pointer font-sans"
         >
           No
         </button>
@@ -65,13 +55,7 @@ export default function EliminarUsuarioBtn({ userId, nombreUsuario, esMismaCuent
     <button
       onClick={() => setConfirmando(true)}
       title={`Eliminar a ${nombreUsuario}`}
-      style={{
-        padding: '5px 10px', borderRadius: 6,
-        border: '1px solid rgba(232,90,90,0.3)',
-        backgroundColor: 'transparent', color: '#e85a5a', fontSize: 12,
-        cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-        display: 'inline-flex', alignItems: 'center', gap: 5,
-      }}
+      className="px-2.5 py-[5px] rounded-md border border-gj-red/30 bg-transparent text-gj-red text-xs cursor-pointer font-sans inline-flex items-center gap-1"
     >
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>

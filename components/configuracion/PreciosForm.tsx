@@ -8,19 +8,6 @@ interface PrecioField {
   valorInicial: number
 }
 
-const inputStyle: React.CSSProperties = {
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px 8px 28px',
-  fontSize: 15,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  width: 160,
-  boxSizing: 'border-box',
-}
-
 function PrecioRow({ clave, label, valorInicial }: PrecioField) {
   const [valor, setValor] = useState(String(valorInicial))
   const [loading, setLoading] = useState(false)
@@ -52,26 +39,18 @@ function PrecioRow({ clave, label, valorInicial }: PrecioField) {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-      <span style={{
-        width: 220, fontSize: 13, color: '#9ba8bb',
-        fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
-      }}>
+    <div className="flex items-center gap-6">
+      <span className="w-[220px] text-[13px] text-gj-secondary font-sans shrink-0">
         {label}
       </span>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ position: 'relative' }}>
-          <span style={{
-            position: 'absolute', left: 10, top: '50%',
-            transform: 'translateY(-50%)',
-            color: '#9ba8bb', fontSize: 14, pointerEvents: 'none',
-            fontFamily: 'DM Sans, sans-serif',
-          }}>$</span>
+      <div className="flex items-center gap-2.5">
+        <div className="relative">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gj-secondary text-sm pointer-events-none font-sans">$</span>
           <input
             type="number"
             min="0"
-            style={inputStyle}
+            className="bg-gj-input text-gj-text border border-white/10 rounded-lg py-2 pl-7 pr-3 text-[15px] font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-40"
             value={valor}
             onChange={(e) => { setValor(e.target.value); setFeedback(null) }}
           />
@@ -80,19 +59,13 @@ function PrecioRow({ clave, label, valorInicial }: PrecioField) {
         <button
           onClick={handleGuardar}
           disabled={loading}
-          style={{
-            padding: '8px 18px', borderRadius: 8, border: 'none',
-            backgroundColor: '#e8a020', color: '#0b1628',
-            fontSize: 13, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif',
-            flexShrink: 0,
-          }}
+          className={`px-[18px] py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold font-sans shrink-0 transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           {loading ? 'Guardando...' : 'Guardar'}
         </button>
 
         {feedback === 'ok' && (
-          <span style={{ fontSize: 13, color: '#22c97a', fontFamily: 'DM Sans, sans-serif', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span className="text-[13px] text-gj-green font-sans flex items-center gap-1">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
@@ -100,7 +73,7 @@ function PrecioRow({ clave, label, valorInicial }: PrecioField) {
           </span>
         )}
         {feedback === 'error' && (
-          <span style={{ fontSize: 13, color: '#e85a5a', fontFamily: 'DM Sans, sans-serif' }}>
+          <span className="text-[13px] text-gj-red font-sans">
             Error al guardar
           </span>
         )}
@@ -116,7 +89,7 @@ interface Props {
 
 export default function PreciosForm({ precioVisa, precioSeminario }: Props) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="flex flex-col gap-5">
       <PrecioRow
         clave="precio_visa"
         label="Precio base — Trámite de visa"

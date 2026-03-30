@@ -42,33 +42,21 @@ interface HistorialEvento {
 
 // ─── Badge configs ────────────────────────────────────────────────────────────
 
-const BADGE_VISA: Record<string, { label: string; color: string; bg: string }> = {
-  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  APROBADA:       { label: 'Aprobada',       color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+const BADGE_VISA: Record<string, { label: string; className: string }> = {
+  EN_PROCESO:     { label: 'En proceso',     className: 'text-gj-amber bg-gj-amber/15'     },
+  TURNO_ASIGNADO: { label: 'Turno asignado', className: 'text-gj-blue bg-gj-blue/15'      },
+  APROBADA:       { label: 'Aprobada',       className: 'text-gj-green bg-gj-green/15'    },
+  RECHAZADA:      { label: 'Rechazada',      className: 'text-gj-red bg-gj-red/15'        },
+  PAUSADA:        { label: 'Pausada',        className: 'text-gj-red bg-gj-red/15'        },
+  CANCELADA:      { label: 'Cancelada',      className: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function Badge({ estado }: { estado: string }) {
-  const b = BADGE_VISA[estado] ?? { label: estado, color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' }
+  const b = BADGE_VISA[estado] ?? { label: estado, className: 'text-gj-secondary bg-gj-secondary/15' }
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: '2px 9px',
-        borderRadius: 6,
-        fontSize: 11,
-        fontWeight: 600,
-        color: b.color,
-        backgroundColor: b.bg,
-        fontFamily: 'DM Sans, sans-serif',
-        whiteSpace: 'nowrap',
-      }}
-    >
+    <span className={`inline-block px-[9px] py-0.5 rounded-[6px] text-[11px] font-semibold font-sans whitespace-nowrap ${b.className}`}>
       {b.label}
     </span>
   )
@@ -115,45 +103,34 @@ function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        backgroundColor: '#111f38',
-        borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          padding: '18px 24px',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
-        }}
-      >
-        <h2
-          style={{
-            fontFamily: 'DM Sans, sans-serif',
-            fontSize: 13,
-            fontWeight: 600,
-            color: '#9ba8bb',
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
-            margin: 0,
-          }}
-        >
+    <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
+      <div className="px-6 py-[18px] border-b border-white/[7%]">
+        <h2 className="font-sans text-[13px] font-semibold text-gj-secondary uppercase tracking-[0.06em] m-0">
           {title}
         </h2>
       </div>
-      <div style={{ padding: '0 24px 20px' }}>{children}</div>
+      <div className="px-6 pb-5">{children}</div>
     </div>
   )
 }
 
 function EmptyRow({ message }: { message: string }) {
   return (
-    <p style={{ color: '#9ba8bb', fontSize: 14, margin: '20px 0 0', fontFamily: 'DM Sans, sans-serif' }}>
+    <p className="text-gj-secondary text-sm mt-5 font-sans">
       {message}
     </p>
   )
+}
+
+// ─── Metric card color config ─────────────────────────────────────────────────
+
+type MetricColor = 'green' | 'amber' | 'blue' | 'red'
+
+const METRIC_COLOR_MAP: Record<MetricColor, { text: string; border: string; iconOpacity: string }> = {
+  green: { text: 'text-gj-green', border: 'border-gj-green/[16%]', iconOpacity: 'text-gj-green opacity-80' },
+  amber: { text: 'text-gj-amber', border: 'border-gj-amber/[16%]', iconOpacity: 'text-gj-amber opacity-80' },
+  blue:  { text: 'text-gj-blue',  border: 'border-gj-blue/[16%]',  iconOpacity: 'text-gj-blue opacity-80'  },
+  red:   { text: 'text-gj-red',   border: 'border-gj-red/[16%]',   iconOpacity: 'text-gj-red opacity-80'   },
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -189,11 +166,17 @@ export default async function DashboardPage() {
   const metricaRow = rawMetricas?.[0]
   const visasEnProceso = (metricaRow?.en_proceso ?? 0) + (metricaRow?.turno_asignado ?? 0)
 
-  const METRIC_CARDS = [
+  const METRIC_CARDS: Array<{
+    label: string
+    value: number
+    colorKey: MetricColor
+    href: string
+    icon: React.ReactNode
+  }> = [
     {
       label: 'Clientes activos',
       value: clientesActivos ?? 0,
-      color: '#22c97a',
+      colorKey: 'green',
       href: '/clientes',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -205,7 +188,7 @@ export default async function DashboardPage() {
     {
       label: 'Visas en proceso',
       value: visasEnProceso,
-      color: '#e8a020',
+      colorKey: 'amber',
       href: '/tramites',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -216,7 +199,7 @@ export default async function DashboardPage() {
     {
       label: 'Turnos esta semana',
       value: turnos.length,
-      color: '#4a9eff',
+      colorKey: 'blue',
       href: '/calendario',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -228,7 +211,7 @@ export default async function DashboardPage() {
     {
       label: 'Deudas próximas',
       value: deudas.length,
-      color: '#e85a5a',
+      colorKey: 'red',
       href: '/pagos',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -241,27 +224,14 @@ export default async function DashboardPage() {
 
   return (
     <div
-      className="p-4 sm:p-6 lg:p-8"
-      style={{
-        backgroundColor: '#0b1628',
-        minHeight: '100%',
-        fontFamily: 'DM Sans, sans-serif',
-      }}
+      className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans"
     >
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1
-          style={{
-            fontFamily: 'Fraunces, serif',
-            fontSize: 28,
-            fontWeight: 700,
-            color: '#e8e6e0',
-            margin: '0 0 4px',
-          }}
-        >
+      <div className="mb-7">
+        <h1 className="font-display text-[28px] font-bold text-gj-text m-0 mb-1">
           Dashboard
         </h1>
-        <p style={{ fontSize: 13, color: '#9ba8bb', margin: 0, textTransform: 'capitalize' }}>
+        <p className="text-[13px] text-gj-secondary m-0 capitalize">
           {formatFechaHoy()}
         </p>
       </div>
@@ -271,69 +241,45 @@ export default async function DashboardPage() {
 
       {/* ── Métricas ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {METRIC_CARDS.map(({ label, value, color, href, icon }) => (
-          <Link
-            key={label}
-            href={href}
-            style={{
-              backgroundColor: '#111f38',
-              borderRadius: 12,
-              padding: '20px 24px',
-              border: `1px solid ${color}28`,
-              textDecoration: 'none',
-              display: 'block',
-              transition: 'border-color 0.15s ease, background-color 0.15s ease',
-            }}
-            className="hover:brightness-110"
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#9ba8bb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {label}
-              </span>
-              <span style={{ color, opacity: 0.8 }}>{icon}</span>
-            </div>
-            <p
-              style={{
-                fontFamily: 'Fraunces, serif',
-                fontSize: 36,
-                fontWeight: 700,
-                color,
-                margin: 0,
-                lineHeight: 1,
-              }}
+        {METRIC_CARDS.map(({ label, value, colorKey, href, icon }) => {
+          const colors = METRIC_COLOR_MAP[colorKey]
+          return (
+            <Link
+              key={label}
+              href={href}
+              className={`bg-gj-card rounded-xl px-6 py-5 border ${colors.border} block no-underline transition-[border-color,background-color] duration-150 ease-linear hover:brightness-110`}
             >
-              {value}
-            </p>
-          </Link>
-        ))}
+              <div className="flex items-center justify-between mb-3.5">
+                <span className="text-xs font-semibold text-gj-secondary uppercase tracking-wide">
+                  {label}
+                </span>
+                <span className={colors.iconOpacity}>{icon}</span>
+              </div>
+              <p className={`font-display text-[36px] font-bold ${colors.text} m-0 leading-none`}>
+                {value}
+              </p>
+            </Link>
+          )
+        })}
       </div>
 
       {/* ── Cuerpo — dos columnas ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-5 items-start">
         {/* Columna izquierda */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="flex flex-col gap-5">
 
           {/* Turnos de la semana */}
           <SectionCard title="Turnos esta semana">
             {turnos.length === 0 ? (
               <EmptyRow message="Sin turnos esta semana" />
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', marginTop: 12 }}>
+              <table className="w-full border-collapse font-sans mt-3">
                 <thead>
                   <tr>
                     {['Cliente', 'Fecha', 'Estado'].map((col) => (
                       <th
                         key={col}
-                        style={{
-                          textAlign: 'left',
-                          padding: '0 16px 10px 0',
-                          fontSize: 11,
-                          fontWeight: 600,
-                          color: '#9ba8bb',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em',
-                          borderBottom: '1px solid rgba(255,255,255,0.07)',
-                        }}
+                        className="text-left pr-4 pb-2.5 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[7%]"
                       >
                         {col}
                       </th>
@@ -344,21 +290,21 @@ export default async function DashboardPage() {
                   {turnos.map((t, i) => (
                     <tr
                       key={i}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                      className="border-b border-white/[4%]"
                     >
-                      <td style={{ padding: '11px 0' }}>
-                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
-                          <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{t.nombre_cliente}</div>
-                          <div style={{ fontSize: 11, color: '#9ba8bb' }}>{t.gj_id}</div>
+                      <td className="py-[11px]">
+                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} className="no-underline">
+                          <div className="text-sm text-gj-text font-medium">{t.nombre_cliente}</div>
+                          <div className="text-[11px] text-gj-secondary">{t.gj_id}</div>
                         </Link>
                       </td>
-                      <td style={{ padding: '11px 16px 11px 0', fontSize: 13, color: '#9ba8bb', whiteSpace: 'nowrap' }}>
-                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <td className="py-[11px] pr-4 text-[13px] text-gj-secondary whitespace-nowrap">
+                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} className="no-underline text-inherit">
                           {formatFecha(t.fecha_turno)}
                         </Link>
                       </td>
-                      <td style={{ padding: '11px 0' }}>
-                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
+                      <td className="py-[11px]">
+                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} className="no-underline">
                           <Badge estado={t.estado_visa} />
                         </Link>
                       </td>
@@ -374,22 +320,13 @@ export default async function DashboardPage() {
             {deudas.length === 0 ? (
               <EmptyRow message="Sin deudas próximas" />
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'DM Sans, sans-serif', marginTop: 12 }}>
+              <table className="w-full border-collapse font-sans mt-3">
                 <thead>
                   <tr>
                     {['Cliente', 'Monto', 'Vence'].map((col) => (
                       <th
                         key={col}
-                        style={{
-                          textAlign: 'left',
-                          padding: '0 16px 10px 0',
-                          fontSize: 11,
-                          fontWeight: 600,
-                          color: '#9ba8bb',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em',
-                          borderBottom: '1px solid rgba(255,255,255,0.07)',
-                        }}
+                        className="text-left pr-4 pb-2.5 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[7%]"
                       >
                         {col}
                       </th>
@@ -399,26 +336,26 @@ export default async function DashboardPage() {
                 <tbody>
                   {deudas.map((d, i) => {
                     const dias = diasRestantes(d.fecha_vencimiento_deuda)
-                    const urgColor = dias <= 7 ? '#e85a5a' : dias <= 15 ? '#e8a020' : '#9ba8bb'
+                    const urgClassName = dias <= 7 ? 'text-gj-red' : dias <= 15 ? 'text-gj-amber' : 'text-gj-secondary'
                     return (
-                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                        <td style={{ padding: '11px 0' }}>
-                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
-                            <div style={{ fontSize: 14, color: '#e8e6e0', fontWeight: 500 }}>{d.nombre_cliente}</div>
-                            <div style={{ fontSize: 11, color: '#9ba8bb' }}>{d.gj_id}</div>
+                      <tr key={i} className="border-b border-white/[4%]">
+                        <td className="py-[11px]">
+                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} className="no-underline">
+                            <div className="text-sm text-gj-text font-medium">{d.nombre_cliente}</div>
+                            <div className="text-[11px] text-gj-secondary">{d.gj_id}</div>
                           </Link>
                         </td>
-                        <td style={{ padding: '11px 20px 11px 0', fontSize: 14, color: '#e8e6e0', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <td className="py-[11px] pr-5 text-sm text-gj-text font-medium whitespace-nowrap">
+                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} className="no-underline text-inherit">
                             {formatPesos(d.monto)}
                           </Link>
                         </td>
-                        <td style={{ padding: '11px 0', whiteSpace: 'nowrap' }}>
-                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} style={{ textDecoration: 'none' }}>
-                            <div style={{ fontSize: 13, color: urgColor, fontWeight: 600 }}>
+                        <td className="py-[11px] whitespace-nowrap">
+                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} className="no-underline">
+                            <div className={`text-[13px] font-semibold ${urgClassName}`}>
                               {dias === 0 ? 'Hoy' : dias === 1 ? '1 día' : `${dias} días`}
                             </div>
-                            <div style={{ fontSize: 11, color: '#9ba8bb' }}>{formatFecha(d.fecha_vencimiento_deuda)}</div>
+                            <div className="text-[11px] text-gj-secondary">{formatFecha(d.fecha_vencimiento_deuda)}</div>
                           </Link>
                         </td>
                       </tr>
@@ -436,55 +373,36 @@ export default async function DashboardPage() {
           {historial.length === 0 ? (
             <EmptyRow message="Sin actividad reciente" />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 4 }}>
+            <div className="flex flex-col mt-1">
               {historial.map((evento, idx) => {
                 const clienteNombre = evento.clientes?.nombre ?? null
                 const clienteGjId = evento.clientes?.gj_id ?? null
                 return (
                   <div
                     key={evento.id}
-                    style={{
-                      display: 'flex',
-                      gap: 12,
-                      paddingTop: 14,
-                      paddingBottom: idx < historial.length - 1 ? 14 : 0,
-                      borderBottom: idx < historial.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                      alignItems: 'flex-start',
-                    }}
+                    className={`flex gap-3 pt-3.5 items-start${idx < historial.length - 1 ? ' pb-3.5 border-b border-white/[4%]' : ''}`}
                   >
-                    <div
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 7,
-                        backgroundColor: '#172645',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        marginTop: 1,
-                      }}
-                    >
+                    <div className="w-7 h-7 rounded-[7px] bg-gj-input flex items-center justify-center shrink-0 mt-px">
                       <HistorialIcon tipo={evento.tipo} />
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="flex-1 min-w-0">
                       {clienteNombre && evento.cliente_id && (
                         <Link
                           href={`/clientes/${evento.cliente_id}`}
-                          style={{ textDecoration: 'none' }}
+                          className="no-underline"
                         >
-                          <span style={{ fontSize: 12, fontWeight: 600, color: '#4a9eff', display: 'block', marginBottom: 1 }}>
+                          <span className="text-xs font-semibold text-gj-blue block mb-px">
                             {clienteNombre}
                             {clienteGjId && (
-                              <span style={{ fontWeight: 400, color: '#9ba8bb', marginLeft: 6 }}>{clienteGjId}</span>
+                              <span className="font-normal text-gj-secondary ml-1.5">{clienteGjId}</span>
                             )}
                           </span>
                         </Link>
                       )}
-                      <p style={{ margin: 0, fontSize: 12, color: '#e8e6e0', lineHeight: 1.45 }}>
+                      <p className="m-0 text-xs text-gj-text leading-[1.45]">
                         {evento.descripcion}
                       </p>
-                      <p style={{ margin: '3px 0 0', fontSize: 11, color: '#9ba8bb' }}>
+                      <p className="m-0 mt-[3px] text-[11px] text-gj-secondary">
                         {formatFechaHora(evento.created_at)}
                       </p>
                     </div>

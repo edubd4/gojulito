@@ -136,14 +136,14 @@ export default async function ClientesPage() {
   }))
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8" style={{ backgroundColor: '#0b1628', minHeight: '100%', fontFamily: 'DM Sans, sans-serif' }}>
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
       <ClientesTable
         clientes={clientes}
         isAdmin={isAdmin}
         seminarios={seminarios}
         gruposFamiliares={gruposFamiliares}
       />
-      <div style={{ marginTop: 32 }}>
+      <div className="mt-8">
         <GruposFamiliaresCard grupos={gruposCard} />
       </div>
     </div>

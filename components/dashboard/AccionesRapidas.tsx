@@ -11,21 +11,6 @@ interface Props {
   gruposFamiliares: GrupoFamiliarOption[]
 }
 
-const btnBase: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '10px 18px',
-  borderRadius: 9,
-  fontSize: 13,
-  fontWeight: 600,
-  fontFamily: 'DM Sans, sans-serif',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  border: 'none',
-  whiteSpace: 'nowrap',
-}
-
 export default function AccionesRapidas({ gruposFamiliares }: Props) {
   const router = useRouter()
   const [clienteOpen, setClienteOpen] = useState(false)
@@ -51,11 +36,11 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
         onSuccess={() => router.refresh()}
       />
 
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 28 }}>
+      <div className="flex gap-2.5 flex-wrap mb-7">
         {/* Nuevo cliente */}
         <button
           onClick={() => setClienteOpen(true)}
-          style={{ ...btnBase, backgroundColor: '#e8a020', color: '#0b1628' }}
+          className="flex items-center gap-2 px-[18px] py-2.5 rounded-[9px] text-[13px] font-semibold font-sans cursor-pointer whitespace-nowrap border-none bg-gj-amber text-gj-bg"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -69,12 +54,7 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
         {/* Nuevo trámite de visa */}
         <button
           onClick={() => setTramiteOpen(true)}
-          style={{
-            ...btnBase,
-            backgroundColor: 'rgba(74,158,255,0.12)',
-            color: '#4a9eff',
-            border: '1px solid rgba(74,158,255,0.25)',
-          }}
+          className="flex items-center gap-2 px-[18px] py-2.5 rounded-[9px] text-[13px] font-semibold font-sans cursor-pointer whitespace-nowrap border border-gj-blue/25 bg-gj-blue/[12%] text-gj-blue"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="5" width="20" height="14" rx="2"/>
@@ -86,12 +66,7 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
         {/* Registrar pago */}
         <button
           onClick={() => setPagoOpen(true)}
-          style={{
-            ...btnBase,
-            backgroundColor: 'rgba(34,201,122,0.12)',
-            color: '#22c97a',
-            border: '1px solid rgba(34,201,122,0.25)',
-          }}
+          className="flex items-center gap-2 px-[18px] py-2.5 rounded-[9px] text-[13px] font-semibold font-sans cursor-pointer whitespace-nowrap border border-gj-green/25 bg-gj-green/[12%] text-gj-green"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="1" y="4" width="22" height="16" rx="2"/>

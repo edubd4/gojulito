@@ -18,78 +18,41 @@ export default function GruposFamiliaresCard({ grupos }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
 
   return (
-    <div
-      style={{
-        backgroundColor: '#111f38',
-        borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.07)',
-        padding: '24px 28px',
-        marginBottom: 28,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <h2
-          style={{
-            fontSize: 15,
-            fontWeight: 600,
-            color: '#9ba8bb',
-            fontFamily: 'DM Sans, sans-serif',
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
-            margin: 0,
-          }}
-        >
+    <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6 mb-7">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-[15px] font-semibold text-gj-secondary font-sans uppercase tracking-[0.06em] m-0">
           Grupos familiares
         </h2>
         <button
           onClick={() => setModalOpen(true)}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '7px 16px',
-            borderRadius: 8,
-            border: '1px solid #e8a020',
-            backgroundColor: 'transparent',
-            color: '#e8a020',
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="inline-flex items-center gap-1.5 px-4 py-[7px] rounded-lg border border-gj-amber bg-transparent text-gj-amber text-[13px] font-semibold cursor-pointer font-sans"
         >
           + Nuevo grupo
         </button>
       </div>
 
       {grupos.length === 0 ? (
-        <p style={{ color: '#9ba8bb', fontSize: 14, fontFamily: 'DM Sans, sans-serif', margin: 0 }}>
+        <p className="text-gj-secondary text-sm font-sans m-0">
           Sin grupos familiares creados
         </p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <div className="flex flex-col gap-0">
           {grupos.map((g) => (
             <div
               key={g.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '10px 0',
-                borderBottom: '1px solid rgba(255,255,255,0.04)',
-              }}
+              className="flex items-center justify-between py-2.5 border-b border-white/[4%]"
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <span style={{ fontSize: 14, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif', fontWeight: 500 }}>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm text-gj-text font-sans font-medium">
                   {g.nombre}
                 </span>
                 {g.notas && (
-                  <span style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+                  <span className="text-xs text-gj-secondary font-sans">
                     {g.notas}
                   </span>
                 )}
               </div>
-              <span style={{ fontSize: 13, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif', flexShrink: 0, marginLeft: 16 }}>
+              <span className="text-[13px] text-gj-secondary font-sans shrink-0 ml-4">
                 {g.cliente_count === 1 ? '1 cliente' : `${g.cliente_count} clientes`}
               </span>
             </div>

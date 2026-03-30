@@ -52,24 +52,26 @@ const MESES = [
 ]
 const DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 
-const CHIP: Record<string, { bg: string; text: string }> = {
-  EN_PROCESO:     { bg: '#e8a020', text: '#0b1628' },
-  TURNO_ASIGNADO: { bg: '#4a9eff', text: '#0b1628' },
-  APROBADA:       { bg: '#22c97a', text: '#0b1628' },
-  RECHAZADA:      { bg: '#e85a5a', text: '#ffffff' },
-  PAUSADA:        { bg: '#e85a5a', text: '#ffffff' },
-  CANCELADA:      { bg: '#9ba8bb', text: '#0b1628' },
+// CHIP: solid background chips for calendar day cells
+const CHIP: Record<string, { classes: string }> = {
+  EN_PROCESO:     { classes: 'bg-gj-amber text-gj-bg'         },
+  TURNO_ASIGNADO: { classes: 'bg-gj-blue text-gj-bg'          },
+  APROBADA:       { classes: 'bg-gj-green text-gj-bg'         },
+  RECHAZADA:      { classes: 'bg-gj-red text-white'           },
+  PAUSADA:        { classes: 'bg-gj-red text-white'           },
+  CANCELADA:      { classes: 'bg-gj-secondary text-gj-bg'     },
 }
 
-const SEMINARIO_CHIP = { bg: 'rgba(167,139,250,0.18)', text: '#a78bfa' }
+const SEMINARIO_CHIP_CLASSES = 'text-gj-seminario bg-gj-seminario/[18%]'
 
-const BADGE: Record<string, { label: string; color: string; bg: string }> = {
-  EN_PROCESO:     { label: 'En proceso',     color: '#e8a020', bg: 'rgba(232,160,32,0.15)'  },
-  TURNO_ASIGNADO: { label: 'Turno asignado', color: '#4a9eff', bg: 'rgba(74,158,255,0.15)'  },
-  APROBADA:       { label: 'Aprobada',       color: '#22c97a', bg: 'rgba(34,201,122,0.15)'  },
-  RECHAZADA:      { label: 'Rechazada',      color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  PAUSADA:        { label: 'Pausada',        color: '#e85a5a', bg: 'rgba(232,90,90,0.15)'   },
-  CANCELADA:      { label: 'Cancelada',      color: '#9ba8bb', bg: 'rgba(155,168,187,0.15)' },
+// BADGE: tinted chips for popup/sidebar
+const BADGE: Record<string, { label: string; classes: string }> = {
+  EN_PROCESO:     { label: 'En proceso',     classes: 'text-gj-amber bg-gj-amber/15'         },
+  TURNO_ASIGNADO: { label: 'Turno asignado', classes: 'text-gj-blue bg-gj-blue/15'           },
+  APROBADA:       { label: 'Aprobada',       classes: 'text-gj-green bg-gj-green/15'         },
+  RECHAZADA:      { label: 'Rechazada',      classes: 'text-gj-red bg-gj-red/15'             },
+  PAUSADA:        { label: 'Pausada',        classes: 'text-gj-red bg-gj-red/15'             },
+  CANCELADA:      { label: 'Cancelada',      classes: 'text-gj-secondary bg-gj-secondary/15' },
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -116,45 +118,26 @@ function TurnoPopup({ turno, onClose }: { turno: TurnoItem; onClose: () => void 
     <>
       {/* Overlay */}
       <div
-        style={{ position: 'fixed', inset: 0, zIndex: 60 }}
+        className="fixed inset-0 z-[60]"
         onClick={onClose}
       />
       {/* Card */}
       <div
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 70,
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: 14,
-          padding: '22px 24px',
-          width: 320,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[320px] font-sans"
+        style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div className="flex items-start justify-between mb-4">
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#e8e6e0', marginBottom: 2 }}>
+            <div className="text-base font-bold text-gj-text mb-0.5">
               {turno.nombre}
             </div>
-            <div style={{ fontSize: 12, color: '#9ba8bb' }}>{turno.gj_id}</div>
+            <div className="text-xs text-gj-secondary">{turno.gj_id}</div>
           </div>
           <button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#9ba8bb',
-              padding: 4,
-              lineHeight: 1,
-            }}
+            className="bg-none border-none cursor-pointer text-gj-secondary p-1 leading-none"
             aria-label="Cerrar"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -165,41 +148,31 @@ function TurnoPopup({ turno, onClose }: { turno: TurnoItem; onClose: () => void 
         </div>
 
         {/* Detalles */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex flex-col gap-2.5 mb-[18px]">
+          <div className="flex items-center gap-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
               <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <span style={{ fontSize: 13, color: '#e8e6e0' }}>
+            <span className="text-[13px] text-gj-text">
               {formatFecha(turno.fecha_turno + 'T12:00:00')}
             </span>
           </div>
 
           {turno.telefono && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.41 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 5.55 5.55l1.62-1.62a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
               </svg>
-              <span style={{ fontSize: 13, color: '#e8e6e0' }}>{turno.telefono}</span>
+              <span className="text-[13px] text-gj-text">{turno.telefono}</span>
             </div>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="flex items-center gap-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '2px 8px',
-                borderRadius: 5,
-                fontSize: 11,
-                fontWeight: 600,
-                color: badge.color,
-                backgroundColor: badge.bg,
-              }}
-            >
+            <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${badge.classes}`}>
               {badge.label}
             </span>
           </div>
@@ -208,22 +181,7 @@ function TurnoPopup({ turno, onClose }: { turno: TurnoItem; onClose: () => void 
         {/* Link al cliente */}
         <Link
           href={`/clientes/${turno.cliente_id}`}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            width: '100%',
-            padding: '9px 0',
-            backgroundColor: 'rgba(74,158,255,0.12)',
-            border: '1px solid rgba(74,158,255,0.25)',
-            borderRadius: 8,
-            color: '#4a9eff',
-            fontSize: 13,
-            fontWeight: 600,
-            textDecoration: 'none',
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="flex items-center justify-center gap-1.5 w-full py-[9px] bg-gj-blue/[12%] border border-gj-blue/25 rounded-lg text-gj-blue text-[13px] font-semibold no-underline font-sans"
           onClick={onClose}
         >
           Ver ficha del cliente
@@ -243,47 +201,28 @@ function SeminarioPopup({ seminario, onClose }: { seminario: SeminarioCalItem; o
     <>
       {/* Overlay */}
       <div
-        style={{ position: 'fixed', inset: 0, zIndex: 60 }}
+        className="fixed inset-0 z-[60]"
         onClick={onClose}
       />
       {/* Card */}
       <div
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 70,
-          backgroundColor: '#111f38',
-          border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: 14,
-          padding: '22px 24px',
-          width: 320,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[320px] font-sans"
+        style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div className="flex items-start justify-between mb-4">
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
+            <div className="text-[11px] font-semibold text-gj-seminario uppercase tracking-[0.05em] mb-1">
               Seminario
             </div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#e8e6e0' }}>
+            <div className="text-base font-bold text-gj-text">
               {seminario.sem_id}
             </div>
           </div>
           <button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#9ba8bb',
-              padding: 4,
-              lineHeight: 1,
-            }}
+            className="bg-none border-none cursor-pointer text-gj-secondary p-1 leading-none"
             aria-label="Cerrar"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -294,32 +233,22 @@ function SeminarioPopup({ seminario, onClose }: { seminario: SeminarioCalItem; o
         </div>
 
         {/* Details */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex flex-col gap-2.5 mb-[18px]">
+          <div className="flex items-center gap-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
               <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <span style={{ fontSize: 13, color: '#e8e6e0' }}>
+            <span className="text-[13px] text-gj-text">
               {formatFecha(seminario.fecha + 'T12:00:00')}
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="flex items-center gap-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ba8bb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '2px 8px',
-                borderRadius: 5,
-                fontSize: 11,
-                fontWeight: 600,
-                color: '#a78bfa',
-                backgroundColor: 'rgba(167,139,250,0.15)',
-              }}
-            >
+            <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${SEMINARIO_CHIP_CLASSES}`}>
               {seminario.modalidad === 'PRESENCIAL' ? 'Presencial' : 'Virtual'}
             </span>
           </div>
@@ -328,22 +257,7 @@ function SeminarioPopup({ seminario, onClose }: { seminario: SeminarioCalItem; o
         {/* Link to seminario */}
         <Link
           href={`/seminarios/${seminario.id}`}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            width: '100%',
-            padding: '9px 0',
-            backgroundColor: 'rgba(167,139,250,0.12)',
-            border: '1px solid rgba(167,139,250,0.25)',
-            borderRadius: 8,
-            color: '#a78bfa',
-            fontSize: 13,
-            fontWeight: 600,
-            textDecoration: 'none',
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          className="flex items-center justify-center gap-1.5 w-full py-[9px] bg-gj-seminario/[12%] border border-gj-seminario/25 rounded-lg text-gj-seminario text-[13px] font-semibold no-underline font-sans"
           onClick={onClose}
         >
           Ver seminario
@@ -447,21 +361,8 @@ export default function CalendarioView({
     void navigateTo(now.getMonth() + 1, now.getFullYear())
   }
 
-  const navBtnStyle: React.CSSProperties = {
-    padding: '6px 14px',
-    borderRadius: 8,
-    border: '1px solid rgba(255,255,255,0.12)',
-    backgroundColor: 'transparent',
-    color: '#9ba8bb',
-    fontSize: 13,
-    fontWeight: 500,
-    cursor: 'pointer',
-    fontFamily: 'DM Sans, sans-serif',
-    transition: 'all 0.15s',
-  }
-
   return (
-    <div style={{ padding: '28px 32px', fontFamily: 'DM Sans, sans-serif', minHeight: '100%' }}>
+    <div className="px-8 py-7 font-sans min-h-full">
       {/* Popup turno */}
       {selectedTurno && (
         <TurnoPopup turno={selectedTurno} onClose={() => setSelectedTurno(null)} />
@@ -470,38 +371,37 @@ export default function CalendarioView({
       {/* Popup pago */}
       {selectedPago && (
         <>
-          <div style={{ position: 'fixed', inset: 0, zIndex: 60 }} onClick={() => setSelectedPago(null)} />
-          <div style={{
-            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-            zIndex: 70, backgroundColor: '#111f38', border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 14, padding: '22px 24px', width: 300,
-            boxShadow: '0 20px 60px rgba(0,0,0,0.6)', fontFamily: 'DM Sans, sans-serif',
-          }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+          <div className="fixed inset-0 z-[60]" onClick={() => setSelectedPago(null)} />
+          <div
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
+            style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-3.5">
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#e8e6e0' }}>{selectedPago.cliente_nombre}</div>
-                <div style={{ fontSize: 12, color: '#9ba8bb' }}>{selectedPago.cliente_gj_id}</div>
+                <div className="text-[15px] font-bold text-gj-text">{selectedPago.cliente_nombre}</div>
+                <div className="text-xs text-gj-secondary">{selectedPago.cliente_gj_id}</div>
               </div>
-              <button onClick={() => setSelectedPago(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ba8bb', padding: 4 }}>
+              <button onClick={() => setSelectedPago(null)} className="bg-none border-none cursor-pointer text-gj-secondary p-1">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ fontSize: 13, color: '#e8e6e0' }}>
-                <span style={{ color: '#9ba8bb' }}>Monto: </span>
+            <div className="flex flex-col gap-2">
+              <div className="text-[13px] text-gj-text">
+                <span className="text-gj-secondary">Monto: </span>
                 ${selectedPago.monto.toLocaleString('es-AR')}
               </div>
-              <div style={{ fontSize: 13 }}>
-                <span style={{ color: '#9ba8bb' }}>Estado: </span>
-                <span style={{ color: selectedPago.estado === 'DEUDA' ? '#e85a5a' : selectedPago.estado === 'PAGADO' ? '#22c97a' : '#e8a020', fontWeight: 600 }}>
+              <div className="text-[13px]">
+                <span className="text-gj-secondary">Estado: </span>
+                <span className={`font-semibold ${selectedPago.estado === 'DEUDA' ? 'text-gj-red' : selectedPago.estado === 'PAGADO' ? 'text-gj-green' : 'text-gj-amber'}`}>
                   {selectedPago.estado}
                 </span>
               </div>
-              <div style={{ fontSize: 12, color: '#9ba8bb' }}>
+              <div className="text-xs text-gj-secondary">
                 {selectedPago.estado === 'DEUDA' ? 'Vence: ' : 'Fecha: '}
                 {formatFecha(selectedPago.fecha + 'T12:00:00')}
               </div>
-              <div style={{ fontSize: 12, color: '#9ba8bb' }}>{selectedPago.pago_id}</div>
+              <div className="text-xs text-gj-secondary">{selectedPago.pago_id}</div>
             </div>
           </div>
         </>
@@ -513,10 +413,7 @@ export default function CalendarioView({
       )}
 
       {/* Page title */}
-      <h1 style={{
-        fontSize: 26, fontWeight: 700, color: '#e8e6e0',
-        fontFamily: 'Fraunces, serif', marginBottom: 24,
-      }}>
+      <h1 className="font-display text-[26px] font-bold text-gj-text mb-6">
         Calendario
       </h1>
 
@@ -531,22 +428,21 @@ export default function CalendarioView({
         {/* ── Calendario principal ── */}
         <div className="flex-1 min-w-0">
           {/* Calendar header */}
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            marginBottom: 16, flexWrap: 'wrap', gap: 8,
-          }}>
-            <h2 style={{
-              fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 700,
-              color: '#e8e6e0', margin: 0,
-            }}>
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h2 className="font-display text-[22px] font-bold text-gj-text m-0">
               {MESES[mes - 1]} {anio}
             </h2>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <button onClick={goToday} style={navBtnStyle}>Hoy</button>
+            <div className="flex gap-1.5 items-center">
+              <button
+                onClick={goToday}
+                className="px-3.5 py-1.5 rounded-lg border border-white/[12%] bg-transparent text-gj-secondary text-[13px] font-medium cursor-pointer font-sans transition-all"
+              >
+                Hoy
+              </button>
               <button
                 onClick={prevMonth}
                 disabled={loading}
-                style={{ ...navBtnStyle, padding: '6px 12px' }}
+                className="px-3 py-1.5 rounded-lg border border-white/[12%] bg-transparent text-gj-secondary text-[13px] font-medium cursor-pointer font-sans transition-all"
                 aria-label="Mes anterior"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -556,7 +452,7 @@ export default function CalendarioView({
               <button
                 onClick={nextMonth}
                 disabled={loading}
-                style={{ ...navBtnStyle, padding: '6px 12px' }}
+                className="px-3 py-1.5 rounded-lg border border-white/[12%] bg-transparent text-gj-secondary text-[13px] font-medium cursor-pointer font-sans transition-all"
                 aria-label="Mes siguiente"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -568,30 +464,14 @@ export default function CalendarioView({
 
           {/* Calendar grid */}
           <div
-            style={{
-              backgroundColor: '#111f38',
-              borderRadius: 12,
-              border: '1px solid rgba(255,255,255,0.06)',
-              overflow: 'hidden',
-              opacity: loading ? 0.6 : 1,
-              transition: 'opacity 0.15s',
-            }}
+            className={`bg-gj-card rounded-xl border border-white/[6%] overflow-hidden transition-opacity duration-150 ${loading ? 'opacity-60' : 'opacity-100'}`}
           >
             {/* Day headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="grid border-b border-white/[8%]" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
               {DIAS.map((d) => (
                 <div
                   key={d}
-                  style={{
-                    padding: '10px 8px',
-                    textAlign: 'center',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: '#9ba8bb',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}
+                  className="px-2 py-2.5 text-center text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.06em] font-sans"
                 >
                   {d}
                 </div>
@@ -602,11 +482,8 @@ export default function CalendarioView({
             {weeks.map((week, wi) => (
               <div
                 key={wi}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(7, 1fr)',
-                  borderBottom: wi < weeks.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                }}
+                className={`grid ${wi < weeks.length - 1 ? 'border-b border-white/[5%]' : ''}`}
+                style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}
               >
                 {week.map((cell, ci) => {
                   const key = dateKey(cell.date)
@@ -620,32 +497,17 @@ export default function CalendarioView({
                   return (
                     <div
                       key={ci}
-                      style={{
-                        minHeight: 100,
-                        padding: '8px 6px',
-                        backgroundColor: cell.inMonth ? '#111f38' : '#0b1628',
-                        borderLeft: ci > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                        border: isToday ? '1.5px solid #e8a020' : undefined,
-                        boxSizing: 'border-box',
-                        position: 'relative',
-                      }}
+                      className={`min-h-[100px] p-2 box-border relative ${cell.inMonth ? 'bg-gj-card' : 'bg-gj-bg'} ${ci > 0 ? 'border-l border-white/[5%]' : ''} ${isToday ? 'border-[1.5px] border-gj-amber' : ''}`}
                     >
                       {/* Day number */}
                       <div
-                        style={{
-                          fontSize: 13,
-                          fontWeight: isToday ? 700 : 400,
-                          color: isToday ? '#e8a020' : cell.inMonth ? '#e8e6e0' : '#9ba8bb',
-                          marginBottom: 4,
-                          fontFamily: 'DM Sans, sans-serif',
-                          lineHeight: 1,
-                        }}
+                        className={`text-[13px] mb-1 font-sans leading-none ${isToday ? 'font-bold text-gj-amber' : cell.inMonth ? 'font-normal text-gj-text' : 'font-normal text-gj-secondary'}`}
                       >
                         {cell.date.getDate()}
                       </div>
 
                       {/* Turno chips */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <div className="flex flex-col gap-0.5">
                         {visible.map((t) => {
                           const chip = CHIP[t.estado] ?? CHIP.EN_PROCESO
                           const firstName = (t.nombre ?? '—').split(' ')[0]
@@ -655,24 +517,7 @@ export default function CalendarioView({
                             <button
                               key={t.visa_id}
                               onClick={() => setSelectedTurno(t)}
-                              style={{
-                                display: 'block',
-                                width: '100%',
-                                textAlign: 'left',
-                                backgroundColor: chip.bg,
-                                color: chip.text,
-                                padding: '2px 5px',
-                                borderRadius: 4,
-                                fontSize: 11,
-                                fontWeight: 600,
-                                border: 'none',
-                                cursor: 'pointer',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                fontFamily: 'DM Sans, sans-serif',
-                                lineHeight: 1.4,
-                              }}
+                              className={`block w-full text-left px-[5px] py-[2px] rounded text-[11px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] ${chip.classes}`}
                               title={`${t.nombre} — ${BADGE[t.estado]?.label ?? t.estado}`}
                             >
                               {label}
@@ -680,12 +525,7 @@ export default function CalendarioView({
                           )
                         })}
                         {overflow > 0 && (
-                          <span style={{
-                            fontSize: 10,
-                            color: '#9ba8bb',
-                            fontFamily: 'DM Sans, sans-serif',
-                            paddingLeft: 2,
-                          }}>
+                          <span className="text-[10px] text-gj-secondary font-sans pl-0.5">
                             +{overflow} más
                           </span>
                         )}
@@ -694,32 +534,10 @@ export default function CalendarioView({
                           <button
                             key={p.id}
                             onClick={() => setSelectedPago(p)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              width: '100%',
-                              textAlign: 'left',
-                              backgroundColor: p.estado === 'DEUDA'
-                                ? 'rgba(232,90,90,0.18)'
-                                : 'rgba(34,201,122,0.18)',
-                              color: p.estado === 'DEUDA' ? '#e85a5a' : '#22c97a',
-                              padding: '2px 5px',
-                              borderRadius: 4,
-                              fontSize: 10,
-                              fontWeight: 600,
-                              border: 'none',
-                              cursor: 'pointer',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              fontFamily: 'DM Sans, sans-serif',
-                              lineHeight: 1.4,
-                              marginTop: 1,
-                            }}
+                            className={`flex items-center gap-[3px] w-full text-left px-[5px] py-[2px] rounded text-[10px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] mt-[1px] ${p.estado === 'DEUDA' ? 'bg-gj-red/[18%] text-gj-red' : 'bg-gj-green/[18%] text-gj-green'}`}
                             title={`${p.cliente_nombre} — $${p.monto.toLocaleString('es-AR')} (${p.estado})`}
                           >
-                            <span style={{ fontSize: 8 }}>$</span>
+                            <span className="text-[8px]">$</span>
                             {p.cliente_nombre.split(' ')[0]}
                           </button>
                         ))}
@@ -728,25 +546,7 @@ export default function CalendarioView({
                           <button
                             key={s.id}
                             onClick={() => setSelectedSeminario(s)}
-                            style={{
-                              display: 'block',
-                              width: '100%',
-                              textAlign: 'left',
-                              backgroundColor: SEMINARIO_CHIP.bg,
-                              color: SEMINARIO_CHIP.text,
-                              padding: '2px 5px',
-                              borderRadius: 4,
-                              fontSize: 11,
-                              fontWeight: 600,
-                              border: 'none',
-                              cursor: 'pointer',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              fontFamily: 'DM Sans, sans-serif',
-                              lineHeight: 1.4,
-                              marginTop: 1,
-                            }}
+                            className={`block w-full text-left px-[5px] py-[2px] rounded text-[11px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] mt-[1px] ${SEMINARIO_CHIP_CLASSES}`}
                             title={`Seminario — ${s.sem_id} (${s.modalidad})`}
                           >
                             {s.sem_id}
@@ -761,7 +561,7 @@ export default function CalendarioView({
           </div>
 
           {/* Count */}
-          <div style={{ marginTop: 10, fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+          <div className="mt-2.5 text-xs text-gj-secondary font-sans">
             {turnos.length === 0
               ? 'Sin turnos este mes'
               : `${turnos.length} turno${turnos.length !== 1 ? 's' : ''} en ${MESES[mes - 1]}`
@@ -773,7 +573,7 @@ export default function CalendarioView({
         </div>
 
         {/* ── Esta semana (desktop sidebar) ── */}
-        <div className="hidden lg:block" style={{ width: 260, flexShrink: 0 }}>
+        <div className="hidden lg:block w-[260px] shrink-0">
           <EstaSemana turnos={turnosSemana} onSelect={setSelectedTurno} />
         </div>
       </div>
@@ -785,39 +585,15 @@ export default function CalendarioView({
 
 function EstaSemana({ turnos, onSelect }: { turnos: TurnoItem[]; onSelect: (t: TurnoItem) => void }) {
   return (
-    <div
-      style={{
-        backgroundColor: '#111f38',
-        borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.06)',
-        overflow: 'hidden',
-      }}
-    >
-      <div style={{
-        padding: '16px 18px 12px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-      }}>
-        <h3 style={{
-          margin: 0,
-          fontSize: 13,
-          fontWeight: 600,
-          color: '#9ba8bb',
-          textTransform: 'uppercase',
-          letterSpacing: '0.06em',
-          fontFamily: 'DM Sans, sans-serif',
-        }}>
+    <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
+      <div className="px-[18px] pt-4 pb-3 border-b border-white/[6%]">
+        <h3 className="m-0 text-[13px] font-semibold text-gj-secondary uppercase tracking-[0.06em] font-sans">
           Esta semana
         </h3>
       </div>
 
       {turnos.length === 0 ? (
-        <div style={{
-          padding: '24px 18px',
-          fontSize: 13,
-          color: '#9ba8bb',
-          fontFamily: 'DM Sans, sans-serif',
-          textAlign: 'center',
-        }}>
+        <div className="px-[18px] py-6 text-[13px] text-gj-secondary font-sans text-center">
           Sin turnos esta semana
         </div>
       ) : (
@@ -828,59 +604,27 @@ function EstaSemana({ turnos, onSelect }: { turnos: TurnoItem[]; onSelect: (t: T
               <button
                 key={`${t.visa_id}-${i}`}
                 onClick={() => onSelect(t)}
-                style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  display: 'block',
-                }}
+                className="w-full text-left bg-none border-none cursor-pointer p-0 block"
               >
                 <div
-                  style={{
-                    padding: '12px 18px',
-                    borderBottom: i < turnos.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                  }}
+                  className={`px-[18px] py-3 ${i < turnos.length - 1 ? 'border-b border-white/[4%]' : ''}`}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.03)' }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: '#e8e6e0',
-                        fontFamily: 'DM Sans, sans-serif',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}>
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="min-w-0">
+                      <div className="text-[13px] font-semibold text-gj-text font-sans overflow-hidden text-ellipsis whitespace-nowrap">
                         {t.nombre}
                       </div>
-                      <div style={{ fontSize: 11, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif', marginTop: 1 }}>
+                      <div className="text-[11px] text-gj-secondary font-sans mt-[1px]">
                         {t.gj_id}
                       </div>
                     </div>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        padding: '2px 8px',
-                        borderRadius: 5,
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: badge.color,
-                        backgroundColor: badge.bg,
-                        fontFamily: 'DM Sans, sans-serif',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}
-                    >
+                    <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold font-sans whitespace-nowrap shrink-0 ${badge.classes}`}>
                       {badge.label}
                     </span>
                   </div>
-                  <div style={{ fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+                  <div className="text-xs text-gj-secondary font-sans">
                     {formatFecha(t.fecha_turno + 'T12:00:00')}
                   </div>
                 </div>

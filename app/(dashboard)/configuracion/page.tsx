@@ -57,70 +57,47 @@ export default async function ConfiguracionPage() {
     precioSeminario = parseInt(config.find((c) => c.clave === 'precio_seminario')?.valor ?? '0', 10)
   }
 
-  const rolColor = perfil.rol === 'admin' ? '#e8a020' : '#4a9eff'
+  const rolClasses = perfil.rol === 'admin'
+    ? 'border-gj-amber/40 bg-gj-amber/15 text-gj-amber'
+    : 'border-gj-blue/40 bg-gj-blue/15 text-gj-blue'
+  const rolDotClass = perfil.rol === 'admin' ? 'bg-gj-amber' : 'bg-gj-blue'
   const rolLabel = perfil.rol === 'admin' ? 'Admin' : 'Colaborador'
 
   return (
-    <div className="p-4 sm:p-6 lg:p-10" style={{ maxWidth: 900, margin: '0 auto' }}>
-      <h1 style={{
-        fontSize: 26, fontWeight: 700, color: '#e8e6e0',
-        fontFamily: 'Fraunces, serif', marginBottom: 32,
-      }}>
+    <div className="p-4 sm:p-6 lg:p-10 max-w-[900px] mx-auto">
+      <h1 className="font-display text-[26px] font-bold text-gj-text mb-8">
         Configuración
       </h1>
 
       {/* Mi perfil */}
-      <div style={{
-        backgroundColor: '#111f38', borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.07)',
-        padding: '24px 28px', marginBottom: 28,
-      }}>
-        <h2 style={{
-          fontSize: 15, fontWeight: 600, color: '#9ba8bb',
-          fontFamily: 'DM Sans, sans-serif', marginBottom: 24,
-          textTransform: 'uppercase', letterSpacing: '0.06em',
-        }}>
+      <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6 mb-7">
+        <h2 className="text-[15px] font-semibold text-gj-secondary font-sans mb-6 uppercase tracking-[0.06em]">
           Mi perfil
         </h2>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <span style={{
-              width: 130, fontSize: 13, color: '#9ba8bb',
-              fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
-            }}>
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center gap-6">
+            <span className="w-[130px] text-[13px] text-gj-secondary font-sans shrink-0">
               Nombre
             </span>
             <EditarNombreForm nombreActual={perfil.nombre ?? ''} />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <span style={{
-              width: 130, fontSize: 13, color: '#9ba8bb',
-              fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
-            }}>
+          <div className="flex items-center gap-6">
+            <span className="w-[130px] text-[13px] text-gj-secondary font-sans shrink-0">
               Email
             </span>
-            <span style={{ fontSize: 15, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif' }}>
+            <span className="text-[15px] text-gj-text font-sans">
               {perfil.email}
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <span style={{
-              width: 130, fontSize: 13, color: '#9ba8bb',
-              fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
-            }}>
+          <div className="flex items-center gap-6">
+            <span className="w-[130px] text-[13px] text-gj-secondary font-sans shrink-0">
               Rol
             </span>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '4px 12px', borderRadius: 6,
-              border: `1px solid ${rolColor}40`,
-              backgroundColor: `${rolColor}15`, color: rolColor,
-              fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
-            }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: rolColor, flexShrink: 0 }} />
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-xs font-semibold font-sans ${rolClasses}`}>
+              <span className={`w-[7px] h-[7px] rounded-full shrink-0 ${rolDotClass}`} />
               {rolLabel}
             </span>
           </div>
@@ -131,36 +108,20 @@ export default async function ConfiguracionPage() {
 
       {/* Usuarios del sistema — solo admin */}
       {esAdmin && (
-        <div style={{
-          backgroundColor: '#111f38', borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.07)',
-          padding: '24px 28px', marginBottom: 28,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-            <h2 style={{
-              fontSize: 15, fontWeight: 600, color: '#9ba8bb',
-              fontFamily: 'DM Sans, sans-serif',
-              textTransform: 'uppercase', letterSpacing: '0.06em',
-              margin: 0,
-            }}>
+        <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6 mb-7">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-[15px] font-semibold text-gj-secondary font-sans uppercase tracking-[0.06em] m-0">
               Usuarios del sistema
             </h2>
             <NuevoUsuarioTrigger />
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
+          <div className="overflow-x-auto">
+          <table className="w-full border-collapse" style={{ minWidth: 560 }}>
             <thead>
               <tr>
                 {['Nombre', 'Email', 'Rol', 'Estado', 'Desde', 'Acciones'].map((h) => (
-                  <th key={h} style={{
-                    textAlign: 'left', padding: '8px 12px',
-                    fontSize: 12, color: '#9ba8bb', fontWeight: 600,
-                    fontFamily: 'DM Sans, sans-serif',
-                    borderBottom: '1px solid rgba(255,255,255,0.07)',
-                    textTransform: 'uppercase', letterSpacing: '0.05em',
-                    whiteSpace: 'nowrap',
-                  }}>
+                  <th key={h} className="text-left px-3 py-2 text-xs text-gj-secondary font-semibold font-sans border-b border-white/[7%] uppercase tracking-[0.05em] whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -168,42 +129,38 @@ export default async function ConfiguracionPage() {
             </thead>
             <tbody>
               {usuarios.map((u) => {
-                const uRolColor = u.rol === 'admin' ? '#e8a020' : '#4a9eff'
+                const uRolClasses = u.rol === 'admin'
+                  ? 'border-gj-amber/40 bg-gj-amber/15 text-gj-amber'
+                  : 'border-gj-blue/40 bg-gj-blue/15 text-gj-blue'
+                const uRolDotClass = u.rol === 'admin' ? 'bg-gj-amber' : 'bg-gj-blue'
                 const uRolLabel = u.rol === 'admin' ? 'Admin' : 'Colaborador'
                 const esMisma = u.id === user.id
                 return (
-                  <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '12px 12px', fontSize: 14, color: '#e8e6e0', fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap' }}>
+                  <tr key={u.id} className="border-b border-white/[4%]">
+                    <td className="px-3 py-3 text-sm text-gj-text font-sans whitespace-nowrap">
                       {u.nombre ?? '—'}
                     </td>
-                    <td style={{ padding: '12px 12px', fontSize: 13, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif' }}>
+                    <td className="px-3 py-3 text-[13px] text-gj-secondary font-sans">
                       {u.email}
                     </td>
-                    <td style={{ padding: '12px 12px' }}>
-                      <span style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 5,
-                        padding: '3px 10px', borderRadius: 6,
-                        border: `1px solid ${uRolColor}40`,
-                        backgroundColor: `${uRolColor}15`, color: uRolColor,
-                        fontSize: 11, fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: uRolColor, flexShrink: 0 }} />
+                    <td className="px-3 py-3">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-semibold font-sans whitespace-nowrap ${uRolClasses}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${uRolDotClass}`} />
                         {uRolLabel}
                       </span>
                     </td>
-                    <td style={{ padding: '12px 12px' }}>
+                    <td className="px-3 py-3">
                       <ToggleUsuario
                         userId={u.id}
                         activo={u.activo}
                         esMismoCuenta={esMisma}
                       />
                     </td>
-                    <td style={{ padding: '12px 12px', fontSize: 12, color: '#9ba8bb', fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap' }}>
+                    <td className="px-3 py-3 text-xs text-gj-secondary font-sans whitespace-nowrap">
                       {new Date(u.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                     </td>
-                    <td style={{ padding: '12px 12px' }}>
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <td className="px-3 py-3">
+                      <div className="flex gap-1.5 items-center">
                         <EditarUsuarioModal
                           usuario={{ id: u.id, nombre: u.nombre ?? '', email: u.email, rol: u.rol }}
                           esMismaCuenta={esMisma}
@@ -226,16 +183,8 @@ export default async function ConfiguracionPage() {
 
       {/* Precios del servicio — solo admin */}
       {esAdmin && (
-        <div style={{
-          backgroundColor: '#111f38', borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.07)',
-          padding: '24px 28px',
-        }}>
-          <h2 style={{
-            fontSize: 15, fontWeight: 600, color: '#9ba8bb',
-            fontFamily: 'DM Sans, sans-serif', marginBottom: 24,
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-          }}>
+        <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6">
+          <h2 className="text-[15px] font-semibold text-gj-secondary font-sans mb-6 uppercase tracking-[0.06em]">
             Precios del servicio
           </h2>
           <PreciosForm precioVisa={precioVisa} precioSeminario={precioSeminario} />

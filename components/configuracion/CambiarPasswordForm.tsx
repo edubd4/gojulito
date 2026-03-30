@@ -3,27 +3,6 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#172645',
-  color: '#e8e6e0',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 14,
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 13,
-  color: '#9ba8bb',
-  marginBottom: 4,
-  fontFamily: 'DM Sans, sans-serif',
-}
-
 export default function CambiarPasswordForm() {
   const [nuevaPassword, setNuevaPassword] = useState('')
   const [confirmarPassword, setConfirmarPassword] = useState('')
@@ -76,53 +55,30 @@ export default function CambiarPasswordForm() {
 
   return (
     <div>
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 20, marginTop: 4 }}>
-        <p style={{
-          fontSize: 13, fontWeight: 600, color: '#9ba8bb',
-          fontFamily: 'DM Sans, sans-serif', marginBottom: 16,
-          textTransform: 'uppercase', letterSpacing: '0.06em',
-        }}>
+      <div className="border-t border-white/[7%] pt-5 mt-1">
+        <p className="text-[13px] font-semibold text-gj-secondary font-sans mb-4 uppercase tracking-[0.06em]">
           Cambiar contraseña
         </p>
 
-        <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3.5">
           {serverError && (
-            <div style={{
-              backgroundColor: 'rgba(232,90,90,0.12)',
-              border: '1px solid rgba(232,90,90,0.3)',
-              borderRadius: 8,
-              padding: '10px 14px',
-              color: '#e85a5a',
-              fontSize: 13,
-              fontFamily: 'DM Sans, sans-serif',
-            }}>
+            <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3.5 py-2.5 text-gj-red text-[13px] font-sans">
               {serverError}
             </div>
           )}
 
           {success && (
-            <div style={{
-              backgroundColor: 'rgba(34,201,122,0.1)',
-              border: '1px solid rgba(34,201,122,0.3)',
-              borderRadius: 8,
-              padding: '10px 14px',
-              color: '#22c97a',
-              fontSize: 13,
-              fontFamily: 'DM Sans, sans-serif',
-            }}>
+            <div className="bg-gj-green/10 border border-gj-green/30 rounded-lg px-3.5 py-2.5 text-gj-green text-[13px] font-sans">
               Contraseña actualizada correctamente.
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 24 }}>
-            <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Nueva contraseña</label>
+          <div className="flex gap-6">
+            <div className="flex-1">
+              <label className="block text-[13px] text-gj-secondary mb-1 font-sans">Nueva contraseña</label>
               <input
                 type="password"
-                style={{
-                  ...inputStyle,
-                  borderColor: errors.nueva ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                }}
+                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nueva ? 'border-gj-red' : 'border-white/10'}`}
                 value={nuevaPassword}
                 onChange={(e) => {
                   setNuevaPassword(e.target.value)
@@ -133,18 +89,15 @@ export default function CambiarPasswordForm() {
                 disabled={loading}
               />
               {errors.nueva && (
-                <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.nueva}</span>
+                <span className="text-[11px] text-gj-red mt-0.5 block">{errors.nueva}</span>
               )}
             </div>
 
-            <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Confirmar contraseña</label>
+            <div className="flex-1">
+              <label className="block text-[13px] text-gj-secondary mb-1 font-sans">Confirmar contraseña</label>
               <input
                 type="password"
-                style={{
-                  ...inputStyle,
-                  borderColor: errors.confirmar ? '#e85a5a' : 'rgba(255,255,255,0.1)',
-                }}
+                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.confirmar ? 'border-gj-red' : 'border-white/10'}`}
                 value={confirmarPassword}
                 onChange={(e) => {
                   setConfirmarPassword(e.target.value)
@@ -154,7 +107,7 @@ export default function CambiarPasswordForm() {
                 disabled={loading}
               />
               {errors.confirmar && (
-                <span style={{ fontSize: 11, color: '#e85a5a', marginTop: 3, display: 'block' }}>{errors.confirmar}</span>
+                <span className="text-[11px] text-gj-red mt-0.5 block">{errors.confirmar}</span>
               )}
             </div>
           </div>
@@ -163,18 +116,7 @@ export default function CambiarPasswordForm() {
             <button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '9px 24px',
-                borderRadius: 8,
-                border: 'none',
-                backgroundColor: '#e8a020',
-                color: '#0b1628',
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                fontFamily: 'DM Sans, sans-serif',
-              }}
+              className={`px-6 py-[9px] rounded-lg border-none bg-gj-amber text-gj-bg text-sm font-semibold font-sans transition-opacity ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               {loading ? 'Guardando...' : 'Actualizar contraseña'}
             </button>

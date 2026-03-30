@@ -36,27 +36,12 @@ export default async function PagosPage() {
   })
 
   return (
-    <div
-      className="p-4 sm:p-6 lg:p-8"
-      style={{
-        backgroundColor: '#0b1628',
-        minHeight: '100%',
-        fontFamily: 'DM Sans, sans-serif',
-      }}
-    >
-      <div style={{ marginBottom: 24 }}>
-        <h1
-          style={{
-            fontFamily: 'Fraunces, serif',
-            fontSize: 28,
-            fontWeight: 700,
-            color: '#e8e6e0',
-            margin: '0 0 4px',
-          }}
-        >
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
+      <div className="mb-6">
+        <h1 className="font-display text-[28px] font-bold text-gj-text m-0 mb-1">
           Pagos
         </h1>
-        <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
+        <p className="text-gj-secondary text-sm m-0">
           {pagos.length} pago{pagos.length !== 1 ? 's' : ''} en total
         </p>
       </div>

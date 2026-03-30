@@ -10,17 +10,7 @@ export default function NuevoUsuarioTrigger() {
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          padding: '7px 16px',
-          borderRadius: 8,
-          border: 'none',
-          backgroundColor: '#e8a020',
-          color: '#0b1628',
-          fontSize: 13,
-          fontWeight: 600,
-          cursor: 'pointer',
-          fontFamily: 'DM Sans, sans-serif',
-        }}
+        className="px-4 py-[7px] rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans"
       >
         + Nuevo usuario
       </button>

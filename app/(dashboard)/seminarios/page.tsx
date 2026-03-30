@@ -34,14 +34,14 @@ export default async function SeminariosPage() {
   const seminarios = (rawSeminarios ?? []) as SeminarioRow[]
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8" style={{ backgroundColor: '#0b1628', minHeight: '100%', fontFamily: 'DM Sans, sans-serif' }}>
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
+      <div className="flex items-center justify-between mb-7 flex-wrap gap-3">
         <div>
-          <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 28, fontWeight: 700, color: '#e8e6e0', margin: '0 0 4px' }}>
+          <h1 className="font-display text-[28px] font-bold text-gj-text m-0 mb-1">
             Seminarios
           </h1>
-          <p style={{ color: '#9ba8bb', fontSize: 14, margin: 0 }}>
+          <p className="text-gj-secondary text-sm m-0">
             {seminarios.length} edición{seminarios.length !== 1 ? 'es' : ''}
           </p>
         </div>
@@ -50,11 +50,11 @@ export default async function SeminariosPage() {
 
       {/* Lista */}
       {seminarios.length === 0 ? (
-        <div style={{ backgroundColor: '#111f38', borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', padding: '48px 28px', textAlign: 'center', color: '#9ba8bb', fontSize: 14 }}>
+        <div className="bg-gj-card rounded-xl border border-white/[6%] px-7 py-12 text-center text-gj-secondary text-sm">
           Sin seminarios registrados
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           {seminarios.map((sem) => {
             const asistentes = sem.seminario_asistentes ?? []
             const totalRecaudado = asistentes

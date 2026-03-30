@@ -28,7 +28,12 @@ export default function ToggleUsuario({ userId, activo, esMismoCuenta }: Props) 
     }
   }
 
-  const color = activo ? '#22c97a' : '#e85a5a'
+  const colorClasses = activo
+    ? 'border-gj-green/40 bg-gj-green/15 text-gj-green'
+    : 'border-gj-red/40 bg-gj-red/15 text-gj-red'
+
+  const dotColorClass = activo ? 'bg-gj-green' : 'bg-gj-red'
+
   const label = activo ? 'Activo' : 'Inactivo'
 
   return (
@@ -36,17 +41,9 @@ export default function ToggleUsuario({ userId, activo, esMismoCuenta }: Props) 
       onClick={() => { void handleToggle() }}
       disabled={loading || esMismoCuenta}
       title={esMismoCuenta ? 'No podés desactivar tu propia cuenta' : `Marcar como ${activo ? 'inactivo' : 'activo'}`}
-      style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        padding: '4px 12px', borderRadius: 6, border: `1px solid ${color}40`,
-        backgroundColor: `${color}15`, color,
-        fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
-        cursor: esMismoCuenta ? 'default' : loading ? 'not-allowed' : 'pointer',
-        opacity: loading ? 0.6 : 1,
-        transition: 'opacity 0.15s',
-      }}
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-xs font-semibold font-sans transition-opacity ${colorClasses} ${esMismoCuenta ? 'cursor-default' : loading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
     >
-      <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: color, flexShrink: 0 }} />
+      <span className={`w-[7px] h-[7px] rounded-full shrink-0 ${dotColorClass}`} />
       {label}
     </button>
   )
