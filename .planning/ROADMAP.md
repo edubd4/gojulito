@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 Core Operativo** — Shipped 2026-03-21 (pre-planning)
 - ✅ **v1.1 Core Hardening** — Phases 1-3 (shipped 2026-03-22)
-- 🚧 **v1.2 Canales y Operación Avanzada** — Phases 4-7 (in progress)
+- ✅ **v1.2 Canales y Operación Avanzada** — Phases 4-9 (shipped 2026-03-30)
 
 ## Phases
 
@@ -24,9 +24,9 @@ Auth, dashboard, CRUD completo (clientes, visas, pagos, seminarios), historial i
 
 </details>
 
-### 🚧 v1.2 Canales y Operación Avanzada (In Progress)
+### ✅ v1.2 Canales y Operación Avanzada — SHIPPED 2026-03-30
 
-**Milestone Goal:** Completar la operación sin abrir el dashboard — seminarios con gestión real de asistentes, bot Telegram Alfred funcional con AI Agent, vista de calendario, y configuración de precios desde la app.
+**Milestone Goal:** Completar la operación sin abrir el dashboard — seminarios con gestión real de asistentes, bot Telegram Alfred funcional con AI Agent, vista de calendario, configuración de precios desde la app, y design system 100% Tailwind gj-*.
 
 ## Phase Details
 
@@ -117,11 +117,11 @@ Plans:
   4. Todos los inputs y textareas tienen `focus:ring-2 focus:ring-gj-amber` visible (sin `outline: none` sin reemplazo)
 **Plans**: 5 plans
 Plans:
-- [ ] 09-01-PLAN.md — Add gj-seminario token to tailwind.config.ts
-- [ ] 09-02-PLAN.md — Migrate components/pagos/ (5 files) — BADGE maps + inputStyle + focus rings
-- [ ] 09-03-PLAN.md — Migrate components/clientes/ (6 files) — BADGE maps + conditional error borders
-- [ ] 09-04-PLAN.md — Migrate components/seminarios/ + tramites/ + visas/ (11 files) — hover state refactor + accentColor
-- [ ] 09-05-PLAN.md — Migrate components/configuracion/ + grupos/ + calendario/ + dashboard + app pages
+- [x] 09-01-PLAN.md — Add gj-seminario token to tailwind.config.ts
+- [x] 09-02-PLAN.md — Migrate components/pagos/ (5 files) — BADGE maps + inputStyle + focus rings
+- [x] 09-03-PLAN.md — Migrate components/clientes/ (6 files) — BADGE maps + conditional error borders
+- [x] 09-04-PLAN.md — Migrate components/seminarios/ + tramites/ + visas/ (11 files) — hover state refactor + accentColor
+- [x] 09-05-PLAN.md — Migrate components/configuracion/ + grupos/ + calendario/ + dashboard + app pages
 **UI hint**: yes
 
 ## Progress
@@ -139,4 +139,4 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 | 6. Bot Telegram Alfred | v1.2 | 1/1 | Complete | 2026-03-24 |
 | 7. Calendario y Configuracion | v1.2 | 2/2 | Complete | 2026-03-24 |
 | 8. Fixes Julito Feedback | v1.2 | 4/4 | Complete | 2026-03-28 |
-| 9. Design System Hardening | v1.2 | 0/5 | Pending | — |
+| 9. Design System Hardening | v1.2 | 5/5 | Complete | 2026-03-30 |

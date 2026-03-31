@@ -1,4 +1,4 @@
-# Phase 8 Context: Design System Hardening
+# Phase 9 Context: Design System Hardening
 
 ## Phase Goal
 Eliminar toda deuda de estilos inline del proyecto. Migrar 958 ocurrencias de `style={}` con hex hardcodeados a clases Tailwind `gj-*`, registrar el color púrpura de seminarios como token oficial, y agregar focus rings visibles en todos los inputs.
@@ -77,11 +77,11 @@ Para `boxShadow` complejos o valores muy específicos sin equivalente: mantener 
 ### 6. Prioridad de planes (orden de ejecución)
 **[auto] Un plan por grupo de componentes afín, ejecutados en orden:**
 
-1. **08-01**: `tailwind.config.ts` — agregar `gj-seminario` + auditar tokens existentes
-2. **08-02**: `components/pagos/` — área con mayor deuda (NuevoPagoModal, PagosTable, etc.)
-3. **08-03**: `components/clientes/` — alto tráfico operativo
-4. **08-04**: `components/seminarios/` + `components/tramites/` + `components/visas/`
-5. **08-05**: `components/configuracion/` + `components/grupos/` + `components/calendario/`
+1. **09-01**: `tailwind.config.ts` — agregar `gj-seminario` + auditar tokens existentes
+2. **09-02**: `components/pagos/` — área con mayor deuda (NuevoPagoModal, PagosTable, etc.)
+3. **09-03**: `components/clientes/` — alto tráfico operativo
+4. **09-04**: `components/seminarios/` + `components/tramites/` + `components/visas/`
+5. **09-05**: `components/configuracion/` + `components/grupos/` + `components/calendario/`
 
 ---
 

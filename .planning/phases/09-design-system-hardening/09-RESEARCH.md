@@ -1,4 +1,4 @@
-# Phase 8: Design System Hardening - Research
+# Phase 9: Design System Hardening - Research
 
 **Researched:** 2026-03-25
 **Domain:** Tailwind CSS token migration, inline style removal, accessibility (focus rings)
@@ -42,11 +42,11 @@
 5. **Estilos sin equivalente Tailwind** — Usar clases Tailwind estándar (`text-sm`, `p-2`, etc.) para spacing/typography. Mantener `style={}` solo para `boxShadow` complejos y valores sin mapeo natural.
 
 6. **Prioridad de planes:**
-   1. 08-01: `tailwind.config.ts`
-   2. 08-02: `components/pagos/`
-   3. 08-03: `components/clientes/`
-   4. 08-04: `components/seminarios/` + `components/tramites/` + `components/visas/`
-   5. 08-05: `components/configuracion/` + `components/grupos/` + `components/calendario/`
+   1. 09-01: `tailwind.config.ts`
+   2. 09-02: `components/pagos/`
+   3. 09-03: `components/clientes/`
+   4. 09-04: `components/seminarios/` + `components/tramites/` + `components/visas/`
+   5. 09-05: `components/configuracion/` + `components/grupos/` + `components/calendario/`
 
 ### Claude's Discretion
 None specified — all decisions are locked.
@@ -103,7 +103,7 @@ gj.red:       '#e85a5a' ✓ present
 gj.blue:      '#4a9eff' ✓ present
 gj.text:      '#e8e6e0' ✓ present
 gj.secondary: '#9ba8bb' ✓ present
-gj.seminario: '#a78bfa' ✗ MISSING — add in plan 08-01
+gj.seminario: '#a78bfa' ✗ MISSING — add in plan 09-01
 ```
 
 ---
@@ -478,7 +478,7 @@ All hex/rgba values found in `style={}` props across the codebase, with token ma
 
 ## Code Examples
 
-### tailwind.config.ts change (Plan 08-01)
+### tailwind.config.ts change (Plan 09-01)
 ```typescript
 // Source: tailwind.config.ts (verified against current file)
 gj: {

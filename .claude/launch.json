@@ -4,7 +4,7 @@
     {
       "name": "Next.js Dev",
       "runtimeExecutable": "node",
-      "cwd": "C:\\Users\\edu_i\\OneDrive\\Documentos\\Proyectos2026\\gojulito",
+      "cwd": ".",
       "runtimeArgs": ["node_modules/next/dist/bin/next", "dev"],
       "port": 3000,
       "autoPort": true

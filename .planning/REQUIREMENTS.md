@@ -28,6 +28,15 @@
 - [x] **CFG-01**: La página `/configuracion` permite al admin ver y editar `precio_visa` y `precio_seminario` desde la tabla `configuracion`
 - [x] **CFG-02**: La página `/configuracion` solo es accesible por usuarios con rol `admin`
 
+### Fixes Operativos (Julito Feedback — Phase 8)
+
+- [ ] **FIX-01**: Al crear un cliente (dashboard o bot Telegram), el estado siempre es `ACTIVO` automáticamente — no se requiere ni se pregunta el estado al crear
+- [ ] **FIX-02**: Un pago de tipo VISA falla con error descriptivo si el `visa_id` no existe o no pertenece al `cliente_id` — el bot puede comunicar el error al usuario
+- [ ] **FIX-03**: Las 4 metric cards del dashboard son clickeables y navegan a la sección correspondiente (clientes, tramites, calendario, pagos)
+- [ ] **FIX-04**: Los dropdowns de estado de cliente en la UI solo muestran `ACTIVO` y `FINALIZADO` — los valores PROSPECTO e INACTIVO no aparecen en selectores pero se mantienen en la DB
+- [ ] **FIX-05**: Desde la sección /tramites se puede crear un cliente nuevo y su visa en un solo modal sin necesidad de ir a /clientes primero
+- [ ] **FIX-06**: En el formulario de nuevo pago se puede registrar simultáneamente un pago PAGADO y una DEUDA pendiente en el mismo submit
+
 ## Future Requirements
 
 ### Seminarios
@@ -64,10 +73,16 @@
 | CAL-02 | Phase 7 | Complete |
 | CFG-01 | Phase 7 | Complete |
 | CFG-02 | Phase 7 | Complete |
+| FIX-01 | Phase 8 | Pending |
+| FIX-02 | Phase 8 | Pending |
+| FIX-03 | Phase 8 | Pending |
+| FIX-04 | Phase 8 | Pending |
+| FIX-05 | Phase 8 | Pending |
+| FIX-06 | Phase 8 | Pending |
 
 **Coverage:**
-- v1.2 requirements: 11 total
-- Mapped to phases: 11 ✓
+- v1.2 requirements: 17 total
+- Mapped to phases: 17 ✓
 - Unmapped: 0 ✓
 
 ---
