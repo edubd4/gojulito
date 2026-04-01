@@ -385,7 +385,6 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.clienteId ? 'border-gj-red' : 'border-white/10'}`}
                       value={clienteId}
                       onChange={(e) => { setClienteId(e.target.value); if (errors.clienteId) setErrors((p) => ({ ...p, clienteId: '' })) }}
-                      size={Math.min(5, clientesFiltrados.length + 1)}
                     >
                       <option value="">— Seleccionar cliente —</option>
                       {clientesFiltrados.map((c) => (
