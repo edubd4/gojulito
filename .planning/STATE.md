@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.2
-milestone_name: Canales y Operación Avanzada
-status: Shipped
-stopped_at: Completed 09-05-PLAN
-last_updated: "2026-03-30T00:00:00.000Z"
+milestone_name: Canales y Operación Avanzada — SHIPPED 2026-03-30
+status: executing
+stopped_at: Completed 10-03-PLAN.md
+last_updated: "2026-04-01T13:35:42.786Z"
+last_activity: 2026-04-01
 progress:
-  total_phases: 9
-  completed_phases: 9
-  total_plans: 16
-  completed_plans: 16
+  total_phases: 6
+  completed_phases: 6
+  total_plans: 12
+  completed_plans: 14
 ---
 
 # Project State
@@ -19,12 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 09 — design-system-hardening
+**Current focus:** Phase 10 — dashboard-modal-fixes
 
 ## Current Position
 
-Phase: 09
-Plan: 01 (next)
+Phase: 10 (dashboard-modal-fixes) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-04-01
 
 ## Performance Metrics
 
@@ -48,6 +51,7 @@ Plan: 01 (next)
 | Phase 06-bot-telegram-alfred P01 | 8 | 2 tasks | 2 files |
 | Phase 07-calendario-y-configuracion P02 | 8 | 1 tasks | 2 files |
 | Phase 07 P01 | 664 | 2 tasks | 3 files |
+| Phase 10 P03 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -76,6 +80,7 @@ Decisions relevant to v1.2:
 - [Phase 07-02]: visibleNavItems computed inside Sidebar using existing rol prop — no new SidebarProps fields needed
 - [Phase 07-01]: Purple chip color rgba(167,139,250,0.18) bg with #a78bfa text — Violet-400 semantic for seminarios, distinct from visa (blue/amber) and pago (green/red) chips
 - [Phase 07-01]: SeminarioCalItem exported from CalendarioView alongside TurnoItem and PagoCalItem — keeps all calendar types co-located
+- [Phase 10]: Removed size attribute from NuevoTramiteModal select to restore native dropdown that closes on selection
 
 ### Pending Todos
 
@@ -87,6 +92,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-24T22:52:41.368Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-04-01T13:35:42.770Z
+Stopped at: Completed 10-03-PLAN.md
 Resume file: None

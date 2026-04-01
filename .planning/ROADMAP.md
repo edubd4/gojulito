@@ -124,10 +124,61 @@ Plans:
 - [x] 09-05-PLAN.md — Migrate components/configuracion/ + grupos/ + calendario/ + dashboard + app pages
 **UI hint**: yes
 
+---
+
+### v1.3 UX Fixes & Calendar
+
+**Milestone Goal:** Corregir los puntos de fricción operativa reportados tras v1.2 — vistas de DB rotas, popups faltantes en el dashboard, flujo de pago parcial claro, y calendario más legible. Sin cambios de schema invasivos, solo fixes focalizados.
+
+### Phase 10: Dashboard & Modal Fixes
+**Goal**: El dashboard muestra datos correctos con navegación funcional y popups de cliente/deuda; el modal de trámites cierra el select al seleccionar
+**Depends on**: Phase 9
+**Requirements**: DB-01, DASH-01, DASH-02, DASH-03, DASH-04, MODAL-01
+**Success Criteria** (what must be TRUE):
+  1. Las vistas `v_turnos_semana` y `v_deudas_proximas` incluyen `cliente_id`, `nombre_cliente` y `estado_visa` con aliases correctos
+  2. Hacer click en la columna Fecha de "Turnos esta semana" navega a `/calendario`
+  3. Hacer click en columna Cliente de "Deudas próximas" muestra popup con nombre, gj_id y botón "Ver ficha"
+  4. Hacer click en columna Monto o Vence de "Deudas próximas" muestra popup de detalle de deuda o navega a `/calendario` respectivamente
+  5. El select de cliente en NuevoTramiteModal se cierra inmediatamente tras seleccionar una opción
+**Plans**: 3 plans (estimado)
+Plans:
+- [ ] 10-01-PLAN.md — DB-01: Supabase migration recreate v_turnos_semana + v_deudas_proximas con cliente_id y aliases
+- [ ] 10-02-PLAN.md — DASH-01 + DASH-04: Columnas Fecha/Vence navegan a /calendario; Deudas table como client component con popups Cliente y Monto (DASH-02 + DASH-03)
+- [x] 10-03-PLAN.md — MODAL-01: Remover size={Math.min(5,...)} del select en NuevoTramiteModal.tsx
+**UI hint**: yes
+
+### Phase 11: Pagos — Pago Parcial
+**Goal**: NuevoPagoModal calcula el resto automáticamente y permite archivar la deuda remanente como PENDIENTE sin fecha
+**Depends on**: Phase 10
+**Requirements**: PAG-01, PAG-02, PAG-03
+**Success Criteria** (what must be TRUE):
+  1. Al ingresar un monto menor a la deuda total, el panel muestra total / pagado / resto calculado en tiempo real
+  2. El checkbox "También registrar deuda pendiente" ya no existe en el modal
+  3. Cuando hay resto pendiente, el toggle "Archivar deuda restante" crea un segundo pago con estado PENDIENTE y sin fecha_vencimiento
+  4. Un pago PENDIENTE sin fecha_vencimiento no aparece en la tabla "Deudas próximas" del dashboard
+**Plans**: 1 plan (estimado)
+Plans:
+- [ ] 11-01-PLAN.md — PAG-01 + PAG-02 + PAG-03: Rework NuevoPagoModal — auto-calc resto, toggle archivar remanente, eliminar checkbox viejo
+**UI hint**: yes
+
+### Phase 12: Calendario — Visual
+**Goal**: Las celdas del calendario son legibles con cap de chips, labels compactos y separadores de sección
+**Depends on**: Phase 10
+**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04
+**Success Criteria** (what must be TRUE):
+  1. Las celdas del calendario muestran máximo 2 chips de pago, con "+X más" cuando hay overflow
+  2. Los chips de pago muestran el monto en formato compacto (`$400`, `$1.2k`) en lugar del nombre del cliente
+  3. Los chips de seminario muestran `Sem · Pres.` o `Sem · Virt.` en lugar del sem_id crudo
+  4. Hay un separador visual entre las secciones turnos / pagos / seminarios dentro de cada celda
+**Plans**: 1 plan (estimado)
+Plans:
+- [ ] 12-01-PLAN.md — CAL-01 + CAL-02 + CAL-03 + CAL-04: Rework CalendarioView.tsx — chip cap, compact labels, section separators
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -140,3 +191,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 | 7. Calendario y Configuracion | v1.2 | 2/2 | Complete | 2026-03-24 |
 | 8. Fixes Julito Feedback | v1.2 | 4/4 | Complete | 2026-03-28 |
 | 9. Design System Hardening | v1.2 | 5/5 | Complete | 2026-03-30 |
+| 10. Dashboard & Modal Fixes | v1.3 | 1/3 | In Progress|  |
+| 11. Pagos — Pago Parcial | v1.3 | 0/1 | Pending | — |
+| 12. Calendario — Visual | v1.3 | 0/1 | Pending | — |
