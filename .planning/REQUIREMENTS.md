@@ -11,10 +11,10 @@
 
 ### DASH — Dashboard UX
 
-- [ ] **DASH-01**: Al hacer click en la columna Fecha de la tabla "Turnos esta semana", navega a `/calendario`
-- [ ] **DASH-02**: Al hacer click en la columna Cliente de la tabla "Deudas próximas", aparece un popup con resumen del cliente (nombre, gj_id) y botón "Ver ficha"
-- [ ] **DASH-03**: Al hacer click en la columna Monto de la tabla "Deudas próximas", aparece un popup con detalle de la deuda (pago_id, monto, fecha de vencimiento)
-- [ ] **DASH-04**: Al hacer click en la columna Vence de la tabla "Deudas próximas", navega a `/calendario`
+- [x] **DASH-01**: Al hacer click en la columna Fecha de la tabla "Turnos esta semana", navega a `/calendario`
+- [x] **DASH-02**: Al hacer click en la columna Cliente de la tabla "Deudas próximas", aparece un popup con resumen del cliente (nombre, gj_id) y botón "Ver ficha"
+- [x] **DASH-03**: Al hacer click en la columna Monto de la tabla "Deudas próximas", aparece un popup con detalle de la deuda (pago_id, monto, fecha de vencimiento)
+- [x] **DASH-04**: Al hacer click en la columna Vence de la tabla "Deudas próximas", navega a `/calendario`
 
 ### MODAL — Modales UX
 
@@ -60,10 +60,10 @@
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
 | DB-01 | Phase 10 | Pending |
-| DASH-01 | Phase 10 | Pending |
-| DASH-02 | Phase 10 | Pending |
-| DASH-03 | Phase 10 | Pending |
-| DASH-04 | Phase 10 | Pending |
+| DASH-01 | Phase 10 | Complete |
+| DASH-02 | Phase 10 | Complete |
+| DASH-03 | Phase 10 | Complete |
+| DASH-04 | Phase 10 | Complete |
 | MODAL-01 | Phase 10 | Complete |
 | PAG-01 | Phase 11 | Pending |
 | PAG-02 | Phase 11 | Pending |
