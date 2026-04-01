@@ -299,7 +299,7 @@ export default async function DashboardPage() {
                         </Link>
                       </td>
                       <td className="py-[11px] pr-4 text-[13px] text-gj-secondary whitespace-nowrap">
-                        <Link href={t.cliente_id ? `/clientes/${t.cliente_id}` : '#'} className="no-underline text-inherit">
+                        <Link href="/calendario" className="no-underline text-inherit">
                           {formatFecha(t.fecha_turno)}
                         </Link>
                       </td>
