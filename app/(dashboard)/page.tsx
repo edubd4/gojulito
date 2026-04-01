@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
-import { formatPesos, formatFecha } from '@/lib/utils'
+import { formatFecha } from '@/lib/utils'
 import type { TipoEvento } from '@/lib/constants'
 import AccionesRapidas from '@/components/dashboard/AccionesRapidas'
+import DeudaTableClient from '@/components/dashboard/DeudaTableClient'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,7 @@ interface DeudaProxima {
   cliente_id: string
   gj_id: string
   nombre_cliente: string
+  pago_id: string
   monto: number
   fecha_vencimiento_deuda: string
 }
@@ -73,12 +75,6 @@ function formatFechaHoy(): string {
   return new Intl.DateTimeFormat('es-AR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   }).format(new Date())
-}
-
-function diasRestantes(fechaStr: string): number {
-  const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
-  const fecha = new Date(fechaStr); fecha.setHours(0, 0, 0, 0)
-  return Math.round((fecha.getTime() - hoy.getTime()) / 86_400_000)
 }
 
 function HistorialIcon({ tipo }: { tipo: TipoEvento }) {
@@ -317,53 +313,7 @@ export default async function DashboardPage() {
 
           {/* Deudas próximas */}
           <SectionCard title="Deudas próximas (30 días)">
-            {deudas.length === 0 ? (
-              <EmptyRow message="Sin deudas próximas" />
-            ) : (
-              <table className="w-full border-collapse font-sans mt-3">
-                <thead>
-                  <tr>
-                    {['Cliente', 'Monto', 'Vence'].map((col) => (
-                      <th
-                        key={col}
-                        className="text-left pr-4 pb-2.5 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[7%]"
-                      >
-                        {col}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {deudas.map((d, i) => {
-                    const dias = diasRestantes(d.fecha_vencimiento_deuda)
-                    const urgClassName = dias <= 7 ? 'text-gj-red' : dias <= 15 ? 'text-gj-amber' : 'text-gj-secondary'
-                    return (
-                      <tr key={i} className="border-b border-white/[4%]">
-                        <td className="py-[11px]">
-                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} className="no-underline">
-                            <div className="text-sm text-gj-text font-medium">{d.nombre_cliente}</div>
-                            <div className="text-[11px] text-gj-secondary">{d.gj_id}</div>
-                          </Link>
-                        </td>
-                        <td className="py-[11px] pr-5 text-sm text-gj-text font-medium whitespace-nowrap">
-                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} className="no-underline text-inherit">
-                            {formatPesos(d.monto)}
-                          </Link>
-                        </td>
-                        <td className="py-[11px] whitespace-nowrap">
-                          <Link href={d.cliente_id ? `/clientes/${d.cliente_id}` : '#'} className="no-underline">
-                            <div className={`text-[13px] font-semibold ${urgClassName}`}>
-                              {dias === 0 ? 'Hoy' : dias === 1 ? '1 día' : `${dias} días`}
-                            </div>
-                            <div className="text-[11px] text-gj-secondary">{formatFecha(d.fecha_vencimiento_deuda)}</div>
-                          </Link>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            )}
+            <DeudaTableClient deudas={deudas} />
           </SectionCard>
 
         </div>
