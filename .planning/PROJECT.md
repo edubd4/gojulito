@@ -18,15 +18,16 @@ Stack: Next.js 14 App Router + TypeScript strict + Supabase + Tailwind gj-* toke
 
 No known active bugs. Tech debt residual: algunos routes menores fuera del scope de v1.1 siguen retornando `{ success: true }` (PagosTable, ClientePagosTable, bulk-update/delete — anotado para v1.2).
 
-## Current Milestone: v1.2 Canales y Operación Avanzada
+## Current Milestone: v1.3 — UX Fixes & Calendar
 
-**Goal:** Completar la operación sin abrir el dashboard — seminarios con gestión real de asistentes, bot Telegram Alfred funcional con AI Agent, vista de calendario, y configuración de precios desde la app.
+**Goal:** Corregir bugs operativos y mejorar la experiencia de uso diario: links rotos en el dashboard, flujo de pago parcial intuitivo, dropdown de modal que cierra correctamente, y calendario más legible.
 
 **Target features:**
-- Seminarios: CRUD completo (SEM-YYYY-NN via RPC), gestión de asistentes (nombre, teléfono, provincia, modalidad, estado_pago, monto, convirtio), vínculo opcional a cliente existente
-- Bot Telegram Alfred: migración `telegram_historial` (JSONB), verificación endpoints webhook, flujo n8n ya construido en `gojulitofiles/agente_gojulito.json`
-- Calendario: vista de turnos de visa (v_turnos_semana) + fechas de seminarios en `/calendario`
-- Configuración: gestión de `precio_visa` y `precio_seminario` desde tabla `configuracion`, solo admin, en `/configuracion`
+- DB Fix: Recrear vistas `v_turnos_semana` y `v_deudas_proximas` con `cliente_id` y aliases correctos
+- Dashboard: interactividad diferenciada por columna en tablas de Turnos y Deudas (popups + links a calendario)
+- NuevoTramiteModal: fix dropdown de cliente existente que no se cierra
+- NuevoPagoModal: auto-cálculo de resto al pago parcial + opción "archivar deuda restante"
+- Calendario: cap de pagos por celda, labels compactos de monto, separadores visuales entre tipos
 
 ## Requirements
 
@@ -53,17 +54,21 @@ No known active bugs. Tech debt residual: algunos routes menores fuera del scope
 
 ### Active
 
-<!-- v1.2 scope — in progress -->
+<!-- v1.3 scope -->
 
-- ✓ **SEM-01**: CRUD completo de seminarios con SEM-YYYY-NN IDs via RPC — Validated in Phase 04
-- ✓ **SEM-02**: Gestión de asistentes con campos nombre, teléfono, provincia, modalidad, estado_pago, monto — Validated in Phase 05
-- ✓ **SEM-03**: Campo `convirtio` (SI/NO/EN_SEGUIMIENTO) para trackear conversión a cliente de visa — Validated in Phase 05
-- ✓ **SEM-04**: Asistente puede vincularse a cliente existente (cliente_id nullable) — Validated in Phase 05
-- **BOT-01**: Migración `telegram_historial` con `message` JSONB para memoria de n8n
-- **BOT-02**: Endpoints webhook retornan shape correcto para el AI Agent (buscar, crear, actualizar)
-- **CAL-01**: Página `/calendario` con vista de turnos de visa (v_turnos_semana, próximos 7 días)
-- **CAL-02**: Página `/calendario` incluye fechas de próximos seminarios
-- **CFG-01**: Página `/configuracion` permite al admin ver y editar `precio_visa` y `precio_seminario`
+- [ ] **DB-01**: Las vistas `v_turnos_semana` y `v_deudas_proximas` incluyen `cliente_id` y aliases correctos
+- [ ] **DASH-01**: Click en Fecha de turno navega a `/calendario`
+- [ ] **DASH-02**: Click en Cliente de Deudas muestra popup con resumen
+- [ ] **DASH-03**: Click en Monto de Deudas muestra popup con detalle de deuda
+- [ ] **DASH-04**: Click en Vence de Deudas navega a `/calendario`
+- [ ] **MODAL-01**: Select de cliente existente en NuevoTramiteModal se cierra tras selección
+- [ ] **PAG-01**: Pago parcial muestra resto auto-calculado en tiempo real
+- [ ] **PAG-02**: Resto puede marcarse como "archivada" (PENDIENTE sin fecha)
+- [ ] **PAG-03**: Checkbox "También registrar deuda pendiente" eliminado
+- [ ] **CAL-01**: Chips de pagos limitados a 2 por celda con "+X más"
+- [ ] **CAL-02**: Label de chip de pago muestra monto compacto
+- [ ] **CAL-03**: Label de chip de seminario muestra modalidad
+- [ ] **CAL-04**: Separador visual entre tipos de eventos en cada celda
 
 ### Out of Scope
 
@@ -120,4 +125,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-23 — v1.2 Canales y Operación Avanzada started*
+*Last updated: 2026-03-31 — v1.3 UX Fixes & Calendar started*

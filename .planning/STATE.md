@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada — SHIPPED 2026-03-30
 status: executing
-stopped_at: Completed 10-03-PLAN.md
-last_updated: "2026-04-01T13:35:42.786Z"
+stopped_at: Completed 10-02-PLAN.md
+last_updated: "2026-04-01T13:55:42.830Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 6
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-23)
 ## Current Position
 
 Phase: 10 (dashboard-modal-fixes) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -52,6 +52,7 @@ Last activity: 2026-04-01
 | Phase 07-calendario-y-configuracion P02 | 8 | 1 tasks | 2 files |
 | Phase 07 P01 | 664 | 2 tasks | 3 files |
 | Phase 10 P03 | 2 | 1 tasks | 1 files |
+| Phase 10 P02 | 5 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,7 @@ Decisions relevant to v1.2:
 - [Phase 07-01]: Purple chip color rgba(167,139,250,0.18) bg with #a78bfa text — Violet-400 semantic for seminarios, distinct from visa (blue/amber) and pago (green/red) chips
 - [Phase 07-01]: SeminarioCalItem exported from CalendarioView alongside TurnoItem and PagoCalItem — keeps all calendar types co-located
 - [Phase 10]: Removed size attribute from NuevoTramiteModal select to restore native dropdown that closes on selection
+- [Phase 10]: DeudaTableClient as client component — state required for popups; server component can't manage onClick state
 
 ### Pending Todos
 
@@ -92,6 +94,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-01T13:35:42.770Z
-Stopped at: Completed 10-03-PLAN.md
+Last session: 2026-04-01T13:55:42.822Z
+Stopped at: Completed 10-02-PLAN.md
 Resume file: None

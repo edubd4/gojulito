@@ -142,8 +142,8 @@ Plans:
   5. El select de cliente en NuevoTramiteModal se cierra inmediatamente tras seleccionar una opción
 **Plans**: 3 plans (estimado)
 Plans:
-- [ ] 10-01-PLAN.md — DB-01: Supabase migration recreate v_turnos_semana + v_deudas_proximas con cliente_id y aliases
-- [ ] 10-02-PLAN.md — DASH-01 + DASH-04: Columnas Fecha/Vence navegan a /calendario; Deudas table como client component con popups Cliente y Monto (DASH-02 + DASH-03)
+- [x] 10-01-PLAN.md — DB-01: Supabase migration recreate v_turnos_semana + v_deudas_proximas con cliente_id y aliases
+- [x] 10-02-PLAN.md — DASH-01 + DASH-04: Columnas Fecha/Vence navegan a /calendario; Deudas table como client component con popups Cliente y Monto (DASH-02 + DASH-03)
 - [x] 10-03-PLAN.md — MODAL-01: Remover size={Math.min(5,...)} del select en NuevoTramiteModal.tsx
 **UI hint**: yes
 
@@ -191,6 +191,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 �
 | 7. Calendario y Configuracion | v1.2 | 2/2 | Complete | 2026-03-24 |
 | 8. Fixes Julito Feedback | v1.2 | 4/4 | Complete | 2026-03-28 |
 | 9. Design System Hardening | v1.2 | 5/5 | Complete | 2026-03-30 |
-| 10. Dashboard & Modal Fixes | v1.3 | 1/3 | In Progress|  |
+| 10. Dashboard & Modal Fixes | v1.3 | 3/3 | Complete   | 2026-04-01 |
 | 11. Pagos — Pago Parcial | v1.3 | 0/1 | Pending | — |
 | 12. Calendario — Visual | v1.3 | 0/1 | Pending | — |
