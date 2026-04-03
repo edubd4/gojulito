@@ -140,7 +140,7 @@ Plans:
   3. Hacer click en columna Cliente de "Deudas próximas" muestra popup con nombre, gj_id y botón "Ver ficha"
   4. Hacer click en columna Monto o Vence de "Deudas próximas" muestra popup de detalle de deuda o navega a `/calendario` respectivamente
   5. El select de cliente en NuevoTramiteModal se cierra inmediatamente tras seleccionar una opción
-**Plans**: 3 plans (estimado)
+**Plans**: 3 plans
 Plans:
 - [x] 10-01-PLAN.md — DB-01: Supabase migration recreate v_turnos_semana + v_deudas_proximas con cliente_id y aliases
 - [x] 10-02-PLAN.md — DASH-01 + DASH-04: Columnas Fecha/Vence navegan a /calendario; Deudas table como client component con popups Cliente y Monto (DASH-02 + DASH-03)
@@ -156,7 +156,7 @@ Plans:
   2. El checkbox "También registrar deuda pendiente" ya no existe en el modal
   3. Cuando hay resto pendiente, el toggle "Archivar deuda restante" crea un segundo pago con estado PENDIENTE y sin fecha_vencimiento
   4. Un pago PENDIENTE sin fecha_vencimiento no aparece en la tabla "Deudas próximas" del dashboard
-**Plans**: 1 plan (estimado)
+**Plans**: 1 plan
 Plans:
 - [ ] 11-01-PLAN.md — PAG-01 + PAG-02 + PAG-03: Rework NuevoPagoModal — auto-calc resto, toggle archivar remanente, eliminar checkbox viejo
 **UI hint**: yes
