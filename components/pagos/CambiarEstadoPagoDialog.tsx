@@ -9,7 +9,7 @@ interface Props {
   onCancel: () => void
 }
 
-const inputClass = "w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+const inputClass = "w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
 const labelClass = "block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans"
 
 export default function CambiarEstadoPagoDialog({ open, montoOriginal, onConfirm, onCancel }: Props) {
@@ -41,7 +41,7 @@ export default function CambiarEstadoPagoDialog({ open, montoOriginal, onConfirm
         onClick={onCancel}
       />
       <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/10 rounded-2xl w-[90%] max-w-[400px] font-sans"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/10 rounded-2xl w-[90%] max-w-[400px] font-sans"
         style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.7)' }}
         onClick={(e) => e.stopPropagation()}
       >

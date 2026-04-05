@@ -2,27 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import {
-  LayoutDashboard,
-  Users,
-  FileText,
-  CreditCard,
-  GraduationCap,
-  Calendar,
-  Settings,
-  X,
-  LogOut,
-} from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { Icon } from '@/components/ui/Icon'
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/clientes', label: 'Clientes', icon: Users, exact: false },
-  { href: '/tramites', label: 'Trámites', icon: FileText, exact: false },
-  { href: '/pagos', label: 'Pagos', icon: CreditCard, exact: false },
-  { href: '/seminarios', label: 'Seminarios', icon: GraduationCap, exact: false },
-  { href: '/calendario', label: 'Calendario', icon: Calendar, exact: false },
-  { href: '/configuracion', label: 'Configuración', icon: Settings, exact: false },
+  { href: '/', label: 'Dashboard', icon: 'dashboard', exact: true },
+  { href: '/clientes', label: 'Clientes', icon: 'group', exact: false },
+  { href: '/tramites', label: 'Trámites', icon: 'folder_open', exact: false },
+  { href: '/pagos', label: 'Pagos', icon: 'payments', exact: false },
+  { href: '/seminarios', label: 'Seminarios', icon: 'school', exact: false },
+  { href: '/calendario', label: 'Calendario', icon: 'calendar_month', exact: false },
+  { href: '/configuracion', label: 'Configuración', icon: 'settings', exact: false },
 ]
 
 interface SidebarProps {
@@ -30,6 +20,15 @@ interface SidebarProps {
   rol: string
   isOpen: boolean
   onClose: () => void
+}
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
 }
 
 export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
@@ -52,39 +51,76 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
     : navItems.filter((item) => item.href !== '/configuracion')
 
   const sidebarContent = (
-    <>
-      {/* Header */}
-      <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
-        <Link href="/" onClick={onClose} className="no-underline">
-          <h1 className="font-display text-xl text-gj-text font-bold">GoJulito</h1>
-          <p className="text-gj-secondary text-xs mt-0.5">Panel operativo</p>
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="px-5 pt-5 pb-4">
+        <Link href="/" onClick={onClose} className="no-underline flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gj-amber-hv/20 flex items-center justify-center">
+            <Icon name="bolt" size="sm" className="text-gj-amber-hv" filled />
+          </div>
+          <div>
+            <h1 className="font-display text-base text-gj-steel font-bold leading-tight">GoJulito</h1>
+            <p className="text-gj-secondary text-[10px] leading-tight">Panel operativo</p>
+          </div>
         </Link>
-        <button
+      </div>
+
+      {/* User profile */}
+      <div className="mx-3 mb-4 p-3 rounded-xl bg-gj-surface-mid border border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-gj-amber-hv/20 flex items-center justify-center flex-shrink-0">
+            <span className="text-gj-amber-hv text-xs font-bold font-sans">
+              {getInitials(displayName)}
+            </span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-gj-steel truncate font-sans leading-tight">{displayName}</p>
+            <span
+              className={`inline-block mt-0.5 px-1.5 py-px rounded text-[10px] font-medium font-sans ${
+                rol === 'admin'
+                  ? 'bg-gj-amber-hv/15 text-gj-amber-hv'
+                  : 'bg-gj-blue/15 text-gj-blue'
+              }`}
+            >
+              {rol === 'admin' ? 'Admin' : 'Colaborador'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Nuevo Trámite */}
+      <div className="px-3 mb-4">
+        <Link
+          href="/tramites/nuevo"
           onClick={onClose}
-          className="lg:hidden text-gj-secondary hover:text-gj-text transition-colors"
-          aria-label="Cerrar menú"
+          className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-gj-amber-hv text-gj-surface font-sans font-semibold text-sm transition-opacity hover:opacity-90 no-underline"
         >
-          <X className="w-5 h-5" />
-        </button>
+          <Icon name="add" size="sm" />
+          Nuevo Trámite
+        </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
         {visibleNavItems.map((item) => {
-          const Icon = item.icon
           const active = isActive(item)
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-sans transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans transition-colors no-underline ${
                 active
-                  ? 'bg-white/10 text-gj-text'
-                  : 'text-gj-secondary hover:bg-white/5 hover:text-gj-text'
+                  ? 'bg-gj-surface-high text-gj-steel border-l-2 border-gj-amber-hv pl-[10px]'
+                  : 'text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel'
               }`}
             >
-              <Icon className={`w-4 h-4 flex-shrink-0 ${active ? 'text-gj-amber' : ''}`} />
+              <Icon
+                name={item.icon}
+                size="sm"
+                className={active ? 'text-gj-amber-hv' : ''}
+                filled={active}
+              />
               {item.label}
             </Link>
           )
@@ -92,45 +128,34 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-white/10">
-        <div className="flex items-center justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-gj-text truncate font-sans">{displayName}</p>
-            {rol && (
-              <span
-                className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium font-sans ${
-                  rol === 'admin'
-                    ? 'bg-gj-amber/15 text-gj-amber'
-                    : 'bg-gj-blue/15 text-gj-blue'
-                }`}
-              >
-                {rol === 'admin' ? 'Admin' : 'Colaborador'}
-              </span>
-            )}
-          </div>
-          <button
-            onClick={() => void handleLogout()}
-            title="Cerrar sesión"
-            aria-label="Cerrar sesión"
-            className="text-gj-secondary hover:text-gj-red transition-colors flex-shrink-0"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
+      <div className="px-3 py-4 mt-2 border-t border-white/5 space-y-0.5">
+        <button
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel transition-colors w-full text-left"
+        >
+          <Icon name="help_outline" size="sm" />
+          Soporte
+        </button>
+        <button
+          onClick={() => void handleLogout()}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans text-gj-secondary hover:bg-gj-red/10 hover:text-gj-red transition-colors w-full text-left"
+        >
+          <Icon name="logout" size="sm" />
+          Cerrar sesión
+        </button>
       </div>
-    </>
+    </div>
   )
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-60 flex-shrink-0 bg-gj-card border-r border-white/10">
+      <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-gj-surface-low border-r border-white/5">
         {sidebarContent}
       </aside>
 
       {/* Mobile sidebar overlay */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-60 bg-gj-card flex flex-col transform transition-transform duration-200 ease-in-out lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-gj-surface-low flex flex-col transform transition-transform duration-200 ease-in-out lg:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >

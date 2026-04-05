@@ -78,7 +78,7 @@ export default function CambiarPasswordForm() {
               <label className="block text-[13px] text-gj-secondary mb-1 font-sans">Nueva contraseña</label>
               <input
                 type="password"
-                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nueva ? 'border-gj-red' : 'border-white/10'}`}
+                className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nueva ? 'border-gj-red' : 'border-white/10'}`}
                 value={nuevaPassword}
                 onChange={(e) => {
                   setNuevaPassword(e.target.value)
@@ -97,7 +97,7 @@ export default function CambiarPasswordForm() {
               <label className="block text-[13px] text-gj-secondary mb-1 font-sans">Confirmar contraseña</label>
               <input
                 type="password"
-                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.confirmar ? 'border-gj-red' : 'border-white/10'}`}
+                className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.confirmar ? 'border-gj-red' : 'border-white/10'}`}
                 value={confirmarPassword}
                 onChange={(e) => {
                   setConfirmarPassword(e.target.value)

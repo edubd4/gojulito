@@ -65,10 +65,10 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-sm p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+          className="max-w-sm p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
         >
           {saved && (
-            <div className="absolute inset-0 bg-gj-bg/[97%] flex flex-col items-center justify-center gap-3 z-20 rounded-[14px]">
+            <div className="absolute inset-0 bg-gj-surface/[97%] flex flex-col items-center justify-center gap-3 z-20 rounded-[14px]">
               <div className="w-12 h-12 rounded-full bg-gj-green/15 border-2 border-gj-green flex items-center justify-center">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c97a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12"/>
@@ -88,12 +88,12 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
             <div className="flex flex-col gap-3.5 px-6 py-[18px]">
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email (no editable)</label>
-                <input className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none opacity-50 cursor-not-allowed" value={usuario.email} disabled />
+                <input className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none opacity-50 cursor-not-allowed" value={usuario.email} disabled />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nombre *</label>
                 <input
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   placeholder="Nombre del usuario"
@@ -102,7 +102,7 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Rol *</label>
                 <select
-                  className={`w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${esMismaCuenta ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${esMismaCuenta ? 'opacity-50 cursor-not-allowed' : ''}`}
                   value={rol}
                   onChange={(e) => setRol(e.target.value)}
                   disabled={esMismaCuenta}

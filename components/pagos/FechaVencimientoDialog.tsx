@@ -19,7 +19,7 @@ export default function FechaVencimientoDialog({ open, onConfirm, onCancel }: Pr
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel() }}>
       <DialogContent
-        className="max-w-sm p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+        className="max-w-sm p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
       >
         <DialogHeader className="px-6 pt-5 pb-0">
           <DialogTitle className="font-display text-gj-text text-[18px] font-bold">
@@ -33,7 +33,7 @@ export default function FechaVencimientoDialog({ open, onConfirm, onCancel }: Pr
           </label>
           <input
             type="date"
-            className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+            className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
             style={{ colorScheme: 'dark' }}
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}

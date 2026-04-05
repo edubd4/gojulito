@@ -136,7 +136,7 @@ export default async function ClientesPage() {
   }))
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-surface min-h-full font-sans">
       <ClientesTable
         clientes={clientes}
         isAdmin={isAdmin}

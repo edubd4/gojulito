@@ -123,7 +123,7 @@ function TurnoPopup({ turno, onClose }: { turno: TurnoItem; onClose: () => void 
       />
       {/* Card */}
       <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[320px] font-sans"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/[12%] rounded-[14px] p-6 w-[320px] font-sans"
         style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -206,7 +206,7 @@ function SeminarioPopup({ seminario, onClose }: { seminario: SeminarioCalItem; o
       />
       {/* Card */}
       <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[320px] font-sans"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/[12%] rounded-[14px] p-6 w-[320px] font-sans"
         style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -373,7 +373,7 @@ export default function CalendarioView({
         <>
           <div className="fixed inset-0 z-[60]" onClick={() => setSelectedPago(null)} />
           <div
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
             style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -464,7 +464,7 @@ export default function CalendarioView({
 
           {/* Calendar grid */}
           <div
-            className={`bg-gj-card rounded-xl border border-white/[6%] overflow-hidden transition-opacity duration-150 ${loading ? 'opacity-60' : 'opacity-100'}`}
+            className={`bg-gj-surface-low rounded-xl border border-white/[6%] overflow-hidden transition-opacity duration-150 ${loading ? 'opacity-60' : 'opacity-100'}`}
           >
             {/* Day headers */}
             <div className="grid border-b border-white/[8%]" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
@@ -497,7 +497,7 @@ export default function CalendarioView({
                   return (
                     <div
                       key={ci}
-                      className={`min-h-[100px] p-2 box-border relative ${cell.inMonth ? 'bg-gj-card' : 'bg-gj-bg'} ${ci > 0 ? 'border-l border-white/[5%]' : ''} ${isToday ? 'border-[1.5px] border-gj-amber' : ''}`}
+                      className={`min-h-[100px] p-2 box-border relative ${cell.inMonth ? 'bg-gj-surface-low' : 'bg-gj-surface'} ${ci > 0 ? 'border-l border-white/[5%]' : ''} ${isToday ? 'border-[1.5px] border-gj-amber' : ''}`}
                     >
                       {/* Day number */}
                       <div
@@ -585,7 +585,7 @@ export default function CalendarioView({
 
 function EstaSemana({ turnos, onSelect }: { turnos: TurnoItem[]; onSelect: (t: TurnoItem) => void }) {
   return (
-    <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
+    <div className="bg-gj-surface-low rounded-xl border border-white/[6%] overflow-hidden">
       <div className="px-[18px] pt-4 pb-3 border-b border-white/[6%]">
         <h3 className="m-0 text-[13px] font-semibold text-gj-secondary uppercase tracking-[0.06em] font-sans">
           Esta semana

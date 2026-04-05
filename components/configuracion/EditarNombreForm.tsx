@@ -66,7 +66,7 @@ export default function EditarNombreForm({ nombreActual }: Props) {
   return (
     <div className="flex flex-col gap-2 max-w-[360px]">
       <input
-        className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+        className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
         value={nombre}
         onChange={(e) => { setNombre(e.target.value); if (error) setError('') }}
         onKeyDown={(e) => { if (e.key === 'Enter') { void handleSave() } if (e.key === 'Escape') handleCancel() }}

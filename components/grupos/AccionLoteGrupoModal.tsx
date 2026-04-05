@@ -151,7 +151,7 @@ export default function AccionLoteGrupoModal({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
-        className="max-w-lg p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans max-h-[90vh] overflow-y-auto"
+        className="max-w-lg p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader
           className="px-7 pt-6 pb-4 border-b border-white/[7%]"
@@ -183,7 +183,7 @@ export default function AccionLoteGrupoModal({
                       return (
                         <div
                           key={c.cliente_id}
-                          className="flex items-center justify-between bg-gj-input rounded-lg px-3 py-2"
+                          className="flex items-center justify-between bg-gj-surface-mid rounded-lg px-3 py-2"
                         >
                           <div>
                             <span className="text-sm text-gj-text font-medium">{c.nombre}</span>
@@ -211,7 +211,7 @@ export default function AccionLoteGrupoModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nuevo estado *</label>
                   <select
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     value={estado}
                     onChange={(e) => {
                       setEstado(e.target.value as EstadoVisa | '')
@@ -230,7 +230,7 @@ export default function AccionLoteGrupoModal({
                     <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de turno *</label>
                     <input
                       type="date"
-                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                       style={{ colorScheme: 'dark' }}
                       value={fechaTurno}
                       onChange={(e) => setFechaTurno(e.target.value)}
@@ -243,7 +243,7 @@ export default function AccionLoteGrupoModal({
                     <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de aprobación</label>
                     <input
                       type="date"
-                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                      className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                       style={{ colorScheme: 'dark' }}
                       value={fechaAprobacion}
                       onChange={(e) => setFechaAprobacion(e.target.value)}
@@ -254,7 +254,7 @@ export default function AccionLoteGrupoModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Notas (opcional)</label>
                   <textarea
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-16 leading-relaxed"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-16 leading-relaxed"
                     value={notas}
                     onChange={(e) => setNotas(e.target.value)}
                     placeholder="Notas adicionales..."
@@ -297,7 +297,7 @@ export default function AccionLoteGrupoModal({
               {resultados.map((r) => (
                 <div
                   key={r.cliente_id}
-                  className="flex items-center justify-between bg-gj-input rounded-lg px-3 py-2"
+                  className="flex items-center justify-between bg-gj-surface-mid rounded-lg px-3 py-2"
                 >
                   <div>
                     <span className="text-sm text-gj-text font-medium">{r.nombre}</span>

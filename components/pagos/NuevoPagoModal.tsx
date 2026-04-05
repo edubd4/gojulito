@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import type { EstadoPago } from '@/lib/constants'
+import { formatPesos } from '@/lib/utils'
 
 interface ClienteOption { id: string; nombre: string; gj_id: string }
 interface VisaOption { id: string; visa_id: string; estado: string }
@@ -13,7 +14,7 @@ interface Props {
   onSuccess: () => void
 }
 
-const inputClass = "w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+const inputClass = "w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
 const labelClass = "block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans"
 
 export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props) {
@@ -29,10 +30,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
   const [fechaVenc, setFechaVenc] = useState('')
   const [notas, setNotas] = useState('')
   const [resolverDeuda, setResolverDeuda] = useState(true)
-  const [registrarDeuda, setRegistrarDeuda] = useState(false)
-  const [montoDeuda, setMontoDeuda] = useState('')
-  const [fechaVencDeuda, setFechaVencDeuda] = useState('')
-  const [notasDeuda, setNotasDeuda] = useState('')
+  const [archivarResto, setArchivarResto] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -51,10 +49,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
     setError('')
     setDeudas([])
     setResolverDeuda(true)
-    setRegistrarDeuda(false)
-    setMontoDeuda('')
-    setFechaVencDeuda('')
-    setNotasDeuda('')
+    setArchivarResto(true)
     void fetch('/api/clientes')
       .then((r) => r.json())
       .then((json: { clientes?: ClienteOption[] }) => setClientes(json.clientes ?? []))
@@ -86,10 +81,6 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
     const montoNum = parseFloat(monto)
     if (isNaN(montoNum) || montoNum <= 0) { setError('El monto debe ser un número positivo'); return }
     if (tipo === 'VISA' && !visaId) { setError('Seleccioná una visa activa'); return }
-    if (registrarDeuda && estado === 'PAGADO') {
-      const montoDeudaNum = parseFloat(montoDeuda)
-      if (isNaN(montoDeudaNum) || montoDeudaNum <= 0) { setError('El monto de la deuda debe ser un número positivo'); return }
-    }
 
     setLoading(true)
     setError('')
@@ -131,35 +122,35 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
       const json = await res.json() as { data?: unknown; error?: string }
       if (!res.ok || json.error) { setError(json.error ?? 'Error al registrar'); return }
 
-      // Segundo POST: registrar deuda adicional si el checkbox está activo
-      if (registrarDeuda && estado === 'PAGADO') {
-        try {
-          const bodyDeuda: Record<string, unknown> = {
-            cliente_id: clienteId,
-            tipo,
-            monto: parseFloat(montoDeuda),
-            fecha_pago: fechaPago,
-            estado: 'DEUDA',
-          }
-          if (tipo === 'VISA') bodyDeuda.visa_id = visaId
-          if (fechaVencDeuda) bodyDeuda.fecha_vencimiento_deuda = fechaVencDeuda
-          if (notasDeuda.trim()) bodyDeuda.notas = notasDeuda.trim()
-
-          const resDeuda = await fetch('/api/pagos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bodyDeuda),
-          })
-          const jsonDeuda = await resDeuda.json() as { data?: unknown; error?: string }
-          if (!resDeuda.ok || jsonDeuda.error) {
-            setError('El pago se registró pero no se pudo registrar la deuda — registrala manualmente.')
+      // Crear remanente PENDIENTE si archivarResto está activo
+      if (usarPatch && archivarResto) {
+        const resto = deudaDelTipo!.monto - montoNum
+        if (resto > 0) {
+          try {
+            const bodyResto: Record<string, unknown> = {
+              cliente_id: clienteId,
+              tipo,
+              monto: resto,
+              fecha_pago: fechaPago,
+              estado: 'PENDIENTE',
+            }
+            if (tipo === 'VISA') bodyResto.visa_id = visaId
+            const resResto = await fetch('/api/pagos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(bodyResto),
+            })
+            const jsonResto = await resResto.json() as { data?: unknown; error?: string }
+            if (!resResto.ok || jsonResto.error) {
+              setError('El pago se registro pero no se pudo crear el remanente — registralo manualmente.')
+              onSuccess()
+              return
+            }
+          } catch {
+            setError('El pago se registro pero no se pudo crear el remanente — registralo manualmente.')
             onSuccess()
             return
           }
-        } catch {
-          setError('El pago se registró pero no se pudo registrar la deuda — registrala manualmente.')
-          onSuccess()
-          return
         }
       }
 
@@ -181,7 +172,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
         onClick={() => onOpenChange(false)}
       />
       <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/10 rounded-2xl w-[90%] max-w-[480px] max-h-[90vh] overflow-y-auto font-sans"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/10 rounded-2xl w-[90%] max-w-[480px] max-h-[90vh] overflow-y-auto font-sans"
         style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.7)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -243,6 +234,47 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
                         El pago actualizará {deudaDelTipo.pago_id} a PAGADO
                       </div>
                     )}
+                    {resolverDeuda && monto !== '' && parseFloat(monto) > 0 && (() => {
+                      const montoNum = parseFloat(monto)
+                      const resto = deudaDelTipo.monto - montoNum
+                      return (
+                        <>
+                          {resto > 0 ? (
+                            <div className="mt-2 transition-opacity duration-150 ease-in-out">
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div>
+                                  <div className="text-xs text-gj-secondary">Total</div>
+                                  <div className="text-[13px] text-gj-text font-semibold">{formatPesos(deudaDelTipo.monto)}</div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gj-secondary">Pagado</div>
+                                  <div className="text-[13px] text-gj-text font-semibold">{formatPesos(montoNum)}</div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gj-secondary">Resto</div>
+                                  <div className="text-[13px] text-gj-amber font-semibold">{formatPesos(resto)}</div>
+                                </div>
+                              </div>
+                              <label className="flex items-center gap-2 cursor-pointer mt-2">
+                                <input
+                                  type="checkbox"
+                                  checked={archivarResto}
+                                  onChange={(e) => setArchivarResto(e.target.checked)}
+                                  className="w-4 h-4 accent-gj-amber cursor-pointer"
+                                />
+                                <span className="text-xs text-gj-text font-sans">
+                                  Archivar deuda restante ({formatPesos(resto)})
+                                </span>
+                              </label>
+                            </div>
+                          ) : (
+                            <div className="mt-2 text-gj-green font-semibold text-xs">
+                              Pago completo — cancela la deuda
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
                   </div>
                 )}
                 {/* Otras deudas de distinto tipo */}
@@ -351,60 +383,6 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
               placeholder="Observaciones opcionales..."
             />
           </div>
-
-          {/* Registrar deuda adicional — solo cuando estado=PAGADO */}
-          {estado === 'PAGADO' && (
-            <div className="border border-white/[8%] rounded-lg px-3.5 py-3 flex flex-col gap-2.5">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={registrarDeuda}
-                  onChange={(e) => setRegistrarDeuda(e.target.checked)}
-                  className="w-4 h-4 accent-gj-amber cursor-pointer"
-                />
-                <span className="text-[13px] text-gj-text font-sans font-semibold">
-                  También registrar deuda pendiente
-                </span>
-              </label>
-              {registrarDeuda && (
-                <>
-                  <div>
-                    <label className={labelClass}>Monto deuda ($) *</label>
-                    <input
-                      type="number"
-                      className={inputClass}
-                      value={montoDeuda}
-                      onChange={(e) => setMontoDeuda(e.target.value)}
-                      min="1"
-                      placeholder="0"
-                    />
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <div>
-                      <label className={labelClass}>Vencimiento deuda</label>
-                      <input
-                        type="date"
-                        className={inputClass}
-                        style={{ colorScheme: 'dark' }}
-                        value={fechaVencDeuda}
-                        onChange={(e) => setFechaVencDeuda(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Notas deuda</label>
-                      <input
-                        type="text"
-                        className={inputClass}
-                        value={notasDeuda}
-                        onChange={(e) => setNotasDeuda(e.target.value)}
-                        placeholder="Opcional..."
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
 
           {error && (
             <div className="bg-gj-red/[12%] border border-gj-red/30 rounded-lg px-3 py-2 text-gj-red text-[13px]">

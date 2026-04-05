@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Canales y Operación Avanzada — SHIPPED 2026-03-30
 status: executing
-stopped_at: Completed 10-02-PLAN.md
-last_updated: "2026-04-01T14:03:27.887Z"
-last_activity: 2026-04-01
+stopped_at: Phase 11 Plan 01 Task 1 complete — awaiting browser verification (Task 2)
+last_updated: "2026-04-04"
+last_activity: 2026-04-04 -- Phase 11 Plan 01 Task 1 executed, build passes
 progress:
   total_phases: 6
   completed_phases: 6
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 10 — dashboard-modal-fixes
+**Current focus:** Phase 11 — pagos-pago-parcial
 
 ## Current Position
 
-Phase: 10
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-04-01
+Phase: 11 (pagos-pago-parcial) — EXECUTING
+Plan: 1 of 1
+Status: Executing Phase 11
+Last activity: 2026-04-03 -- Phase 11 execution started
 
 ## Performance Metrics
 
@@ -94,6 +94,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-01T13:55:42.822Z
-Stopped at: Completed 10-02-PLAN.md
-Resume file: None
+Last session: 2026-04-03T14:20:59.626Z
+Stopped at: Phase 11 UI-SPEC approved
+Resume file: .planning/phases/11-pagos-pago-parcial/11-UI-SPEC.md

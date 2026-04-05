@@ -116,7 +116,7 @@ export default function EditarSeminarioModal({ seminario }: Props) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-md p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+          className="max-w-md p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
         >
           {saved && (
             <div className="absolute inset-0 z-20 rounded-[14px] bg-black/[97%] flex flex-col items-center justify-center gap-3">
@@ -144,7 +144,7 @@ export default function EditarSeminarioModal({ seminario }: Props) {
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nombre *</label>
                 <input
-                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
+                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                   value={form.nombre}
                   onChange={(e) => setField('nombre', e.target.value)}
                 />
@@ -155,7 +155,7 @@ export default function EditarSeminarioModal({ seminario }: Props) {
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha *</label>
                 <input
                   type="date"
-                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.fecha ? 'border-gj-red' : 'border-white/10'}`}
+                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.fecha ? 'border-gj-red' : 'border-white/10'}`}
                   style={{ colorScheme: 'dark' }}
                   value={form.fecha}
                   onChange={(e) => setField('fecha', e.target.value)}
@@ -166,7 +166,7 @@ export default function EditarSeminarioModal({ seminario }: Props) {
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Modalidad *</label>
                 <select
-                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.modalidad ? 'border-gj-red' : 'border-white/10'}`}
+                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.modalidad ? 'border-gj-red' : 'border-white/10'}`}
                   value={form.modalidad}
                   onChange={(e) => setField('modalidad', e.target.value)}
                 >
@@ -183,7 +183,7 @@ export default function EditarSeminarioModal({ seminario }: Props) {
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gj-secondary text-sm pointer-events-none">$</span>
                   <input
                     type="number" min="0" step="1"
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg pl-[22px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg pl-[22px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.precio}
                     onChange={(e) => setField('precio', e.target.value)}
                   />
@@ -193,7 +193,7 @@ export default function EditarSeminarioModal({ seminario }: Props) {
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Notas</label>
                 <textarea
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y leading-relaxed"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y leading-relaxed"
                   style={{ minHeight: 80 }}
                   value={form.notas}
                   onChange={(e) => setField('notas', e.target.value)}

@@ -38,7 +38,7 @@ const BADGE_TIPO: Record<'VISA' | 'SEMINARIO', { classes: string; label: string 
   SEMINARIO: { classes: 'text-gj-seminario bg-gj-seminario/[18%]', label: 'Seminario' },
 }
 
-const inputClass = "bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+const inputClass = "bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
 
 function SmallBadge({ classes, label }: { classes: string; label: string }) {
   return (
@@ -299,7 +299,7 @@ export default function PagosTable({ pagos }: Props) {
       </div>
 
       {/* Tabla */}
-      <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
+      <div className="bg-gj-surface-low rounded-xl border border-white/[6%] overflow-hidden">
         {filtrados.length === 0 ? (
           <div className="px-7 py-12 text-center text-gj-secondary text-sm font-sans">
             Sin pagos para los filtros seleccionados
@@ -312,7 +312,7 @@ export default function PagosTable({ pagos }: Props) {
                   {['Pago ID', 'Cliente', 'Tipo', 'Monto', 'Fecha pago', 'Estado', 'Vencimiento'].map((col) => (
                     <th
                       key={col}
-                      className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[8%] whitespace-nowrap bg-gj-card"
+                      className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-wide border-b border-white/[8%] whitespace-nowrap bg-gj-surface-low"
                     >
                       {col}
                     </th>
@@ -386,7 +386,7 @@ export default function PagosTable({ pagos }: Props) {
                                     zIndex: 50,
                                     boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
                                   }}
-                                  className="bg-gj-card border border-white/[12%] rounded-lg p-1 min-w-[110px]"
+                                  className="bg-gj-surface-low border border-white/[12%] rounded-lg p-1 min-w-[110px]"
                                 >
                                   {getOpciones(p.estado).map((opt) => (
                                     <button

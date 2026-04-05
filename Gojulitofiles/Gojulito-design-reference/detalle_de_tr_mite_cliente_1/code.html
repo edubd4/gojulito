@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#93f2f2",
+                    "outline-variant": "#c4c5d6",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-primary-fixed-variant": "#0438b6",
+                    "tertiary-container": "#694b00",
+                    "secondary-fixed-dim": "#76d6d5",
+                    "surface-container": "#edeeef",
+                    "surface-container-low": "#f3f4f5",
+                    "primary-container": "#1a43bf",
+                    "on-secondary-fixed-variant": "#004f4f",
+                    "tertiary": "#4c3500",
+                    "on-tertiary-container": "#f3ba44",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#90efef",
+                    "on-tertiary-fixed": "#271900",
+                    "on-secondary-fixed": "#002020",
+                    "on-primary-container": "#b2bfff",
+                    "primary": "#002c98",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#d9dadb",
+                    "on-error": "#ffffff",
+                    "background": "#f8f9fa",
+                    "surface": "#f8f9fa",
+                    "on-primary-fixed": "#001453",
+                    "surface-container-high": "#e7e8e9",
+                    "primary-fixed": "#dde1ff",
+                    "secondary": "#006a6a",
+                    "inverse-primary": "#b7c4ff",
+                    "inverse-surface": "#2e3132",
+                    "inverse-on-surface": "#f0f1f2",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#2f53ce",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#5d4200",
+                    "on-surface": "#191c1d",
+                    "on-secondary-container": "#006e6e",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e1e3e4",
+                    "on-surface-variant": "#444654",
+                    "tertiary-fixed": "#ffdea6",
+                    "tertiary-fixed-dim": "#f7bd48",
+                    "on-background": "#191c1d",
+                    "outline": "#747685",
+                    "primary-fixed-dim": "#b7c4ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c4c5d6; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 z-50 bg-[#f8f9fa] dark:bg-slate-900">
+<div class="flex justify-between items-center px-8 w-full h-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold tracking-tighter text-[#002c98] dark:text-blue-500">GoJulito</span>
+<div class="relative hidden md:flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-1.5 rounded-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary text-sm w-64" placeholder="Buscar cliente..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 font-manrope text-sm tracking-tight">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#f3f4f5] dark:hover:bg-slate-800 transition-colors duration-200">
+<span class="material-symbols-outlined text-slate-500" data-icon="notifications">notifications</span>
+</button>
+<span class="text-slate-500 hover:text-slate-900 cursor-pointer">Help</span>
+</div>
+<img alt="User profile photo" class="w-8 h-8 rounded-full border border-outline-variant/20" data-alt="Professional portrait of a male administrative executive in a minimalist workspace, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxtp7dWPY80tdNYlxEthAf6EdPTJ86Vv983i-k6XMdifDxOE0YOR8oi7WKEd35sT1qKRYVtE88q7qkvsZ9MGynEllz5MgitzViUonG_-MHXseYJHSLJLz7UA_t5gQAw7umt7jQIEqG9skuRuQUFT5F8tpwye4_mT7exJASdLT_2R4aw-9LKpgfaBaiWjnSPSAO9V0Q9Dipg7hkgEC7NjM9wca5Ch486kRBQNJ0AmrLI0labtsNVAiqWq-EVnknquGgeMdrFHVTqjtf"/>
+</div>
+</div>
+<div class="bg-[#f3f4f5] dark:bg-slate-800 h-[1px] w-full"></div>
+</header>
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f3f4f5] dark:bg-slate-950/50 backdrop-blur-xl border-r border-transparent flex flex-col p-4 z-40 hidden md:flex">
+<div class="mb-12 mt-16 px-4">
+<div class="flex items-center gap-3">
+<img alt="Concierge Profile" class="w-10 h-10 rounded-full object-cover" data-alt="Close up portrait of a senior business professional, sharp corporate attire, confident look, neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtWYk3rhA6TY8YixPeYxm9yLarfWEkvT9-vpRJekZaCsTMANOm2b-PnzW6hhZeomZOLo0Ovui-Id6EQ_lxuJsUs2J-uQksgMVlmYbPkfVRPcjbG2RheZrYklaRrWPh8r16-OUElPXEy4o0qEidqsh0fObPUI9_GSrXcJNyV0rTPn3V6YP1xBUSE6Zi7OfApy-QNMtmWitggox_SsUMvUqeyPNVETEPhapatY6zf9MpUTVLqLrMCRbjRWUGEHEQFFRtHYawpo3SqDeg"/>
+<div>
+<p class="font-manrope font-bold text-sm text-[#002c98]">GoJulito Admin</p>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest">Premier Concierge</p>
+</div>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all duration-300 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 duration-200" data-icon="dashboard">dashboard</span>
+<span class="font-manrope font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#002c98] dark:text-blue-300 rounded-lg shadow-sm font-semibold transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-manrope text-sm">Visa Cases</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all duration-300 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 duration-200" data-icon="event">event</span>
+<span class="font-manrope font-medium text-sm">Seminars</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all duration-300 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 duration-200" data-icon="settings">settings</span>
+<span class="font-manrope font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-slate-200 pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-manrope font-medium text-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 min-h-screen bg-surface">
+<div class="max-w-7xl mx-auto p-8">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-10">
+<div>
+<nav class="flex items-center gap-2 text-xs text-outline mb-2">
+<span>Visa Cases</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-medium">Case #VJ-99281</span>
+</nav>
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface">Detalle del Cliente</h1>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 bg-surface-container-high text-on-surface-variant rounded-xl font-medium text-sm hover:bg-surface-container-highest transition-colors">
+                        Imprimir Expediente
+                    </button>
+<button class="px-6 py-2.5 bg-primary text-on-primary rounded-xl font-medium text-sm shadow-lg shadow-primary/20 hover:bg-primary-container transition-all">
+                        Finalizar Trámite
+                    </button>
+</div>
+</div>
+<!-- Bento Layout Container -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Left: Profile Info -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-low p-8 rounded-3xl relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-4 mb-8">
+<img alt="Client portrait" class="w-20 h-20 rounded-2xl object-cover shadow-sm" data-alt="Modern professional headshot of a middle-aged man, clean lighting, neutral gray background, confident smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfV5DS4Ew52LTR7qxNMEfhZ9VHfYlCsXelB-f-34oeQo7ErdksrVnGq2tfdKbJA0yF_1V_JdzJMCnR8V4-zhWKylxc_7ywad-E0Q0jeLlLUkDiE-KcsrJFYUUsLSisV7rJEgT_9DdK6BHLBXUJSau87TPosYXBivcmxHs0QudNZMNdMIrs8C9FpseU1xRw9dmLB7BrEnPhQo4629hAIiTor1WREzgQLdeKF1-2xia-4hiocR1gZV9aGXTTzMCym5Ajgf8CatgqNSkk"/>
+<div>
+<h2 class="text-2xl font-bold text-on-surface leading-tight">Alejandro <br/>Ramírez Solís</h2>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-container text-on-secondary-container mt-2">
+                                        Visa B1/B2
+                                    </span>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<p class="text-[10px] uppercase tracking-widest text-outline font-bold mb-2">Información de Pasaporte</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+<p class="text-[10px] text-outline">Número</p>
+<p class="text-sm font-bold">G88291022</p>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+<p class="text-[10px] text-outline">Vencimiento</p>
+<p class="text-sm font-bold">12 OCT 2028</p>
+</div>
+</div>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-widest text-outline font-bold mb-2">Contacto Directo</p>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">mail</span>
+<span class="text-sm">a.ramirez.solis@example.com</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">smartphone</span>
+<span class="text-sm">+52 55 4910 2039</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">location_on</span>
+<span class="text-sm">CDMX, México</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Documents Section -->
+<div class="bg-surface-container-low p-8 rounded-3xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-bold">Documentos Adjuntos</h3>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">add</span>
+                                Subir
+                            </button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-error-container/20 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-xs font-bold">DS-160_Confirm.pdf</p>
+<p class="text-[10px] text-outline">1.2 MB • Ayer, 14:20</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">download</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-error-container/20 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-xs font-bold">Pago_MRV_Recibo.pdf</p>
+<p class="text-[10px] text-outline">890 KB • 12 Oct</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">download</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary-container/20 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="image">image</span>
+</div>
+<div>
+<p class="text-xs font-bold">Foto_Visa_5x5.jpg</p>
+<p class="text-[10px] text-outline">2.4 MB • 10 Oct</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">download</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Timeline & Work Area -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- Timeline Section -->
+<div class="bg-surface-container-lowest p-10 rounded-[2rem] border border-outline-variant/10">
+<h3 class="text-xl font-bold mb-10 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="analytics">analytics</span>
+                            Progreso del Proceso
+                        </h3>
+<div class="relative">
+<!-- Horizontal Line -->
+<div class="absolute top-5 left-0 w-full h-[2px] bg-surface-container-high z-0"></div>
+<div class="absolute top-5 left-0 w-[75%] h-[2px] bg-primary z-0"></div>
+<div class="grid grid-cols-4 relative z-10">
+<!-- Step 1 -->
+<div class="flex flex-col items-center text-center">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center mb-4 ring-8 ring-white">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<p class="text-sm font-bold">DS-160</p>
+<p class="text-[10px] text-outline mt-1">Completado</p>
+<p class="text-[10px] text-primary font-medium mt-1">12 Oct 2023</p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center text-center">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center mb-4 ring-8 ring-white">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<p class="text-sm font-bold">Pago</p>
+<p class="text-[10px] text-outline mt-1">Completado</p>
+<p class="text-[10px] text-primary font-medium mt-1">14 Oct 2023</p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center text-center">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center mb-4 ring-8 ring-white relative">
+<div class="absolute inset-0 rounded-full animate-ping bg-primary opacity-20"></div>
+<span class="material-symbols-outlined text-sm">event</span>
+</div>
+<p class="text-sm font-bold">Cita CAS</p>
+<p class="text-[10px] text-on-primary-fixed-variant font-bold mt-1">EN PROCESO</p>
+<p class="text-[10px] text-outline mt-1 font-medium">25 Oct, 09:30 AM</p>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center text-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-outline flex items-center justify-center mb-4 ring-8 ring-white">
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+<p class="text-sm font-bold text-outline">Entrevista</p>
+<p class="text-[10px] text-outline mt-1">Pendiente</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Notes Area -->
+<div class="bg-surface-container-low rounded-3xl p-8 flex-grow">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">notes</span>
+                                Notas del Administrador
+                            </h3>
+<span class="text-[10px] font-bold text-outline uppercase tracking-tighter">Autoguardado hace 2m</span>
+</div>
+<div class="space-y-4">
+<div class="bg-white/60 p-4 rounded-2xl border-l-4 border-primary">
+<div class="flex justify-between mb-1">
+<p class="text-xs font-bold text-primary">Actualización de Sistema</p>
+<p class="text-[10px] text-outline">Hoy, 10:45 AM</p>
+</div>
+<p class="text-sm text-on-surface-variant italic">"Se verificó la carga del DS-160. El cliente reportó un error en el código postal, ya fue corregido manualmente en el portal."</p>
+</div>
+<div class="relative group">
+<textarea class="w-full h-40 bg-surface-container-highest/50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline/50 resize-none transition-all" placeholder="Añadir una nota importante sobre el caso..."></textarea>
+<div class="absolute bottom-4 right-4 flex gap-2">
+<button class="p-2 bg-white rounded-lg shadow-sm hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="attach_file">attach_file</span>
+</button>
+<button class="px-4 py-1.5 bg-primary text-on-primary rounded-lg text-xs font-bold shadow-md shadow-primary/10">
+                                        Guardar Nota
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Banner -->
+<div class="bg-primary-container p-6 rounded-3xl flex items-center justify-between text-on-primary-container">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div>
+<p class="font-bold">Acción Requerida</p>
+<p class="text-xs opacity-80">Confirmar recepción de pago MRV para habilitar calendario de citas.</p>
+</div>
+</div>
+<button class="px-5 py-2 bg-white text-primary font-bold text-xs rounded-xl hover:bg-primary-fixed transition-colors">
+                            Validar Ahora
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for quick actions - Suppressed on details as per logic but here as a 'Add Milestone' contextual action if needed -->
+<!-- Suppressed based on rule: "You MUST suppress the FAB on Settings, Profile, Details, and Transactional screens." -->
+</body></html>

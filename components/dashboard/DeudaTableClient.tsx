@@ -80,7 +80,7 @@ export default function DeudaTableClient({ deudas }: { deudas: DeudaProxima[] })
         <>
           <div className="fixed inset-0 z-[60]" onClick={() => setClientePopup(null)} />
           <div
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
             style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -118,7 +118,7 @@ export default function DeudaTableClient({ deudas }: { deudas: DeudaProxima[] })
         <>
           <div className="fixed inset-0 z-[60]" onClick={() => setDeudaPopup(null)} />
           <div
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-card border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/[12%] rounded-[14px] p-6 w-[300px] font-sans"
             style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
             onClick={(e) => e.stopPropagation()}
           >

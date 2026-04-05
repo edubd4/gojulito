@@ -43,7 +43,7 @@ const config: Config = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        // GoJulito custom
+        // GoJulito custom — legacy
         gj: {
           bg: "#0b1628",
           card: "#111f38",
@@ -55,6 +55,16 @@ const config: Config = {
           text: "#e8e6e0",
           secondary: "#9ba8bb",
           seminario: "#a78bfa", // purple — chips de seminario en calendario
+          // Horizon Vista — nuevas superficies
+          surface: "#051426",
+          "surface-low": "#0d1c2f",
+          "surface-mid": "#122033",
+          "surface-high": "#1c2b3e",
+          "surface-highest": "#273649",
+          "amber-hv": "#ffba3a",
+          steel: "#c0c6d9",
+          "steel-light": "#b9c7df",
+          outline: "#909096",
         },
       },
       borderRadius: {
@@ -63,8 +73,9 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ["Fraunces", "serif"],
-        body: ["DM Sans", "sans-serif"],
+        display: ["Manrope", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
+        body: ["Inter", "sans-serif"],
       },
     },
   },

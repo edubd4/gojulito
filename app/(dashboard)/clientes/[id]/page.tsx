@@ -86,7 +86,7 @@ function Badge({ classes, label }: { classes: string; label: string }) {
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-gj-card rounded-xl px-7 py-6 border border-white/[6%]">
+    <div className="bg-gj-surface-low rounded-xl px-7 py-6 border border-white/[6%]">
       {children}
     </div>
   )
@@ -264,7 +264,7 @@ export default async function ClienteDetallePage({
   const estadoBadge = BADGE_CLIENTE[cliente.estado]
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-surface min-h-full font-sans">
       {/* Back + header */}
       <div className="mb-6">
         <Link
@@ -435,7 +435,7 @@ export default async function ClienteDetallePage({
                   key={evento.id}
                   className={`flex items-start gap-3.5 py-3 ${idx < historial.length - 1 ? 'border-b border-white/[4%]' : ''}`}
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gj-input flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-gj-surface-mid flex items-center justify-center shrink-0">
                     <HistorialIcon tipo={evento.tipo} />
                   </div>
                   <div className="flex-1 min-w-0">

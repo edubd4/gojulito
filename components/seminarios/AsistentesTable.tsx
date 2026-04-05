@@ -116,7 +116,7 @@ export default function AsistentesTable({
 
   if (initialAsistentes.length === 0) {
     return (
-      <div className="bg-gj-card rounded-xl border border-white/[6%] px-7 py-12 text-center text-gj-secondary text-sm">
+      <div className="bg-gj-surface-low rounded-xl border border-white/[6%] px-7 py-12 text-center text-gj-secondary text-sm">
         Sin asistentes registrados
       </div>
     )
@@ -131,7 +131,7 @@ export default function AsistentesTable({
         </div>
       )}
 
-      <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
+      <div className="bg-gj-surface-low rounded-xl border border-white/[6%] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse font-sans">
             <thead>
@@ -139,7 +139,7 @@ export default function AsistentesTable({
                 {['Nombre', 'Teléfono', 'Provincia', 'Modalidad', 'Estado pago', 'Monto', 'Convirtió', 'Cliente', ''].map((col) => (
                   <th
                     key={col}
-                    className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] border-b border-white/[8%] whitespace-nowrap bg-gj-card"
+                    className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] border-b border-white/[8%] whitespace-nowrap bg-gj-surface-low"
                   >
                     {col}
                   </th>
@@ -191,7 +191,7 @@ export default function AsistentesTable({
                                 onClick={() => setOpenDropdownId(null)}
                               />
                               <div
-                                className="absolute top-[calc(100%+4px)] left-0 z-50 bg-gj-card border border-white/[12%] rounded-lg p-1 min-w-[100px]"
+                                className="absolute top-[calc(100%+4px)] left-0 z-50 bg-gj-surface-low border border-white/[12%] rounded-lg p-1 min-w-[100px]"
                                 style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
                               >
                                 {OPCIONES_PAGO.filter((opt) => opt !== a.estado_pago).map((opt) => (

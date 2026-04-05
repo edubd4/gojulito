@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import NuevoClienteModal from '@/components/clientes/NuevoClienteModal'
 import NuevoTramiteModal from '@/components/visas/NuevoTramiteModal'
 import NuevoPagoModal from '@/components/pagos/NuevoPagoModal'
+import { Icon } from '@/components/ui/Icon'
 import type { GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
 
 interface Props {
@@ -36,44 +38,64 @@ export default function AccionesRapidas({ gruposFamiliares }: Props) {
         onSuccess={() => router.refresh()}
       />
 
-      <div className="flex gap-2.5 flex-wrap mb-7">
-        {/* Nuevo cliente */}
+      <div className="col-span-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+
+        {/* Nuevo Cliente */}
         <button
           onClick={() => setClienteOpen(true)}
-          className="flex items-center gap-2 px-[18px] py-2.5 rounded-[9px] text-[13px] font-semibold font-sans cursor-pointer whitespace-nowrap border-none bg-gj-amber text-gj-bg"
+          className="bg-gj-surface-low p-6 rounded-xl flex items-center gap-4 hover:bg-gj-surface-high transition-all group cursor-pointer border border-gj-outline/10 text-left"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="8.5" cy="7" r="4"/>
-            <line x1="20" y1="8" x2="20" y2="14"/>
-            <line x1="23" y1="11" x2="17" y2="11"/>
-          </svg>
-          Nuevo cliente
+          <div className="w-12 h-12 rounded-xl bg-gj-amber-hv/15 flex items-center justify-center shrink-0">
+            <Icon name="person_add" className="text-gj-amber-hv" size="md" />
+          </div>
+          <div>
+            <h4 className="font-display font-bold text-gj-text text-sm">Nuevo Cliente</h4>
+            <p className="text-xs text-gj-secondary font-sans mt-0.5">Registro rápido de perfil</p>
+          </div>
         </button>
 
-        {/* Nuevo trámite de visa */}
+        {/* Facturación */}
+        <Link
+          href="/pagos"
+          className="bg-gj-surface-low p-6 rounded-xl flex items-center gap-4 hover:bg-gj-surface-high transition-all group border border-gj-outline/10 no-underline"
+        >
+          <div className="w-12 h-12 rounded-xl bg-gj-blue/15 flex items-center justify-center shrink-0">
+            <Icon name="payments" className="text-gj-blue" size="md" />
+          </div>
+          <div>
+            <h4 className="font-display font-bold text-gj-text text-sm">Facturación</h4>
+            <p className="text-xs text-gj-secondary font-sans mt-0.5">Pagos pendientes y recibos</p>
+          </div>
+        </Link>
+
+        {/* Clientes */}
+        <Link
+          href="/clientes"
+          className="bg-gj-surface-low p-6 rounded-xl flex items-center gap-4 hover:bg-gj-surface-high transition-all group border border-gj-outline/10 no-underline"
+        >
+          <div className="w-12 h-12 rounded-xl bg-gj-steel/10 flex items-center justify-center shrink-0">
+            <Icon name="inventory_2" className="text-gj-steel" size="md" />
+          </div>
+          <div>
+            <h4 className="font-display font-bold text-gj-text text-sm">Archivo</h4>
+            <p className="text-xs text-gj-secondary font-sans mt-0.5">Historial de casos cerrados</p>
+          </div>
+        </Link>
+
+        {/* Nuevo Trámite — CTA amber */}
         <button
           onClick={() => setTramiteOpen(true)}
-          className="flex items-center gap-2 px-[18px] py-2.5 rounded-[9px] text-[13px] font-semibold font-sans cursor-pointer whitespace-nowrap border border-gj-blue/25 bg-gj-blue/[12%] text-gj-blue"
+          className="bg-gj-amber-hv p-6 rounded-xl flex items-center gap-4 hover:brightness-110 active:scale-95 transition-all group cursor-pointer shadow-xl shadow-gj-amber-hv/10 text-left"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="5" width="20" height="14" rx="2"/>
-            <line x1="2" y1="10" x2="22" y2="10"/>
-          </svg>
-          Nuevo trámite de visa
+          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+            <Icon name="rocket_launch" filled className="text-gj-surface" size="md" />
+          </div>
+          <div>
+            <h4 className="font-display font-bold text-gj-surface text-sm">Nuevo Trámite</h4>
+            <p className="text-xs text-gj-surface/70 font-sans mt-0.5">Iniciar gestión de visa</p>
+          </div>
         </button>
 
-        {/* Registrar pago */}
-        <button
-          onClick={() => setPagoOpen(true)}
-          className="flex items-center gap-2 px-[18px] py-2.5 rounded-[9px] text-[13px] font-semibold font-sans cursor-pointer whitespace-nowrap border border-gj-green/25 bg-gj-green/[12%] text-gj-green"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="4" width="22" height="16" rx="2"/>
-            <line x1="1" y1="10" x2="23" y2="10"/>
-          </svg>
-          Registrar pago
-        </button>
       </div>
     </>
   )

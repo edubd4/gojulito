@@ -18,7 +18,7 @@ export default function GruposFamiliaresCard({ grupos }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
 
   return (
-    <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6 mb-7">
+    <div className="bg-gj-surface-low rounded-xl border border-white/[7%] px-7 py-6 mb-7">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-[15px] font-semibold text-gj-secondary font-sans uppercase tracking-[0.06em] m-0">
           Grupos familiares

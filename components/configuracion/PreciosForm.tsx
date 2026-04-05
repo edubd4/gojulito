@@ -50,7 +50,7 @@ function PrecioRow({ clave, label, valorInicial }: PrecioField) {
           <input
             type="number"
             min="0"
-            className="bg-gj-input text-gj-text border border-white/10 rounded-lg py-2 pl-7 pr-3 text-[15px] font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-40"
+            className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg py-2 pl-7 pr-3 text-[15px] font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-40"
             value={valor}
             onChange={(e) => { setValor(e.target.value); setFeedback(null) }}
           />

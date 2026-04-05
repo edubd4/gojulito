@@ -8,6 +8,11 @@ import EditarSeminarioModal from '@/components/seminarios/EditarSeminarioModal'
 import InactivarSeminarioButton from '@/components/seminarios/InactivarSeminarioButton'
 import AsistentesTable from '@/components/seminarios/AsistentesTable'
 import type { AsistenteRow } from '@/components/seminarios/AsistentesTable'
+import ItinerarioPanel from '@/components/seminarios/ItinerarioPanel'
+import type { ItinerarioEntrada } from '@/components/seminarios/ItinerarioPanel'
+import DocumentosChecklist from '@/components/seminarios/DocumentosChecklist'
+import LogisticaSection from '@/components/seminarios/LogisticaSection'
+import type { LogisticaEntrada } from '@/components/seminarios/LogisticaSection'
 
 interface Seminario {
   id: string
@@ -40,7 +45,7 @@ function SmallBadge({ classes, label }: { classes: string; label: string }) {
 
 function StatCard({ label, value, color }: { label: string; value: string | number; color?: string }) {
   return (
-    <div className="bg-gj-input rounded-[10px] px-5 py-4 min-w-[140px]">
+    <div className="bg-gj-surface-mid rounded-[10px] px-5 py-4 min-w-[140px]">
       <div className="text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] mb-1.5">{label}</div>
       <div className={`text-2xl font-bold font-display leading-none ${color ? '' : 'text-gj-text'}`} style={color ? { color } : undefined}>{value}</div>
     </div>
@@ -60,10 +65,14 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
     { data: rawSem, error: semError },
     { data: rawAsistentes },
     { data: rawClientes },
+    { data: rawItinerario },
+    { data: rawLogistica },
   ] = await Promise.all([
     supabase.from('seminarios').select('*').eq('id', params.id).single(),
     supabase.from('seminario_asistentes').select('*, clientes(id, gj_id, nombre)').eq('seminario_id', params.id).order('created_at', { ascending: true }),
     supabase.from('clientes').select('id, gj_id, nombre, telefono, provincia, grupo_familiar_id').order('nombre', { ascending: true }),
+    supabase.from('seminario_itinerario').select('*').eq('seminario_id', params.id).order('dia', { ascending: true }).order('hora_inicio', { ascending: true }),
+    supabase.from('seminario_logistica').select('*').eq('seminario_id', params.id).order('fecha_hora', { ascending: true, nullsFirst: false }).order('created_at', { ascending: true }),
   ])
 
   if (semError || !rawSem) notFound()
@@ -71,13 +80,22 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
   const sem = rawSem as Seminario
   const asistentes = (rawAsistentes ?? []) as Asistente[]
   const clienteOptions = (rawClientes ?? []) as ClienteOption[]
+  const itinerario = (rawItinerario ?? []) as ItinerarioEntrada[]
+  const logistica = (rawLogistica ?? []) as LogisticaEntrada[]
 
   const totalRecaudado = asistentes.filter((a) => a.estado_pago === 'PAGADO').reduce((s, a) => s + (a.monto ?? 0), 0)
   const totalConvertidos = asistentes.filter((a) => a.convirtio === 'SI').length
   const badgeModalidad = BADGE_MODALIDAD[sem.modalidad]
 
+  // Props para DocumentosChecklist
+  const asistentesDoc = asistentes.map((a) => ({
+    id: a.id,
+    nombre: a.nombre,
+    estado_pago: a.estado_pago,
+  }))
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-surface min-h-full font-sans">
       {/* Volver */}
       <Link
         href="/seminarios"
@@ -124,21 +142,40 @@ export default async function SeminarioDetallePage({ params }: { params: { id: s
         <StatCard label="Convirtieron a visa" value={totalConvertidos} color="#4a9eff" />
       </div>
 
-      {/* Tabla */}
-      <AsistentesTable
-        initialAsistentes={asistentes}
-        seminarioId={sem.id}
-        seminarioModalidad={sem.modalidad}
-        clientes={clienteOptions}
-      />
+      {/* Layout 2 columnas: contenido principal + panel lateral */}
+      <div className="flex gap-6 items-start">
+        {/* Columna principal */}
+        <div className="flex-1 min-w-0 space-y-5">
+          {/* Tabla de asistentes */}
+          <AsistentesTable
+            initialAsistentes={asistentes}
+            seminarioId={sem.id}
+            seminarioModalidad={sem.modalidad}
+            clientes={clienteOptions}
+          />
 
-      {/* Notas del seminario */}
-      {sem.notas && (
-        <div className="mt-5 bg-gj-card rounded-xl border border-white/[6%] px-6 py-5">
-          <div className="text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] mb-2">Notas</div>
-          <p className="m-0 text-sm text-gj-text leading-relaxed">{sem.notas}</p>
+          {/* Notas del seminario */}
+          {sem.notas && (
+            <div className="bg-gj-surface-low rounded-xl border border-white/[6%] px-6 py-5">
+              <div className="text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] mb-2">Notas</div>
+              <p className="m-0 text-sm text-gj-text leading-relaxed">{sem.notas}</p>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Panel lateral sticky */}
+        <div className="w-80 flex-shrink-0 space-y-5 sticky top-6">
+          <ItinerarioPanel
+            seminarioId={sem.id}
+            initialItinerario={itinerario}
+          />
+          <LogisticaSection
+            seminarioId={sem.id}
+            initialLogistica={logistica}
+          />
+          <DocumentosChecklist asistentes={asistentesDoc} />
+        </div>
+      </div>
     </div>
   )
 }

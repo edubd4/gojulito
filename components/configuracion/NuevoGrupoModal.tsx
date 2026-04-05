@@ -74,7 +74,7 @@ export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-md p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+        className="max-w-md p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
       >
         <DialogHeader
           className="px-7 pt-6 pb-4 border-b border-white/[7%]"
@@ -97,7 +97,7 @@ export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
                 Nombre<span className="text-gj-amber ml-0.5">*</span>
               </label>
               <input
-                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errorNombre ? 'border-gj-red' : 'border-white/10'}`}
+                className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errorNombre ? 'border-gj-red' : 'border-white/10'}`}
                 value={nombre}
                 onChange={(e) => {
                   setNombre(e.target.value)
@@ -118,7 +118,7 @@ export default function NuevoGrupoModal({ open, onOpenChange }: Props) {
                 Notas
               </label>
               <textarea
-                className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[80px] leading-relaxed"
+                className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[80px] leading-relaxed"
                 value={notas}
                 onChange={(e) => setNotas(e.target.value)}
                 placeholder="Observaciones opcionales..."

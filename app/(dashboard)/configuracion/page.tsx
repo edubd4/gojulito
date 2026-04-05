@@ -70,7 +70,7 @@ export default async function ConfiguracionPage() {
       </h1>
 
       {/* Mi perfil */}
-      <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6 mb-7">
+      <div className="bg-gj-surface-low rounded-xl border border-white/[7%] px-7 py-6 mb-7">
         <h2 className="text-[15px] font-semibold text-gj-secondary font-sans mb-6 uppercase tracking-[0.06em]">
           Mi perfil
         </h2>
@@ -108,7 +108,7 @@ export default async function ConfiguracionPage() {
 
       {/* Usuarios del sistema — solo admin */}
       {esAdmin && (
-        <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6 mb-7">
+        <div className="bg-gj-surface-low rounded-xl border border-white/[7%] px-7 py-6 mb-7">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-[15px] font-semibold text-gj-secondary font-sans uppercase tracking-[0.06em] m-0">
               Usuarios del sistema
@@ -183,7 +183,7 @@ export default async function ConfiguracionPage() {
 
       {/* Precios del servicio — solo admin */}
       {esAdmin && (
-        <div className="bg-gj-card rounded-xl border border-white/[7%] px-7 py-6">
+        <div className="bg-gj-surface-low rounded-xl border border-white/[7%] px-7 py-6">
           <h2 className="text-[15px] font-semibold text-gj-secondary font-sans mb-6 uppercase tracking-[0.06em]">
             Precios del servicio
           </h2>

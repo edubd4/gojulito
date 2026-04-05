@@ -36,7 +36,7 @@ export default async function PagosPage() {
   })
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gj-bg min-h-full font-sans">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gj-surface min-h-full font-sans">
       <div className="mb-6">
         <h1 className="font-display text-[28px] font-bold text-gj-text m-0 mb-1">
           Pagos

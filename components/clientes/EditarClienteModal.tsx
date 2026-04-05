@@ -220,7 +220,7 @@ export default function EditarClienteModal({
       {/* ── Modal — misma estructura que NuevoClienteModal ── */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-xl p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+          className="max-w-xl p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
         >
           {/* ── Overlay: Confirmación de cambio de estado ── */}
           {confirming && (
@@ -296,7 +296,7 @@ export default function EditarClienteModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Nombre *</label>
                   <input
-                    className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
+                    className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                     value={form.nombre}
                     onChange={(e) => setField('nombre', e.target.value)}
                   />
@@ -311,7 +311,7 @@ export default function EditarClienteModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Teléfono</label>
                   <input
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.telefono}
                     onChange={(e) => setField('telefono', e.target.value)}
                   />
@@ -322,7 +322,7 @@ export default function EditarClienteModal({
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email</label>
                   <input
                     type="email"
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.email}
                     onChange={(e) => setField('email', e.target.value)}
                   />
@@ -332,7 +332,7 @@ export default function EditarClienteModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">DNI</label>
                   <input
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     value={form.dni}
                     onChange={(e) => setField('dni', e.target.value)}
                   />
@@ -342,7 +342,7 @@ export default function EditarClienteModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Provincia / País</label>
                   <select
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     value={provinciaSelect}
                     onChange={(e) => {
                       const val = e.target.value
@@ -359,7 +359,7 @@ export default function EditarClienteModal({
                   </select>
                   {provinciaSelect === '__otro__' && (
                     <input
-                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none mt-1.5"
+                      className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none mt-1.5"
                       value={form.provincia}
                       onChange={(e) => setField('provincia', e.target.value)}
                       placeholder="Ej: Chile, Uruguay..."
@@ -372,7 +372,7 @@ export default function EditarClienteModal({
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de nacimiento</label>
                   <input
                     type="date"
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     style={{ colorScheme: 'dark' }}
                     value={form.fecha_nac}
                     onChange={(e) => setField('fecha_nac', e.target.value)}
@@ -383,7 +383,7 @@ export default function EditarClienteModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Canal *</label>
                   <select
-                    className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
+                    className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
                     value={form.canal}
                     onChange={(e) => setField('canal', e.target.value as CanalIngreso | '')}
                   >
@@ -411,7 +411,7 @@ export default function EditarClienteModal({
                       style={{ backgroundColor: estadoColor }}
                     />
                     <select
-                      className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg pl-[26px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                      className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg pl-[26px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                       value={form.estado === 'PROSPECTO' ? 'ACTIVO' : form.estado === 'INACTIVO' ? 'INACTIVO' : form.estado}
                       onChange={(e) => setField('estado', e.target.value as EstadoCliente)}
                     >
@@ -429,7 +429,7 @@ export default function EditarClienteModal({
                 <div>
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Grupo familiar</label>
                   <select
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     value={form.grupo_familiar_id}
                     onChange={(e) => setField('grupo_familiar_id', e.target.value)}
                   >
@@ -444,7 +444,7 @@ export default function EditarClienteModal({
                 <div className="col-span-2">
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Observaciones</label>
                   <textarea
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[72px]"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y min-h-[72px]"
                     value={form.observaciones}
                     onChange={(e) => setField('observaciones', e.target.value)}
                   />

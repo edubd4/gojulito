@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#690005",
+                        "on-primary-container": "#81889a",
+                        "tertiary-fixed-dim": "#ffba3a",
+                        "on-secondary-container": "#abb9d1",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "error-container": "#93000a",
+                        "surface-dim": "#051426",
+                        "surface-tint": "#c0c6d9",
+                        "on-background": "#d5e3fd",
+                        "primary": "#c0c6d9",
+                        "on-secondary": "#233144",
+                        "primary-fixed-dim": "#c0c6d9",
+                        "inverse-surface": "#d5e3fd",
+                        "secondary-container": "#3c4a5e",
+                        "on-surface": "#d5e3fd",
+                        "outline": "#909096",
+                        "on-primary-fixed": "#151c29",
+                        "surface-bright": "#2c3a4e",
+                        "on-tertiary-container": "#b57e00",
+                        "secondary": "#b9c7df",
+                        "surface": "#051426",
+                        "outline-variant": "#45474c",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed": "#281900",
+                        "on-primary": "#29303f",
+                        "inverse-primary": "#575e6f",
+                        "primary-fixed": "#dce2f6",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "inverse-on-surface": "#233144",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#1c2b3e",
+                        "surface-container-lowest": "#010f21",
+                        "on-surface-variant": "#c6c6cc",
+                        "surface-container-low": "#0d1c2f",
+                        "tertiary-fixed": "#ffdead",
+                        "surface-container": "#122033",
+                        "surface-container-highest": "#273649",
+                        "surface-variant": "#273649",
+                        "primary-container": "#1a212f",
+                        "tertiary": "#ffba3a",
+                        "tertiary-container": "#2f1e00",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-primary-fixed-variant": "#404756",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "background": "#051426",
+                        "on-tertiary": "#432c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #051426; }
+        ::-webkit-scrollbar-thumb { background: #273649; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-8 h-16 z-40 bg-[#051426] fixed top-0">
+<div class="flex items-center gap-6">
+<span class="text-xl font-bold tracking-tight text-[#ffba3a] font-headline">GoJulito</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#ffba3a] font-semibold text-sm transition-colors" href="#">Gestión de Visas</a>
+<a class="text-[#c0c6d9] hover:bg-[#122033] hover:text-[#ffba3a] px-3 py-1 rounded transition-colors text-sm" href="#">Escritorio</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#c0c6d9] hover:text-[#ffba3a] p-2">notifications</button>
+<button class="material-symbols-outlined text-[#c0c6d9] hover:text-[#ffba3a] p-2">help_outline</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-outline-variant/20">
+<img alt="Julio Correa Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a professional man in a navy blue suit with a soft warm office background lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-UfRMn8dFRA3wFT1M9dWFBtjJ7QRGr8vDqkPPCvE1wMN_DOTo4RtADqH9K4Tj8xkhcYjiUVKrk_4NlfBI4CwV3OArzz4bykXPz5UWPj872Q4fv6ATkQeoCnGn_efjWh51Vzqae7nrfn5p_7uOfGxVVAlOHd-eFrcxMbN-_O1Of6yrAXcsM5YkPhl-ANXV_KnZtm6znIDZso79AprUvHmrXag4ualQuRviQseYa_kdfuqJT_1SQndKW37VsQ5fFe_hajBWSZ9kGKWT"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 pt-16">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-50 bg-[#0d1c2f] w-64 shadow-[40px_0_60px_-5px_rgba(1,15,33,0.6)] hidden lg:flex">
+<div class="px-6 mb-8">
+<span class="text-2xl font-black text-[#ffba3a] font-headline block mb-6">GoJulito</span>
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-outline-variant/10">
+<img alt="Julio Correa" class="w-10 h-10 rounded-lg" data-alt="Portrait of a smiling professional administrator in a high-end corporate setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpL6OVjy0ya4T0xBHkUPST5S___AJR86E8dWDa6St8dbdZiwMlG-0_dVfy3Lo1ZT2t5duMDE_xSOkgYtxq22XkB7hvWglSefD7yDxo9-427OCo_D-0N1-UtOKW75K3Du77dmOw3e4gwtPnbER7JpRrVI4HgdWVHWyFlVnzRA0twLz90VJEFItV34twY13pVm-aQR1EuLgqmNzsHNC0ByusCtiXcWY5Vw0POrUOuiKcRLKIOlU_ATMqgCc_9hFQrHzBTv7JkRJhlP5A"/>
+<div>
+<p class="font-headline font-bold text-on-surface text-sm">Julio Correa</p>
+<p class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant opacity-70">Administrador Principal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#c0c6d9] opacity-80 hover:bg-[#122033] hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label text-xs uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#122033] text-[#ffba3a] border-r-4 border-[#ffba3a] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label text-xs uppercase tracking-wider font-semibold">Gestión de Visas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#c0c6d9] opacity-80 hover:bg-[#122033] hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label text-xs uppercase tracking-wider">Seminarios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#c0c6d9] opacity-80 hover:bg-[#122033] hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label text-xs uppercase tracking-wider">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#c0c6d9] opacity-80 hover:bg-[#122033] hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label text-xs uppercase tracking-wider">Configuración</span>
+</a>
+</nav>
+<div class="px-4 py-6 border-t border-outline-variant/10">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#c0c6d9] opacity-80 hover:bg-[#122033] hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="font-label text-xs uppercase tracking-wider">Soporte</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#c0c6d9] opacity-80 hover:bg-[#122033] hover:opacity-100 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label text-xs uppercase tracking-wider">Cerrar Sesión</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 lg:ml-64 p-4 md:p-8">
+<div class="max-w-5xl mx-auto">
+<!-- Page Header -->
+<header class="mb-10">
+<h1 class="text-4xl md:text-5xl font-headline font-bold tracking-tight text-on-surface mb-2">Nuevo Trámite de Visa</h1>
+<p class="text-on-surface-variant text-lg">Formulario de Perfil de Cliente - Expediente #GJ-2024-089</p>
+</header>
+<!-- Stepper -->
+<div class="mb-12 relative">
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-highest -translate-y-1/2 z-0"></div>
+<div class="relative z-10 flex justify-between">
+<!-- Step 1: Active -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center font-bold ring-4 ring-background">1</div>
+<span class="font-label text-[10px] uppercase tracking-[0.1em] text-tertiary font-bold">Datos Personales</span>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold ring-4 ring-background">2</div>
+<span class="font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant">Pasaporte</span>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold ring-4 ring-background">3</div>
+<span class="font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant">Historial</span>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold ring-4 ring-background">4</div>
+<span class="font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant">Visa DS-160</span>
+</div>
+</div>
+</div>
+<!-- Form Section -->
+<section class="bg-surface-container-low rounded-xl p-8 border-none shadow-2xl relative overflow-hidden">
+<!-- Subtle Gradient Accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-tertiary/60 to-transparent"></div>
+<div class="flex justify-between items-center mb-10">
+<div>
+<h2 class="text-2xl font-headline font-bold text-on-surface">1. Datos Personales</h2>
+<p class="text-on-surface-variant text-sm mt-1 italic opacity-80">Asegúrese de que coincidan exactamente con la identificación oficial.</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container text-tertiary rounded-lg text-sm font-semibold hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">save</span>
+                            Guardar Progreso
+                        </button>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+<!-- Column 1 -->
+<div class="space-y-8">
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant ml-1">Nombres Completos</label>
+<div class="bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10 focus-within:border-tertiary/40 transition-all">
+<input class="w-full bg-transparent border-none text-on-surface placeholder:text-on-surface-variant/30 focus:ring-0 py-2 px-3 text-sm" placeholder="Ej: Juan Alberto" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant ml-1">Fecha de Nacimiento</label>
+<div class="bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10 focus-within:border-tertiary/40 transition-all">
+<input class="w-full bg-transparent border-none text-on-surface focus:ring-0 py-2 px-3 text-sm [color-scheme:dark]" type="date"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant ml-1">País de Origen</label>
+<div class="bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10 focus-within:border-tertiary/40 transition-all">
+<select class="w-full bg-transparent border-none text-on-surface focus:ring-0 py-2 px-3 text-sm">
+<option>Seleccione País</option>
+<option>Colombia</option>
+<option>México</option>
+<option>Argentina</option>
+<option>España</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Column 2 -->
+<div class="space-y-8">
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant ml-1">Apellidos</label>
+<div class="bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10 focus-within:border-tertiary/40 transition-all">
+<input class="w-full bg-transparent border-none text-on-surface placeholder:text-on-surface-variant/30 focus:ring-0 py-2 px-3 text-sm" placeholder="Ej: Pérez Gómez" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant ml-1">Género</label>
+<div class="flex gap-4">
+<label class="flex-1 flex items-center justify-center gap-3 p-3 bg-surface-container-lowest border border-outline-variant/10 rounded-lg cursor-pointer hover:border-tertiary/40 transition-all">
+<input class="text-tertiary bg-surface-container border-outline-variant/40 focus:ring-offset-background" name="gender" type="radio"/>
+<span class="text-sm">Masculino</span>
+</label>
+<label class="flex-1 flex items-center justify-center gap-3 p-3 bg-surface-container-lowest border border-outline-variant/10 rounded-lg cursor-pointer hover:border-tertiary/40 transition-all">
+<input class="text-tertiary bg-surface-container border-outline-variant/40 focus:ring-offset-background" name="gender" type="radio"/>
+<span class="text-sm">Femenino</span>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant ml-1">Estado Civil</label>
+<div class="bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10 focus-within:border-tertiary/40 transition-all">
+<select class="w-full bg-transparent border-none text-on-surface focus:ring-0 py-2 px-3 text-sm">
+<option>Soltero/a</option>
+<option>Casado/a</option>
+<option>Divorciado/a</option>
+<option>Viudo/a</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Full Width Info Card -->
+<div class="md:col-span-2 bg-surface-container p-6 rounded-xl flex gap-4 items-start border border-outline-variant/10">
+<span class="material-symbols-outlined text-tertiary mt-0.5">info</span>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Validación de Identidad Automática</h4>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">Sus datos serán contrastados con el OCR de su pasaporte en el siguiente paso. Asegúrese de la veracidad de la información para evitar retrasos en el consulado.</p>
+</div>
+</div>
+<!-- Form Footer -->
+<div class="md:col-span-2 flex justify-between items-center pt-8 border-t border-outline-variant/10 mt-4">
+<button class="px-6 py-3 text-on-surface-variant font-semibold hover:text-on-surface transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined">close</span>
+                                Cancelar Trámite
+                            </button>
+<div class="flex gap-4">
+<button class="px-8 py-3 bg-tertiary text-on-tertiary font-bold rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-tertiary/20 flex items-center gap-3" type="submit">
+                                    Continuar a Pasaporte
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</form>
+</section>
+<!-- Helpful Quick Tips (Bento Style Sidebar/Bottom) -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+<h3 class="font-bold text-on-surface mb-2">Seguridad Encriptada</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">Toda su información se maneja bajo protocolos de seguridad diplomática de nivel 4.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="w-10 h-10 bg-tertiary/10 rounded-lg flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-tertiary">speed</span>
+</div>
+<h3 class="font-bold text-on-surface mb-2">Ahorro de Tiempo</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">Nuestra IA pre-llena hasta el 60% de los formularios gubernamentales con estos datos.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-secondary">support</span>
+</div>
+<h3 class="font-bold text-on-surface mb-2">Soporte Directo</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">¿Dudas? Nuestro concierge está disponible para asistirle en este paso.</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-low h-16 flex justify-around items-center z-50 border-t border-outline-variant/5">
+<button class="flex flex-col items-center gap-1 text-[#c0c6d9]">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] uppercase font-label">Inicio</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#ffba3a]">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] uppercase font-label font-bold">Visas</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#c0c6d9]">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] uppercase font-label">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#c0c6d9]">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] uppercase font-label">Ajustes</span>
+</button>
+</nav>
+</body></html>

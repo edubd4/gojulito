@@ -113,7 +113,7 @@ export default function CrearUsuarioModal({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-md p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+        className="max-w-md p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
       >
         <DialogHeader
           className="px-7 pt-6 pb-4 border-b border-white/[7%]"
@@ -138,7 +138,7 @@ export default function CrearUsuarioModal({ open, onOpenChange }: Props) {
               </label>
               <input
                 type="text"
-                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
+                className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                 value={nombre}
                 onChange={(e) => { setNombre(e.target.value); if (errors.nombre) setErrors((prev) => ({ ...prev, nombre: '' })) }}
                 placeholder="Nombre completo"
@@ -157,7 +157,7 @@ export default function CrearUsuarioModal({ open, onOpenChange }: Props) {
               </label>
               <input
                 type="email"
-                className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.email ? 'border-gj-red' : 'border-white/10'}`}
+                className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.email ? 'border-gj-red' : 'border-white/10'}`}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((prev) => ({ ...prev, email: '' })) }}
                 placeholder="usuario@ejemplo.com"
@@ -176,7 +176,7 @@ export default function CrearUsuarioModal({ open, onOpenChange }: Props) {
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 pr-10 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.password ? 'border-gj-red' : 'border-white/10'}`}
+                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 pr-10 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.password ? 'border-gj-red' : 'border-white/10'}`}
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors((prev) => ({ ...prev, password: '' })) }}
                   placeholder="Mínimo 8 caracteres"
@@ -205,7 +205,7 @@ export default function CrearUsuarioModal({ open, onOpenChange }: Props) {
               <div className="relative">
                 <input
                   type={showConfirmar ? 'text' : 'password'}
-                  className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 pr-10 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.confirmarPassword ? 'border-gj-red' : 'border-white/10'}`}
+                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 pr-10 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.confirmarPassword ? 'border-gj-red' : 'border-white/10'}`}
                   value={confirmarPassword}
                   onChange={(e) => { setConfirmarPassword(e.target.value); if (errors.confirmarPassword) setErrors((prev) => ({ ...prev, confirmarPassword: '' })) }}
                   placeholder="Repetí la contraseña"

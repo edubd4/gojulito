@@ -200,7 +200,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-lg p-0 overflow-hidden bg-gj-card border border-white/10 rounded-[14px] font-sans"
+        className="max-w-lg p-0 overflow-hidden bg-gj-surface-low border border-white/10 rounded-[14px] font-sans"
       >
         {/* Overlay éxito */}
         {saved && (
@@ -321,7 +321,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       Nombre<span className="text-gj-amber ml-0.5">*</span>
                     </label>
                     <input
-                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
+                      className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.nombre ? 'border-gj-red' : 'border-white/10'}`}
                       value={nombre}
                       onChange={(e) => { setNombre(e.target.value); if (errors.nombre) setErrors((p) => ({ ...p, nombre: '' })) }}
                       placeholder="Juan Pérez"
@@ -335,7 +335,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       Teléfono<span className="text-gj-amber ml-0.5">*</span>
                     </label>
                     <input
-                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.telefono ? 'border-gj-red' : 'border-white/10'}`}
+                      className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none ${errors.telefono ? 'border-gj-red' : 'border-white/10'}`}
                       value={telefono}
                       onChange={(e) => { setTelefono(e.target.value); if (errors.telefono) setErrors((p) => ({ ...p, telefono: '' })) }}
                       placeholder="+54 11 1234-5678"
@@ -348,7 +348,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       Canal de ingreso<span className="text-gj-amber ml-0.5">*</span>
                     </label>
                     <select
-                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
+                      className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
                       value={canal}
                       onChange={(e) => { setCanal(e.target.value as CanalIngreso | ''); if (errors.canal) setErrors((p) => ({ ...p, canal: '' })) }}
                     >
@@ -372,7 +372,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                     Buscar cliente<span className="text-gj-amber ml-0.5">*</span>
                   </label>
                   <input
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none mb-2"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none mb-2"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                     placeholder="Nombre o ID (ej: GJ-0001)..."
@@ -382,7 +382,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                     <p className="text-gj-secondary text-[13px] font-sans">Cargando clientes...</p>
                   ) : (
                     <select
-                      className={`w-full bg-gj-input text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.clienteId ? 'border-gj-red' : 'border-white/10'}`}
+                      className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.clienteId ? 'border-gj-red' : 'border-white/10'}`}
                       value={clienteId}
                       onChange={(e) => { setClienteId(e.target.value); if (errors.clienteId) setErrors((p) => ({ ...p, clienteId: '' })) }}
                     >
@@ -409,7 +409,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Estado inicial</label>
                 <select
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                   value={estadoVisa}
                   onChange={(e) => setEstadoVisa(e.target.value as EstadoVisa)}
                 >
@@ -425,7 +425,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Fecha de turno</label>
                   <input
                     type="date"
-                    className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                     style={{ colorScheme: 'dark' }}
                     value={fechaTurno}
                     onChange={(e) => setFechaTurno(e.target.value)}
@@ -437,7 +437,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">DS-160</label>
                 <input
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={ds160}
                   onChange={(e) => setDs160(e.target.value)}
                   placeholder="Número de caso (opcional)"
@@ -448,7 +448,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Email portal</label>
                 <input
                   type="email"
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={emailPortal}
                   onChange={(e) => setEmailPortal(e.target.value)}
                   placeholder="Email del portal (opcional)"
@@ -459,7 +459,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Orden de atención</label>
                 <input
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                   value={ordenAtencion}
                   onChange={(e) => setOrdenAtencion(e.target.value)}
                   placeholder="Número de orden (opcional)"
@@ -470,7 +470,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Notas</label>
                 <textarea
-                  className="w-full bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y leading-relaxed"
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none resize-y leading-relaxed"
                   style={{ minHeight: 68 }}
                   value={notas}
                   onChange={(e) => setNotas(e.target.value)}

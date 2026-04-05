@@ -189,7 +189,7 @@ export default function ClientePagosTable({ initialPagos }: Props) {
                             onClick={() => setOpenDropdownId(null)}
                           />
                           <div
-                            className="absolute top-[calc(100%+4px)] left-0 z-50 bg-gj-card border border-white/[12%] rounded-lg p-1 min-w-[110px]"
+                            className="absolute top-[calc(100%+4px)] left-0 z-50 bg-gj-surface-low border border-white/[12%] rounded-lg p-1 min-w-[110px]"
                             style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
                           >
                             {getOpciones(pago.estado).map((opt) => (

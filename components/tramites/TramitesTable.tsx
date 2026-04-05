@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatFecha } from '@/lib/utils'
 import type { EstadoVisa } from '@/lib/constants'
 import AccionLoteGrupoModal from '@/components/grupos/AccionLoteGrupoModal'
+import VisaProgressBadges from '@/components/tramites/VisaProgressBadges'
 
 export interface TramiteRow {
   id: string
@@ -38,6 +39,8 @@ const BADGE_VISA: Record<EstadoVisa, { classes: string; label: string }> = {
 }
 
 const ESTADOS: EstadoVisa[] = ['EN_PROCESO', 'TURNO_ASIGNADO', 'APROBADA', 'RECHAZADA', 'PAUSADA', 'CANCELADA']
+const ACTIVOS: EstadoVisa[] = ['EN_PROCESO', 'TURNO_ASIGNADO', 'PAUSADA']
+const COMPLETADOS: EstadoVisa[] = ['APROBADA', 'RECHAZADA', 'CANCELADA']
 
 function Spinner() {
   return (
@@ -63,6 +66,8 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
   const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
   const [currentPage, setCurrentPage] = useState(1)
+  const [quickFilter, setQuickFilter] = useState<'todos' | 'activos' | 'completados'>('todos')
+  const [showFiltros, setShowFiltros] = useState(false)
   const PAGE_SIZE = 15
 
   useEffect(() => {
@@ -75,6 +80,8 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
   const filtrados = useMemo(() => {
     setCurrentPage(1)
     return rows.filter((t) => {
+      if (quickFilter === 'activos' && !ACTIVOS.includes(t.estado)) return false
+      if (quickFilter === 'completados' && !COMPLETADOS.includes(t.estado)) return false
       if (estadoFiltro && t.estado !== estadoFiltro) return false
       if (grupoFiltro && t.grupo_familiar_id !== grupoFiltro) return false
       if (busqueda.trim()) {
@@ -87,7 +94,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
       }
       return true
     })
-  }, [rows, estadoFiltro, grupoFiltro, busqueda])
+  }, [rows, estadoFiltro, grupoFiltro, busqueda, quickFilter])
 
   const totalPages = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE))
   const paginated = filtrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -186,7 +193,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
             onClick={() => !deleteLoading && setConfirmDeleteId(null)}
           />
           <div
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[10001] bg-gj-card border border-white/10 rounded-xl px-8 py-7 max-w-[420px] w-[90%] font-sans"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[10001] bg-gj-surface-low border border-white/10 rounded-xl px-8 py-7 max-w-[420px] w-[90%] font-sans"
             style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}
           >
             <p className="text-gj-text text-[15px] leading-relaxed mb-6">
@@ -218,64 +225,99 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
         </div>
       )}
 
-      {/* Filtros */}
-      <div className="flex gap-3 mb-5 flex-wrap items-center">
-        <input
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none min-w-[220px]"
-          placeholder="Buscar cliente o visa..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-        />
-        <select
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
-          value={estadoFiltro}
-          onChange={(e) => setEstadoFiltro(e.target.value as EstadoVisa | '')}
-        >
-          <option value="">Todos los estados</option>
-          {ESTADOS.map((e) => (
-            <option key={e} value={e}>{BADGE_VISA[e].label}</option>
+      {/* Tabs + Filtros row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        {/* Quick filter tabs */}
+        <div className="flex items-center bg-gj-surface-low rounded-xl p-1 gap-1 self-start border border-gj-outline/10">
+          {(['todos', 'activos', 'completados'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setQuickFilter(tab)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold font-sans transition-colors capitalize ${
+                quickFilter === tab
+                  ? 'bg-gj-surface-highest text-gj-amber-hv'
+                  : 'text-gj-secondary hover:text-gj-text'
+              }`}
+            >
+              {tab === 'todos' ? 'Todos' : tab === 'activos' ? 'Activos' : 'Completados'}
+            </button>
           ))}
-        </select>
-        {grupos.length > 0 && (
-          <select
-            className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
-            value={grupoFiltro}
-            onChange={(e) => setGrupoFiltro(e.target.value)}
-          >
-            <option value="">Todos los grupos</option>
-            {grupos.map((g) => (
-              <option key={g.id} value={g.id}>{g.nombre}</option>
-            ))}
-          </select>
-        )}
-        {grupoSeleccionado && (
+        </div>
+
+        {/* Right controls */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-gj-secondary text-[13px] font-sans">
+            {filtrados.length} trámite{filtrados.length !== 1 ? 's' : ''}
+          </span>
           <button
-            onClick={() => setLoteModalOpen(true)}
-            className="px-4 py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans whitespace-nowrap"
+            onClick={() => setShowFiltros((v) => !v)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gj-surface-mid border border-gj-outline/10 text-gj-steel text-sm font-semibold font-sans hover:bg-gj-surface-high transition-colors"
           >
-            Actualizar todas las visas del grupo
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+            </svg>
+            Filtros Avanzados
           </button>
-        )}
-        <span className="text-gj-secondary text-[13px] font-sans ml-1">
-          {filtrados.length} trámite{filtrados.length !== 1 ? 's' : ''}
-        </span>
+          {grupoSeleccionado && (
+            <button
+              onClick={() => setLoteModalOpen(true)}
+              className="px-4 py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans whitespace-nowrap"
+            >
+              Actualizar grupo
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* Filtros avanzados — collapsible */}
+      {showFiltros && (
+        <div className="flex gap-3 mb-5 flex-wrap items-center p-4 bg-gj-surface-low rounded-xl border border-gj-outline/10">
+          <input
+            className="bg-gj-surface-mid text-gj-text border border-gj-outline/20 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber-hv focus:outline-none min-w-[220px]"
+            placeholder="Buscar cliente o visa..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+          <select
+            className="bg-gj-surface-mid text-gj-text border border-gj-outline/20 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber-hv focus:outline-none cursor-pointer"
+            value={estadoFiltro}
+            onChange={(e) => setEstadoFiltro(e.target.value as EstadoVisa | '')}
+          >
+            <option value="">Todos los estados</option>
+            {ESTADOS.map((e) => (
+              <option key={e} value={e}>{BADGE_VISA[e].label}</option>
+            ))}
+          </select>
+          {grupos.length > 0 && (
+            <select
+              className="bg-gj-surface-mid text-gj-text border border-gj-outline/20 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber-hv focus:outline-none cursor-pointer"
+              value={grupoFiltro}
+              onChange={(e) => setGrupoFiltro(e.target.value)}
+            >
+              <option value="">Todos los grupos</option>
+              {grupos.map((g) => (
+                <option key={g.id} value={g.id}>{g.nombre}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
+
       {/* Tabla */}
-      <div className="bg-gj-card rounded-xl border border-white/[6%] overflow-hidden">
+      <div className="bg-gj-surface-low rounded-xl border border-gj-outline/10 overflow-hidden">
         {filtrados.length === 0 ? (
           <div className="px-7 py-12 text-center text-gj-secondary text-sm font-sans">
             Sin trámites para los filtros seleccionados
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse font-sans" style={{ minWidth: 580 }}>
+            <table className="w-full border-collapse font-sans" style={{ minWidth: 700 }}>
               <thead>
-                <tr>
-                  {['Visa ID', 'Cliente', 'Estado', 'DS-160', 'Fecha turno', 'Aprobación', 'Vencimiento', ...(isAdmin ? [''] : [])].map((col) => (
+                <tr className="bg-gj-surface-mid/50">
+                  {['Visa ID', 'Cliente', 'Estado', 'Progreso', 'DS-160', 'Fecha turno', 'Aprobación', 'Vencimiento', ...(isAdmin ? [''] : [])].map((col) => (
                     <th
                       key={col}
-                      className="text-left px-4 py-3 text-[11px] font-semibold text-gj-secondary uppercase tracking-[0.05em] border-b border-white/[8%] whitespace-nowrap bg-gj-card"
+                      className="text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap"
                     >
                       {col}
                     </th>
@@ -291,18 +333,25 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                       className="border-b border-white/[4%] hover:bg-white/[3%]"
                     >
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <Link href={`/clientes/${t.cliente_id}`} className="no-underline block">
-                          <span className="text-[13px] text-gj-secondary">{t.visa_id}</span>
+                        <Link href={`/tramites/${t.id}`} className="no-underline block hover:text-gj-blue transition-colors">
+                          <span className="text-[13px] text-gj-secondary hover:text-gj-blue">{t.visa_id}</span>
                         </Link>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <Link href={`/clientes/${t.cliente_id}`} className="no-underline">
-                          <div className="text-sm text-gj-text font-medium">{t.cliente_nombre}</div>
-                          <div className="text-xs text-gj-secondary">
-                            {t.cliente_gj_id}
-                            {t.grupo_familiar_nombre && (
-                              <span className="ml-1.5 text-gj-blue">· {t.grupo_familiar_nombre}</span>
-                            )}
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-gj-surface-highest flex items-center justify-center text-gj-steel text-xs font-bold shrink-0">
+                              {t.cliente_nombre.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="text-sm text-gj-text font-medium">{t.cliente_nombre}</div>
+                              <div className="text-xs text-gj-secondary">
+                                {t.cliente_gj_id}
+                                {t.grupo_familiar_nombre && (
+                                  <span className="ml-1.5 text-gj-blue">· {t.grupo_familiar_nombre}</span>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </Link>
                       </td>
@@ -340,7 +389,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                                   onClick={() => setOpenDropdownId(null)}
                                 />
                                 <div
-                                  className="fixed z-50 bg-gj-card border border-white/[12%] rounded-lg p-1 min-w-[145px]"
+                                  className="fixed z-50 bg-gj-surface-low border border-white/[12%] rounded-lg p-1 min-w-[145px]"
                                   style={{ top: dropdownPos.top, left: dropdownPos.left, boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
                                 >
                                   {ESTADOS.filter((e) => e !== t.estado).map((opt) => {
@@ -364,6 +413,15 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                         )}
                       </td>
 
+                      {/* Progreso multi-badge */}
+                      <td className="px-4 py-3">
+                        <VisaProgressBadges
+                          estado={t.estado}
+                          ds160={t.ds160}
+                          fechaTurno={t.fecha_turno}
+                        />
+                      </td>
+
                       <td className="px-4 py-3 text-[13px] text-gj-secondary whitespace-nowrap">
                         <Link href={`/clientes/${t.cliente_id}`} className="no-underline text-inherit">
                           {t.ds160 ?? '—'}
@@ -375,7 +433,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                           <div>
                             <input
                               type="date"
-                              className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
+                              className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
                               style={{ colorScheme: 'dark' }}
                               value={fechaTurnoEdits[t.id] ?? (t.fecha_turno ?? '')}
                               onChange={(e) =>
@@ -407,7 +465,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                           <div>
                             <input
                               type="date"
-                              className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
+                              className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
                               style={{ colorScheme: 'dark' }}
                               value={fechaAprobEdits[t.id] ?? (t.fecha_aprobacion ?? '')}
                               onChange={(e) =>
@@ -439,7 +497,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                           <div>
                             <input
                               type="date"
-                              className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
+                              className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none w-[150px]"
                               style={{ colorScheme: 'dark' }}
                               value={fechaVencEdits[t.id] ?? (t.fecha_vencimiento ?? '')}
                               onChange={(e) =>

@@ -52,7 +52,7 @@ export default function InactivarSeminarioButton({ seminarioId, semId, asistente
           onClick={() => { if (!loading) setShowConfirm(false) }}
         >
           <div
-            className="bg-gj-card border border-white/10 rounded-xl px-8 py-7 max-w-[440px] w-[90%] font-sans"
+            className="bg-gj-surface-low border border-white/10 rounded-xl px-8 py-7 max-w-[440px] w-[90%] font-sans"
             style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}
             onClick={(e) => e.stopPropagation()}
           >

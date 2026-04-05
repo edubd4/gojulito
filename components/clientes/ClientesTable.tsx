@@ -95,7 +95,7 @@ function ToastContainer({ toasts }: { toasts: Toast[] }) {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`bg-gj-card rounded-lg px-4 py-2.5 text-[13px] font-sans max-w-[320px] pointer-events-auto ${
+          className={`bg-gj-surface-low rounded-lg px-4 py-2.5 text-[13px] font-sans max-w-[320px] pointer-events-auto ${
             t.kind === 'success'
               ? 'border border-gj-green text-gj-green'
               : 'border border-gj-red text-gj-red'
@@ -143,7 +143,7 @@ function ConfirmModal({
       onClick={onCancel}
     >
       <div
-        className="bg-gj-card border border-white/10 rounded-xl px-8 py-7 max-w-[440px] w-[90%] font-sans"
+        className="bg-gj-surface-low border border-white/10 rounded-xl px-8 py-7 max-w-[440px] w-[90%] font-sans"
         style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -431,13 +431,13 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           placeholder="Buscar por nombre, teléfono o ID..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="bg-gj-input text-gj-text placeholder:text-gj-secondary border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none focus:border-white/20 min-w-[240px]"
+          className="bg-gj-surface-mid text-gj-text placeholder:text-gj-secondary border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none focus:border-white/20 min-w-[240px]"
         />
 
         <select
           value={filtroEstadoCliente}
           onChange={(e) => setFiltroEstadoCliente(e.target.value as FiltroEstadoCliente)}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado cliente</option>
           <option value="ACTIVO">Activo</option>
@@ -447,7 +447,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         <select
           value={filtroEstadoVisa}
           onChange={(e) => setFiltroEstadoVisa(e.target.value as FiltroEstadoVisa)}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado visa</option>
           <option value="EN_PROCESO">En proceso</option>
@@ -461,7 +461,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         <select
           value={filtroEstadoPago}
           onChange={(e) => setFiltroEstadoPago(e.target.value as FiltroEstadoPago)}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Estado pago</option>
           <option value="PAGADO">Pagado</option>
@@ -472,7 +472,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
         <select
           value={filtroCanal}
           onChange={(e) => setFiltroCanal(e.target.value as FiltroCanal)}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
         >
           <option value="TODOS">Canal</option>
           <option value="SEMINARIO">Seminario</option>
@@ -495,7 +495,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
       {/* Tabla */}
       <div
-        className="rounded-xl overflow-hidden bg-gj-card border border-white/[7%]"
+        className="rounded-xl overflow-hidden bg-gj-surface-low border border-white/[7%]"
       >
         {clientesFiltrados.length === 0 ? (
           <div className="py-16 text-center">
@@ -596,7 +596,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                           }}
                           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
                           onClick={(e) => e.stopPropagation()}
-                          className="bg-gj-input text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-sm font-sans outline-none min-w-[120px]"
+                          className="bg-gj-surface-mid text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-sm font-sans outline-none min-w-[120px]"
                         />
                       ) : (
                         <span className="border-b border-dashed border-white/20 cursor-text">{c.nombre}</span>
@@ -623,7 +623,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                           }}
                           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
                           onClick={(e) => e.stopPropagation()}
-                          className="bg-gj-input text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-[13px] font-sans outline-none min-w-[110px]"
+                          className="bg-gj-surface-mid text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-[13px] font-sans outline-none min-w-[110px]"
                         />
                       ) : (
                         <span className="border-b border-dashed border-white/20 cursor-text">{c.telefono ?? '—'}</span>
@@ -634,7 +634,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       <select
                         value={c.canal}
                         onChange={(e) => void handleInlinePatch(c.id, 'canal', e.target.value)}
-                        className="bg-gj-input text-gj-secondary border border-white/[8%] rounded-md px-1.5 py-[3px] text-[13px] font-sans cursor-pointer outline-none"
+                        className="bg-gj-surface-mid text-gj-secondary border border-white/[8%] rounded-md px-1.5 py-[3px] text-[13px] font-sans cursor-pointer outline-none"
                       >
                         {(['SEMINARIO', 'WHATSAPP', 'INSTAGRAM', 'REFERIDO', 'CHARLA', 'OTRO'] as const).map((opt) => (
                           <option key={opt} value={opt}>{opt.charAt(0) + opt.slice(1).toLowerCase()}</option>
@@ -646,15 +646,15 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       <select
                         value={c.estado}
                         onChange={(e) => void handleInlinePatch(c.id, 'estado', e.target.value)}
-                        className="bg-gj-input text-gj-text border border-white/10 rounded-md px-1.5 py-0.5 text-xs font-semibold cursor-pointer font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                        className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-md px-1.5 py-0.5 text-xs font-semibold cursor-pointer font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
                       >
                         {/* Solo ACTIVO y FINALIZADO visibles — FIX-04 */}
                         {(['ACTIVO', 'FINALIZADO'] as const).map((opt) => (
-                          <option key={opt} value={opt} className="bg-gj-input text-gj-text">{BADGE_ESTADO_CLIENTE[opt].label}</option>
+                          <option key={opt} value={opt} className="bg-gj-surface-mid text-gj-text">{BADGE_ESTADO_CLIENTE[opt].label}</option>
                         ))}
                         {/* Mostrar estado actual si es PROSPECTO o INACTIVO (sólo lectura) */}
                         {(c.estado === 'PROSPECTO' || c.estado === 'INACTIVO') && (
-                          <option value={c.estado} className="bg-gj-input text-gj-text">{BADGE_ESTADO_CLIENTE[c.estado].label}</option>
+                          <option value={c.estado} className="bg-gj-surface-mid text-gj-text">{BADGE_ESTADO_CLIENTE[c.estado].label}</option>
                         )}
                       </select>
                     </td>
@@ -749,7 +749,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
 
       {/* Barra de acciones masivas */}
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-gj-card border-t border-gj-amber px-6 py-3 flex items-center gap-3 flex-wrap z-[1000] font-sans transition-transform duration-[250ms] ease-in-out ${showActionBar ? 'translate-y-0' : 'translate-y-full'}`}
+        className={`fixed bottom-0 left-0 right-0 bg-gj-surface-low border-t border-gj-amber px-6 py-3 flex items-center gap-3 flex-wrap z-[1000] font-sans transition-transform duration-[250ms] ease-in-out ${showActionBar ? 'translate-y-0' : 'translate-y-full'}`}
       >
         <span className="text-gj-amber font-semibold text-sm mr-1">
           {selectedCount} {selectedCount === 1 ? 'cliente seleccionado' : 'clientes seleccionados'}
@@ -770,7 +770,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             setPendingAction({ type: 'cambiar-estado', valor: val, label: labels[val] })
             e.target.value = ''
           }}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Cambiar estado cliente</option>
           <option value="ACTIVO">Activo</option>
@@ -791,7 +791,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             setPendingAction({ type: 'cambiar-pago', valor: val, label: labels[val] })
             e.target.value = ''
           }}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Cambiar estado pago</option>
           <option value="PAGADO">Pagado</option>
@@ -810,7 +810,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             setPendingAction({ type: 'agregar-seminario', valor: val, label: sem.nombre })
             e.target.value = ''
           }}
-          className="bg-gj-input text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
+          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
         >
           <option value="">Agregar a seminario</option>
           {seminarios.map((s) => (

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -35,14 +35,14 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', sans-serif;
   }
 }
 
-/* GoJulito custom colors */
+/* GoJulito custom colors — legacy (mantener para compatibilidad) */
 :root {
   --gj-bg: #0b1628;
   --gj-card: #111f38;
@@ -54,4 +54,23 @@
   --gj-blue: #4a9eff;
   --gj-text: #e8e6e0;
   --gj-text-secondary: #9ba8bb;
+
+  /* Horizon Vista — nuevos tokens de superficie */
+  --gj-surface: #051426;
+  --gj-surface-low: #0d1c2f;
+  --gj-surface-mid: #122033;
+  --gj-surface-high: #1c2b3e;
+  --gj-surface-highest: #273649;
+  --gj-amber-hv: #ffba3a;
+  --gj-steel: #c0c6d9;
+  --gj-steel-light: #b9c7df;
+  --gj-outline: #909096;
+  --gj-outline-variant: rgba(144, 144, 150, 0.15);
+}
+
+/* Material Symbols — configuración de estilo */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+  line-height: 1;
 }
