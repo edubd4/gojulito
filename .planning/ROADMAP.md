@@ -20,7 +20,7 @@
 **Plans**: 1 plan
 
 Plans:
-- [ ] 13-01-PLAN.md — FIX-01 colorScheme dark en ~46 selects (17 archivos) + FIX-02 campo fecha_turno condicional en wizard paso 4
+- [x] 13-01-PLAN.md — FIX-01 colorScheme dark en ~46 selects (17 archivos) + FIX-02 campo fecha_turno condicional en wizard paso 4
 
 ### Fase 14: Seminarios — Visibilidad + Responsive
 **Goal**: Seminarios creados aparecen en lista. Dashboard muestra solo activos. Detalle responsive.
@@ -101,7 +101,7 @@ Auth, dashboard, CRUD completo, historial inmutable, webhooks Telegram/n8n, conf
 | 1-3 | v1.1 | Complete | 2026-03-22 |
 | 4-9 | v1.2 | Complete | 2026-03-30 |
 | 10 | v1.3 | Complete | 2026-04-01 |
-| 13 | v1.4 | Planeada | — |
+| 13 | 1/1 | Complete   | 2026-04-06 |
 | 14 | v1.4 | Pendiente | — |
 | 15 | v1.4 | Pendiente | — |
 | 16 | v1.4 | Pendiente | — |

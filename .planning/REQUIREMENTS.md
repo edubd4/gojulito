@@ -1,82 +1,82 @@
-# Requirements: GoJulito v1.3
+# Requirements: GoJulito v1.4
 
-**Defined:** 2026-03-31
+**Defined:** 2026-04-06
 **Core Value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
 
-## v1.3 Requirements
+## v1.4 Requirements
 
-### DB — Fixes de base de datos
+### FIX — Bugs de estabilizacion
 
-- [ ] **DB-01**: Las vistas `v_turnos_semana` y `v_deudas_proximas` incluyen `cliente_id` y los aliases correctos (`nombre_cliente`, `estado_visa`) para que los links del dashboard funcionen
+- [x] **FIX-01**: Todos los `<select>` tienen `style={{ colorScheme: 'dark' }}` (46 selects en 18 archivos)
+- [x] **FIX-02**: Wizard paso 4 muestra campo fecha_turno cuando estado = TURNO_ASIGNADO
+- [ ] **FIX-03**: POST seminarios incluye `activo: true` — aparecen en lista al crearse
+- [ ] **FIX-04**: Dashboard filtra seminario proximo por `activo: true`
+- [ ] **FIX-05**: Seminario detalle layout responsive (flex-col lg:flex-row)
+- [ ] **FIX-06**: Barra busqueda header es input funcional → /tramites?q=
+- [ ] **FIX-07**: Boton notificaciones → link a /tramites
+- [ ] **FIX-08**: Boton ayuda → link a /ayuda
+- [ ] **FIX-09**: Chart semanal con hover interactivo
+- [ ] **FIX-10**: TramitesTable responsive — ocultar columnas en mobile
+- [ ] **FIX-11**: ClientesTable responsive — ocultar columnas en mobile
+- [ ] **FIX-12**: PagosTable responsive — ocultar columnas en mobile
+- [ ] **FIX-13**: Badge CAS → CITA
 
-### DASH — Dashboard UX
+### PAG — Pagos (de v1.3, no ejecutado)
 
-- [x] **DASH-01**: Al hacer click en la columna Fecha de la tabla "Turnos esta semana", navega a `/calendario`
-- [x] **DASH-02**: Al hacer click en la columna Cliente de la tabla "Deudas próximas", aparece un popup con resumen del cliente (nombre, gj_id) y botón "Ver ficha"
-- [x] **DASH-03**: Al hacer click en la columna Monto de la tabla "Deudas próximas", aparece un popup con detalle de la deuda (pago_id, monto, fecha de vencimiento)
-- [x] **DASH-04**: Al hacer click en la columna Vence de la tabla "Deudas próximas", navega a `/calendario`
+- [ ] **PAG-01**: Auto-calculo de resto en NuevoPagoModal
+- [ ] **PAG-02**: Toggle archivar deuda restante como PENDIENTE sin fecha
+- [ ] **PAG-03**: Eliminar checkbox viejo de deuda pendiente
 
-### MODAL — Modales UX
+### CAL — Calendario (de v1.3, no ejecutado)
 
-- [x] **MODAL-01**: El select de "Buscar cliente existente" en NuevoTramiteModal se cierra tras seleccionar una opción
+- [ ] **CAL-01**: Max 2 chips de pago por celda, "+X mas" para overflow
+- [ ] **CAL-02**: Label compacto de monto en chips ($400, $1.2k)
+- [ ] **CAL-03**: Chips seminario muestran modalidad (Sem · Pres.)
+- [ ] **CAL-04**: Separador visual entre tipos de eventos por celda
 
-### PAG — Pagos — Flujo de pago parcial
+### HELP — Ayuda integrada
 
-- [ ] **PAG-01**: En NuevoPagoModal, cuando el monto ingresado es menor a la deuda total, el panel muestra el total, el monto pagado y el resto calculado automáticamente en tiempo real
-- [ ] **PAG-02**: En NuevoPagoModal, cuando hay un resto pendiente, el usuario puede activar "Archivar deuda restante" para crear el remanente como `PENDIENTE` sin fecha de vencimiento (no aparece en deudas próximas del dashboard)
-- [ ] **PAG-03**: El checkbox "También registrar deuda pendiente" es eliminado del modal y reemplazado por el flujo automático de PAG-01/PAG-02
+- [ ] **HELP-01**: Pagina /ayuda con instrucciones por seccion (dashboard, clientes, tramites, pagos, seminarios, calendario, config, telegram)
+- [ ] **HELP-02**: Link a /ayuda en sidebar
 
-### CAL — Calendario — Mejoras visuales
+## Traceability
 
-- [ ] **CAL-01**: Los chips de pagos en las celdas del calendario muestran un máximo de 2, con "+X más" para el overflow
-- [ ] **CAL-02**: El label de los chips de pago muestra el monto de forma compacta (`$400`, `$1.2k`) en vez del nombre del cliente
-- [ ] **CAL-03**: Los chips de seminario muestran `Sem · Pres.` o `Sem · Virt.` en vez del `sem_id` crudo
-- [ ] **CAL-04**: Hay un separador visual entre las secciones de turnos, pagos y seminarios dentro de cada celda del calendario
+| REQ-ID | Fase | Status |
+|--------|------|--------|
+| FIX-01 | 13 | Pendiente |
+| FIX-02 | 13 | Pendiente |
+| FIX-03 | 14 | Pendiente |
+| FIX-04 | 14 | Pendiente |
+| FIX-05 | 14 | Pendiente |
+| FIX-06 | 15 | Pendiente |
+| FIX-07 | 15 | Pendiente |
+| FIX-08 | 15 | Pendiente |
+| FIX-09 | 15 | Pendiente |
+| FIX-10 | 16 | Pendiente |
+| FIX-11 | 16 | Pendiente |
+| FIX-12 | 16 | Pendiente |
+| FIX-13 | 16 | Pendiente |
+| PAG-01 | 11 | Pendiente |
+| PAG-02 | 11 | Pendiente |
+| PAG-03 | 11 | Pendiente |
+| CAL-01 | 12 | Pendiente |
+| CAL-02 | 12 | Pendiente |
+| CAL-03 | 12 | Pendiente |
+| CAL-04 | 12 | Pendiente |
+| HELP-01 | 17 | Pendiente |
+| HELP-02 | 17 | Pendiente |
 
----
-
-## Future Requirements
-
-- Navegación directa a una fecha específica al clickear en el calendario desde el dashboard
-- Popup de pago con botón "Registrar pago" inline desde el calendario
-
----
+**Coverage:** 22 requirements → 22 mapped to phases
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Migración a Server Actions | Sin beneficio para este scope; diferido |
-| Tests automatizados | Sin setup de testing; diferido a milestone dedicado |
-| Paginación de listas | Volumen actual (<200 registros) no lo justifica |
-| Nuevo campo `archivada` en DB | Innecesario — `PENDIENTE` sin fecha no aparece en `v_deudas_proximas` |
+| Sistema de notificaciones real | Diferido a v1.5 |
+| Documentos editables por seminario | Diferido a v1.5 |
+| Busqueda global | Diferido a v1.5 |
+| Server Actions | Sin beneficio |
+| Tests automatizados | Sin setup |
 
 ---
-
-## Traceability
-
-<!-- Filled by roadmapper -->
-
-| REQ-ID | Phase | Status |
-|--------|-------|--------|
-| DB-01 | Phase 10 | Pending |
-| DASH-01 | Phase 10 | Complete |
-| DASH-02 | Phase 10 | Complete |
-| DASH-03 | Phase 10 | Complete |
-| DASH-04 | Phase 10 | Complete |
-| MODAL-01 | Phase 10 | Complete |
-| PAG-01 | Phase 11 | Pending |
-| PAG-02 | Phase 11 | Pending |
-| PAG-03 | Phase 11 | Pending |
-| CAL-01 | Phase 12 | Pending |
-| CAL-02 | Phase 12 | Pending |
-| CAL-03 | Phase 12 | Pending |
-| CAL-04 | Phase 12 | Pending |
-
-**Coverage:**
-- v1.3 requirements: 13 total
-- Mapped to phases: 13 / 13
-
----
-*Requirements defined: 2026-03-31*
-*Last updated: 2026-03-31 — v1.3 started*
+*Last updated: 2026-04-06*
