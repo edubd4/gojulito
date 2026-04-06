@@ -159,6 +159,20 @@ export default function StepVisaDS160({ data, onChange, onSubmit, onBack, submit
           </div>
         </div>
 
+        {/* Fecha turno — solo si TURNO_ASIGNADO */}
+        {data.estado_visa_inicial === 'TURNO_ASIGNADO' && (
+          <div className="md:col-span-2">
+            <Field label="Fecha del Turno" optional>
+              <Input
+                type="date"
+                value={data.fecha_turno}
+                onChange={(e) => onChange({ fecha_turno: e.target.value })}
+                style={{ colorScheme: 'dark' }}
+              />
+            </Field>
+          </div>
+        )}
+
         {/* Info card */}
         <div className="md:col-span-2 bg-gj-surface-mid p-5 rounded-xl flex gap-4 items-start border border-gj-outline/10">
           <Icon name="info" className="text-gj-green mt-0.5 shrink-0" size="md" />

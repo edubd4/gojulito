@@ -38,6 +38,7 @@ export interface WizardData {
   orden_atencion: string
   notas_visa: string
   estado_visa_inicial: 'EN_PROCESO' | 'TURNO_ASIGNADO'
+  fecha_turno: string
 }
 
 const INITIAL_DATA: WizardData = {
@@ -62,6 +63,7 @@ const INITIAL_DATA: WizardData = {
   orden_atencion: '',
   notas_visa: '',
   estado_visa_inicial: 'EN_PROCESO',
+  fecha_turno: '',
 }
 
 const WIZARD_STEPS = [
@@ -189,6 +191,9 @@ export default function NuevoTramiteWizard() {
       if (data.email_portal.trim()) body.email_portal = data.email_portal.trim()
       if (data.orden_atencion.trim()) body.orden_atencion = data.orden_atencion.trim()
       if (notas) body.notas = notas
+      if (data.estado_visa_inicial === 'TURNO_ASIGNADO' && data.fecha_turno.trim()) {
+        body.fecha_turno = data.fecha_turno.trim()
+      }
 
       const res = await fetch('/api/visas', {
         method: 'POST',
