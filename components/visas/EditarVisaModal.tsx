@@ -198,6 +198,7 @@ export default function EditarVisaModal({ visa }: Props) {
                     />
                     <select
                       className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg pl-[26px] pr-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                      style={{ colorScheme: 'dark' }}
                       value={form.estado}
                       onChange={(e) => setField('estado', e.target.value as EstadoVisa)}
                     >

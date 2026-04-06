@@ -199,6 +199,7 @@ export default function IniciarVisaModal({ clienteId }: Props) {
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Estado inicial *</label>
                   <select
                     className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                     value={form.estado}
                     onChange={(e) => setField('estado', e.target.value as EstadoVisa)}
                   >

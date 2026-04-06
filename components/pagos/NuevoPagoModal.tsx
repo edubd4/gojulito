@@ -195,7 +195,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           {/* Cliente */}
           <div>
             <label className={labelClass}>Cliente *</label>
-            <select className={`${inputClass} cursor-pointer`} value={clienteId} onChange={(e) => setClienteId(e.target.value)}>
+            <select className={`${inputClass} cursor-pointer`} style={{ colorScheme: 'dark' }} value={clienteId} onChange={(e) => setClienteId(e.target.value)}>
               <option value="">— Seleccionar cliente —</option>
               {clientes.map((c) => (
                 <option key={c.id} value={c.id}>{c.nombre} ({c.gj_id})</option>
@@ -298,6 +298,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
             <label className={labelClass}>Tipo de pago</label>
             <select
               className={`${inputClass} cursor-pointer`}
+              style={{ colorScheme: 'dark' }}
               value={tipo}
               onChange={(e) => setTipo(e.target.value as 'VISA' | 'SEMINARIO')}
             >
@@ -315,7 +316,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
                   El cliente no tiene visas activas
                 </div>
               ) : (
-                <select className={`${inputClass} cursor-pointer`} value={visaId} onChange={(e) => setVisaId(e.target.value)}>
+                <select className={`${inputClass} cursor-pointer`} style={{ colorScheme: 'dark' }} value={visaId} onChange={(e) => setVisaId(e.target.value)}>
                   {visas.map((v) => (
                     <option key={v.id} value={v.id}>{v.visa_id} — {v.estado}</option>
                   ))}
@@ -352,7 +353,7 @@ export default function NuevoPagoModal({ open, onOpenChange, onSuccess }: Props)
           {/* Estado */}
           <div>
             <label className={labelClass}>Estado</label>
-            <select className={`${inputClass} cursor-pointer`} value={estado} onChange={(e) => setEstado(e.target.value as EstadoPago)}>
+            <select className={`${inputClass} cursor-pointer`} style={{ colorScheme: 'dark' }} value={estado} onChange={(e) => setEstado(e.target.value as EstadoPago)}>
               <option value="PAGADO">Pagado</option>
               <option value="DEUDA">Deuda</option>
               <option value="PENDIENTE">Pendiente</option>

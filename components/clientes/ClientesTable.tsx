@@ -438,6 +438,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           value={filtroEstadoCliente}
           onChange={(e) => setFiltroEstadoCliente(e.target.value as FiltroEstadoCliente)}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="TODOS">Estado cliente</option>
           <option value="ACTIVO">Activo</option>
@@ -448,6 +449,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           value={filtroEstadoVisa}
           onChange={(e) => setFiltroEstadoVisa(e.target.value as FiltroEstadoVisa)}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="TODOS">Estado visa</option>
           <option value="EN_PROCESO">En proceso</option>
@@ -462,6 +464,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           value={filtroEstadoPago}
           onChange={(e) => setFiltroEstadoPago(e.target.value as FiltroEstadoPago)}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="TODOS">Estado pago</option>
           <option value="PAGADO">Pagado</option>
@@ -473,6 +476,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           value={filtroCanal}
           onChange={(e) => setFiltroCanal(e.target.value as FiltroCanal)}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="TODOS">Canal</option>
           <option value="SEMINARIO">Seminario</option>
@@ -635,6 +639,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         value={c.canal}
                         onChange={(e) => void handleInlinePatch(c.id, 'canal', e.target.value)}
                         className="bg-gj-surface-mid text-gj-secondary border border-white/[8%] rounded-md px-1.5 py-[3px] text-[13px] font-sans cursor-pointer outline-none"
+                        style={{ colorScheme: 'dark' }}
                       >
                         {(['SEMINARIO', 'WHATSAPP', 'INSTAGRAM', 'REFERIDO', 'CHARLA', 'OTRO'] as const).map((opt) => (
                           <option key={opt} value={opt}>{opt.charAt(0) + opt.slice(1).toLowerCase()}</option>
@@ -647,6 +652,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         value={c.estado}
                         onChange={(e) => void handleInlinePatch(c.id, 'estado', e.target.value)}
                         className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-md px-1.5 py-0.5 text-xs font-semibold cursor-pointer font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                        style={{ colorScheme: 'dark' }}
                       >
                         {/* Solo ACTIVO y FINALIZADO visibles — FIX-04 */}
                         {(['ACTIVO', 'FINALIZADO'] as const).map((opt) => (
@@ -771,6 +777,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             e.target.value = ''
           }}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="">Cambiar estado cliente</option>
           <option value="ACTIVO">Activo</option>
@@ -792,6 +799,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             e.target.value = ''
           }}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="">Cambiar estado pago</option>
           <option value="PAGADO">Pagado</option>
@@ -811,6 +819,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
             e.target.value = ''
           }}
           className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-xs font-sans focus:outline-none cursor-pointer"
+          style={{ colorScheme: 'dark' }}
         >
           <option value="">Agregar a seminario</option>
           {seminarios.map((s) => (

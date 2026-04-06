@@ -276,6 +276,7 @@ export default function PagosTable({ pagos }: Props) {
         </button>
         <select
           className={`${inputClass} cursor-pointer`}
+          style={{ colorScheme: 'dark' }}
           value={estadoFiltro}
           onChange={(e) => setEstadoFiltro(e.target.value as EstadoPago | '')}
         >
@@ -286,6 +287,7 @@ export default function PagosTable({ pagos }: Props) {
         </select>
         <select
           className={`${inputClass} cursor-pointer`}
+          style={{ colorScheme: 'dark' }}
           value={tipoFiltro}
           onChange={(e) => setTipoFiltro(e.target.value as 'VISA' | 'SEMINARIO' | '')}
         >

@@ -211,6 +211,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Cliente existente (opcional)</label>
                 <select
                   className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                  style={{ colorScheme: 'dark' }}
                   value={form.cliente_id}
                   onChange={(e) => handleClienteChange(e.target.value)}
                 >
@@ -273,6 +274,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
                   ) : (
                     <select
                       className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.modalidad ? 'border-gj-red' : 'border-white/10'}`}
+                      style={{ colorScheme: 'dark' }}
                       value={form.modalidad}
                       onChange={(e) => setField('modalidad', e.target.value as FormState['modalidad'])}
                     >
@@ -289,6 +291,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Estado de pago *</label>
                   <select
                     className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                     value={form.estado_pago}
                     onChange={(e) => setField('estado_pago', e.target.value as FormState['estado_pago'])}
                   >
@@ -332,6 +335,7 @@ export default function AgregarAsistenteModal({ seminarioId, seminarioModalidad,
                   <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">¿Convirtió a visa?</label>
                   <select
                     className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                     value={form.convirtio}
                     onChange={(e) => setField('convirtio', e.target.value as FormState['convirtio'])}
                   >

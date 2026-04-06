@@ -103,6 +103,7 @@ export default function EditarUsuarioModal({ usuario, esMismaCuenta }: Props) {
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Rol *</label>
                 <select
                   className={`w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${esMismaCuenta ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  style={{ colorScheme: 'dark' }}
                   value={rol}
                   onChange={(e) => setRol(e.target.value)}
                   disabled={esMismaCuenta}

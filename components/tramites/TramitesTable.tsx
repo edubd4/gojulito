@@ -280,6 +280,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
           />
           <select
             className="bg-gj-surface-mid text-gj-text border border-gj-outline/20 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber-hv focus:outline-none cursor-pointer"
+            style={{ colorScheme: 'dark' }}
             value={estadoFiltro}
             onChange={(e) => setEstadoFiltro(e.target.value as EstadoVisa | '')}
           >
@@ -291,6 +292,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
           {grupos.length > 0 && (
             <select
               className="bg-gj-surface-mid text-gj-text border border-gj-outline/20 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber-hv focus:outline-none cursor-pointer"
+              style={{ colorScheme: 'dark' }}
               value={grupoFiltro}
               onChange={(e) => setGrupoFiltro(e.target.value)}
             >

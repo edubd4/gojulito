@@ -267,6 +267,7 @@ export default function NuevoClienteModal({
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Provincia / País</label>
                 <select
                   className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                  style={{ colorScheme: 'dark' }}
                   value={provinciaSelect}
                   onChange={(e) => {
                     const val = e.target.value
@@ -310,6 +311,7 @@ export default function NuevoClienteModal({
                 </label>
                 <select
                   className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
+                  style={{ colorScheme: 'dark' }}
                   value={form.canal}
                   onChange={(e) => set('canal', e.target.value as CanalIngreso | '')}
                 >
@@ -333,6 +335,7 @@ export default function NuevoClienteModal({
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Grupo familiar</label>
                 <select
                   className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                  style={{ colorScheme: 'dark' }}
                   value={form.grupo_familiar_id}
                   onChange={(e) => set('grupo_familiar_id', e.target.value)}
                 >

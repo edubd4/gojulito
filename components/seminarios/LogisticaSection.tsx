@@ -314,6 +314,7 @@ export default function LogisticaSection({ seminarioId, initialLogistica }: Prop
                 value={form.tipo}
                 onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value as typeof TIPOS_VALIDOS[number] }))}
                 className="w-full bg-gj-surface-high border border-white/[10%] rounded-lg px-3 py-1.5 text-sm text-gj-text focus:outline-none focus:border-gj-amber-hv/50"
+                style={{ colorScheme: 'dark' }}
               >
                 {TIPOS_VALIDOS.map((t) => (
                   <option key={t} value={t}>{TIPO_CONFIG[t].label}</option>
@@ -350,6 +351,7 @@ export default function LogisticaSection({ seminarioId, initialLogistica }: Prop
                 value={form.estado}
                 onChange={(e) => setForm((p) => ({ ...p, estado: e.target.value as typeof ESTADOS_VALIDOS[number] }))}
                 className="w-full bg-gj-surface-high border border-white/[10%] rounded-lg px-3 py-1.5 text-sm text-gj-text focus:outline-none focus:border-gj-amber-hv/50"
+                style={{ colorScheme: 'dark' }}
               >
                 {ESTADOS_VALIDOS.map((s) => (
                   <option key={s} value={s}>{ESTADO_CONFIG[s].label}</option>
