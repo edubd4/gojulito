@@ -17,8 +17,6 @@ interface SeminarioRow {
   modalidad: string
   notas: string | null
   capacidad_max: number | null
-  categoria: string | null
-  imagen_url: string | null
   seminario_asistentes: Asistente[]
 }
 
@@ -31,13 +29,13 @@ export default async function SeminariosPage() {
 
   const { data: rawActivos } = await supabase
     .from('seminarios')
-    .select('id, sem_id, nombre, fecha, modalidad, notas, capacidad_max, categoria, imagen_url, seminario_asistentes(monto, estado_pago)')
+    .select('id, sem_id, nombre, fecha, modalidad, notas, capacidad_max, seminario_asistentes(monto, estado_pago)')
     .or('activo.eq.true,activo.is.null')
     .order('fecha', { ascending: true })
 
   const { data: rawPasados } = await supabase
     .from('seminarios')
-    .select('id, sem_id, nombre, fecha, modalidad, notas, capacidad_max, categoria, imagen_url, seminario_asistentes(monto, estado_pago)')
+    .select('id, sem_id, nombre, fecha, modalidad, notas, capacidad_max, seminario_asistentes(monto, estado_pago)')
     .eq('activo', false)
     .order('fecha', { ascending: false })
     .limit(6)
