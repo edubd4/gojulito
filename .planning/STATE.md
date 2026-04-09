@@ -1,14 +1,13 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4
-milestone_name: — Estabilizacion y Entrega
-status: verifying
-last_updated: "2026-04-06T22:41:14.428Z"
+milestone: v1.5
+milestone_name: Horizon Vista Design System
+status: bugs_pendientes
+last_updated: "2026-04-08T23:00:00.000Z"
 progress:
-  total_phases: 9
-  completed_phases: 9
-  total_plans: 17
-  completed_plans: 19
+  total_phases: 5
+  completed_phases: 5
+  bugs_open: 4
 ---
 
 # Project State
@@ -18,35 +17,81 @@ progress:
 See: .planning/PROJECT.md
 
 **Core value:** El admin puede ver en tiempo real el estado de todos sus clientes, visas y pagos desde un dashboard centralizado, sin perder datos por error operativo.
-**Current focus:** Phase 13 — formularios-dropdowns-fecha-turno
+**Current focus:** v1.5 — estabilizar post-redesign (bugs funcionales pendientes)
+
+---
 
 ## Current Position
 
-Phase: 13 (formularios-dropdowns-fecha-turno) — CHECKPOINT
-Plan: 1 of 1 (tareas 1 y 2 completas, checkpoint verificacion pendiente)
-Milestone: v1.4 — Estabilizacion y Entrega
-Fase actual: 13 (formularios-dropdowns-fecha-turno)
-Status: Checkpoint humano — FIX-01 y FIX-02 commiteados, esperando verificacion visual
+Milestone: v1.5 — Horizon Vista Design System — **DEPLOYED 2026-04-08** (UI completa, bugs funcionales pendientes)
 
-## Fases v1.4
+### Qué se deployó
 
-| Fase | Descripcion | Status |
-|------|-------------|--------|
-| 0 | Limpieza de documentacion | En progreso |
-| 13 | Dropdowns oscuros + Fecha turno wizard | Verificando |
-| 14 | Seminarios visibilidad + responsive | Pendiente |
-| 15 | Dashboard header + chart | Pendiente |
-| 16 | Tablas responsive + badge | Pendiente |
-| 11 | Pagos pago parcial | Pendiente |
-| 12 | Calendario visual | Pendiente |
-| 17 | Pagina de ayuda | Pendiente |
+Commit: `feat(ux-ui): complete redesign phases F1-F5 — Horizon Vista design system`
+Build time: 3m 31s — Estado Dokploy: ✅ Done
 
-## Milestones anteriores
+**Cambios incluidos:**
+- Nuevo sistema de tipografía (Manrope + Inter)
+- Tokens de color HV dark (reemplaza hex hardcodeados progresivamente)
+- Iconografía Material Symbols
+- Dashboard "Panel Central" — bento grid con métricas, chart semanal, próximas citas, próximo seminario
+- Clientes — tabla redesignada con dropdowns inline de estado
+- Trámites "Expedientes Activos" — chips de PROGRESO (DS-160/PAGO/CAS/EMBAJADA), date pickers inline
+- Pagos — badges con dropdown de estado inline
+- Sidebar — nuevas secciones "Soporte" y "Cerrar sesión" al fondo
 
-- v1.0 Core Operativo — shipped 2026-03-21
-- v1.1 Core Hardening (fases 1-3) — shipped 2026-03-22
-- v1.2 Canales y Operacion Avanzada (fases 4-9) — shipped 2026-03-30
-- v1.3 UX Fixes (fase 10 completada, fases 11-12 NO ejecutadas) — parcial
+---
+
+## Bugs abiertos post-deploy (2026-04-08)
+
+| ID | Página | Bug | Prioridad | Causa |
+|----|--------|-----|-----------|-------|
+| BUG-01 | Seminarios | "0 próximos · 0 en historial" aunque hay datos con `activo=true` | 🔴 Alta | Redesign no incluyó el fix de query `.or('activo.eq.true,activo.is.null')` — FIX-D no commiteado antes del redesign |
+| BUG-02 | Sidebar | Link "Soporte" lleva a 404 (`/soporte` no existe) | 🟡 Media | Nueva feature en sidebar sin página construida |
+| BUG-03 | Dashboard | AccionesRapidas siguen en dashboard (Nuevo Cliente, Facturación, Archivo, Nuevo Trámite) | 🟡 Media | FIX-B no commiteado antes del redesign |
+| BUG-04 | Trámites | Métricas no filtran al hacer click (FIX-E sin efecto) | 🟡 Media | FIX-E no commiteado antes del redesign |
+
+### Nota de proceso — causa raíz
+
+Los fixes FIX-B, FIX-D, FIX-E, FIX-F de v1.4 se aplicaron al directorio local pero **no se commitearon a git** antes de que se hiciera el commit del redesign. El redesign fue hecho sobre una rama que no tenía esos cambios. Al deployar el redesign, los fixes funcionales quedaron fuera de producción.
+
+**Acción correctiva:** commitear los fixes al repo y hacer un nuevo deploy.
+
+---
+
+## Dato en BD a corregir
+
+- Seminario `id = b87bee41...` tiene `nombre = "t6"` (dato de prueba). Aparece en el widget "Próximo Seminario" del dashboard. Renombrar en Supabase.
+
+---
+
+## Historial de milestones
+
+| Versión | Nombre | Estado | Fecha |
+|---------|--------|--------|-------|
+| v1.0 | Core Operativo | ✅ shipped | 2026-03-21 |
+| v1.1 | Core Hardening (fases 1-3) | ✅ shipped | 2026-03-22 |
+| v1.2 | Canales y Operacion Avanzada (fases 4-9) | ✅ shipped | 2026-03-30 |
+| v1.3 | UX Fixes (fase 10) | ✅ shipped | 2026-04-01 |
+| v1.4 | Estabilizacion y Entrega | ✅ shipped local / ⚠️ parcial en prod | 2026-04-07 |
+| v1.5 | Horizon Vista Design System | 🟡 UI deployada, bugs funcionales abiertos | 2026-04-08 |
+
+---
+
+## Fixes completados en v1.4 (2026-04-07) — estado real
+
+| Fix | Descripcion | Local | Prod |
+|-----|-------------|-------|------|
+| FIX-01 | Dropdowns oscuros — `colorScheme: 'dark'` en ~46 selects | ✅ | ✅ |
+| FIX-02 | Campo fecha_turno condicional en wizard paso 4 | ✅ | ✅ |
+| FIX-A | Sidebar "Nuevo Cliente" abre modal | ✅ | ⚠️ Redesign cambió sidebar — revisar comportamiento nuevo |
+| FIX-B | Dashboard sin AccionesRapidas | ✅ | ❌ No deployado (BUG-03) |
+| FIX-C | Pago de deuda funcional | ✅ | ✅ |
+| FIX-D | Seminarios visibles — `.or('activo.eq.true,activo.is.null')` | ✅ | ❌ No deployado (BUG-01) |
+| FIX-E | Métricas de trámites clickeables con `?metric=` | ✅ | ❌ No deployado (BUG-04) |
+| FIX-F | Ícono ⓘ en columna PROGRESO | ✅ | ⚠️ Redesign rediseñó PROGRESO con chips — equivalente funcional presente |
+
+---
 
 ## Decisiones activas
 
@@ -56,12 +101,20 @@ Status: Checkpoint humano — FIX-01 y FIX-02 commiteados, esperando verificacio
 - 409 DUPLICATE_CLIENT shape inmutable (Telegram bot lo parsea)
 - SEM IDs via RPC
 - Bot endpoints siempre via API routes
-- Todos los `<select>` nativos requieren `style={{ colorScheme: 'dark' }}` para evitar override del OS en dark theme (2026-04-06)
+- Todos los `<select>` nativos requieren `style={{ colorScheme: 'dark' }}` (2026-04-06)
+- Seminarios: query usa `.or('activo.eq.true,activo.is.null')` — null tratado como activo (2026-04-07) ← **pendiente deployar**
+- Sistema de iconos: Material Symbols (Horizon Vista) — reemplaza lucide-react progresivamente
+- Sidebar: "Soporte" y "Cerrar sesión" como nuevos items fijos al fondo
 
-## Pendientes conocidos
+## Pendientes conocidos (deuda técnica)
 
-- Tech debt: `{ success: true }` en bulk-update/delete y PagosTable routes
-- v1.5: Sistema de notificaciones real, documentos editables por seminario, busqueda global
+- Tech debt: `{ success: true }` en bulk-update/delete y PagosTable routes (no es `{ data, error }`)
+- Sistema de estilos dual: tokens HV parcialmente aplicados — migración incompleta
+- Sin paginación en listas (clientes, tramites, pagos)
+- Focus rings ausentes en inputs (accesibilidad)
+- `verificarAdmin` no es helper compartido — inline en `api/usuarios/route.ts`
+- Página `/soporte` no existe (BUG-02)
+- Fases 11, 12, 14, 15, 16, 17 de v1.4 siguen pendientes (absorbidas en backlog)
 
 ---
-*Last updated: 2026-04-06*
+*Last updated: 2026-04-08*

@@ -2,65 +2,89 @@
 
 ## Milestones
 
-- ✅ **v1.0 Core Operativo** — Shipped 2026-03-21 (pre-planning)
+- ✅ **v1.0 Core Operativo** — Shipped 2026-03-21
 - ✅ **v1.1 Core Hardening** — Phases 1-3 (shipped 2026-03-22)
 - ✅ **v1.2 Canales y Operacion Avanzada** — Phases 4-9 (shipped 2026-03-30)
-- ⚠️ **v1.3 UX Fixes** — Phase 10 complete, phases 11-12 NOT executed (absorbidas por v1.4)
-- 🔄 **v1.4 Estabilizacion y Entrega** — Phases 13-17 + 11-12 (en progreso)
+- ✅ **v1.3 UX Fixes** — Phase 10 (shipped 2026-04-01)
+- ✅ **v1.4 Estabilizacion y Entrega** — FIX-01/02 + FIX-A..F (shipped local 2026-04-07 / parcial en prod)
+- 🟡 **v1.5 Horizon Vista Design System** — UI deployada 2026-04-08, bugs funcionales abiertos
+- 🔲 **v1.6** — Formulario externo, notificaciones, búsqueda global (sin planificar)
 
 ---
 
-## v1.4 — Estabilizacion y Entrega
+## v1.5 — Horizon Vista Design System
 
-**Goal:** Corregir todos los bugs, completar fases pendientes, agregar ayuda integrada. Entregar estable en PC/tablet/celular.
+**Goal:** Migrar el sistema visual al nuevo design system HV. Tipografía Manrope/Inter, tokens de color HV, iconografía Material Symbols, layouts redesignados por página.
 
-### Fase 13: Formularios — Dropdowns + Fecha Turno
-**Goal**: Todos los selects tienen fondo oscuro. El wizard permite elegir fecha de turno al seleccionar TURNO_ASIGNADO.
-**Requirements**: FIX-01, FIX-02
-**Plans**: 1 plan
+**Commit:** `feat(ux-ui): complete redesign phases F1-F5 — Horizon Vista design system`
+**Deploy:** 2026-04-08 — ✅ UI completa en producción
+
+### Fases del redesign (F1-F5) — COMPLETADAS
+
+| Fase | Descripción | Status |
+|------|-------------|--------|
+| F1 | Tokens de color y tipografía — sistema HV base | ✅ |
+| F2 | Dashboard "Panel Central" — bento grid, métricas, chart, próximo seminario | ✅ |
+| F3 | Sidebar — nueva estructura, Soporte + Cerrar sesión, iconos Material Symbols | ✅ |
+| F4 | Tablas y listas — Clientes, Trámites, Pagos redesignados | ✅ |
+| F5 | Chips de progreso — DS-160/PAGO/CAS/EMBAJADA en tabla de Trámites | ✅ |
+
+### Bugs abiertos post-deploy v1.5
+
+| ID | Prioridad | Descripción | Fix requerido |
+|----|-----------|-------------|---------------|
+| BUG-01 | 🔴 Alta | Seminarios muestra 0 — query sin fix de `activo` | Aplicar `.or('activo.eq.true,activo.is.null')` y commitear |
+| BUG-02 | 🟡 Media | `/soporte` → 404 — link muerto en sidebar | Crear página o redirigir |
+| BUG-03 | 🟡 Media | AccionesRapidas siguen en dashboard | Eliminar bloque (FIX-B) y commitear |
+| BUG-04 | 🟡 Media | Métricas de trámites no filtran al click | Implementar filtro `?metric=` (FIX-E) y commitear |
+
+### Pendiente v1.5 (no incluido en redesign)
+
+- Fases 11, 12, 14, 15, 16, 17 de v1.4 — absorbidas en backlog v1.6+
+- Dato BD: seminario `nombre = "t6"` — renombrar directamente en Supabase
+
+---
+
+## v1.4 — Estabilizacion y Entrega ✅
+
+**Shipped local 2026-04-07. Parcialmente en prod (ver STATE.md).**
+
+### Fase 13: Formularios — Dropdowns + Fecha Turno ✅
 
 Plans:
-- [x] 13-01-PLAN.md — FIX-01 colorScheme dark en ~46 selects (17 archivos) + FIX-02 campo fecha_turno condicional en wizard paso 4
+- [x] 13-01-PLAN.md — FIX-01 colorScheme dark + FIX-02 fecha_turno condicional
 
-### Fase 14: Seminarios — Visibilidad + Responsive
-**Goal**: Seminarios creados aparecen en lista. Dashboard muestra solo activos. Detalle responsive.
-**Requirements**: FIX-03, FIX-04, FIX-05
-**Plans**: 1 plan
-- [ ] Pendiente
+### Fase 14-17 + 11-12: Pendientes → absorbidas en backlog
 
-### Fase 15: Dashboard — Header + Chart
-**Goal**: Busqueda funcional, botones de header con destino, chart con hover interactivo.
-**Requirements**: FIX-06, FIX-07, FIX-08, FIX-09
-**Plans**: 1 plan
-- [ ] Pendiente
+Las siguientes fases fueron planificadas para v1.4 pero no se completaron. Pasan al backlog de v1.6+:
 
-### Fase 16: Tablas — Responsive + Badge
-**Goal**: Tablas usables en mobile sin scroll excesivo. Badge CAS renombrado.
-**Requirements**: FIX-10, FIX-11, FIX-12, FIX-13
-**Plans**: 1 plan
-- [ ] Pendiente
-
-### Fase 11: Pagos — Pago Parcial (de v1.3)
-**Goal**: Auto-calculo de resto, toggle archivar remanente, eliminar checkbox viejo.
-**Requirements**: PAG-01, PAG-02, PAG-03
-**Plans**: 1 plan (existente: 11-01-PLAN.md)
-- [ ] Pendiente
-
-### Fase 12: Calendario — Visual (de v1.3)
-**Goal**: Cap de chips, labels compactos, separadores visuales.
-**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04
-**Plans**: 1 plan
-- [ ] Pendiente
-
-### Fase 17: Pagina de Ayuda
-**Goal**: Instrucciones didacticas por seccion integradas en la app. Link en sidebar.
-**Requirements**: HELP-01, HELP-02
-**Plans**: 1 plan
-- [ ] Pendiente
+| Fase | Descripción |
+|------|-------------|
+| 11 | Pagos — Pago Parcial (auto-calculo, toggle archivar remanente) |
+| 12 | Calendario Visual (cap de chips, labels compactos) |
+| 14 | Seminarios — Visibilidad + Responsive |
+| 15 | Dashboard — Header + Chart interactivo |
+| 16 | Tablas — Responsive + Badge CAS |
+| 17 | Página de Ayuda con instrucciones por sección |
 
 ---
 
-## Fases completadas (historico)
+## v1.6 — Backlog (sin planificar)
+
+Candidatos para próximos milestones:
+
+- Formulario externo de registro de clientes (solicitudes desde web)
+- Sistema de notificaciones real (push / email)
+- Documentos editables por seminario
+- Búsqueda global funcional
+- Paginación en listas largas
+- Página de Ayuda / Soporte integrada
+- Métricas interactivas con filtro `?metric=` (FIX-E)
+- Pagos parciales y auto-calculo de resto
+
+---
+
+## Fases completadas (histórico)
 
 <details>
 <summary>v1.0 Core Operativo — SHIPPED 2026-03-21</summary>
@@ -87,27 +111,25 @@ Auth, dashboard, CRUD completo, historial inmutable, webhooks Telegram/n8n, conf
 </details>
 
 <details>
-<summary>v1.3 UX Fixes — Phase 10 COMPLETE, 11-12 absorbed into v1.4</summary>
+<summary>v1.3 UX Fixes — Phase 10 COMPLETE</summary>
 
 - [x] Phase 10: Dashboard & Modal Fixes (3/3 plans) — completed 2026-04-01
-- [ ] Phase 11: Pagos Pago Parcial — moved to v1.4
-- [ ] Phase 12: Calendario Visual — moved to v1.4
+- [ ] Phase 11: Pagos Pago Parcial — moved to backlog
+- [ ] Phase 12: Calendario Visual — moved to backlog
 </details>
+
+---
 
 ## Progress
 
-| Fase | Milestone | Status | Completada |
-|------|-----------|--------|------------|
-| 1-3 | v1.1 | Complete | 2026-03-22 |
-| 4-9 | v1.2 | Complete | 2026-03-30 |
-| 10 | v1.3 | Complete | 2026-04-01 |
-| 13 | 1/1 | Complete   | 2026-04-06 |
-| 14 | v1.4 | Pendiente | — |
-| 15 | v1.4 | Pendiente | — |
-| 16 | v1.4 | Pendiente | — |
-| 11 | v1.4 | Pendiente | — |
-| 12 | v1.4 | Pendiente | — |
-| 17 | v1.4 | Pendiente | — |
+| Milestone | Fases | Status | Fecha |
+|-----------|-------|--------|-------|
+| v1.1 | 1-3 | ✅ Complete | 2026-03-22 |
+| v1.2 | 4-9 | ✅ Complete | 2026-03-30 |
+| v1.3 | 10 | ✅ Complete | 2026-04-01 |
+| v1.4 | 13 | ✅ Complete (local) | 2026-04-07 |
+| v1.5 | F1-F5 | 🟡 UI deployada, 4 bugs abiertos | 2026-04-08 |
+| v1.6 | — | 🔲 Sin planificar | — |
 
 ---
-*Last updated: 2026-04-06 — Phase 13 planned*
+*Last updated: 2026-04-08*

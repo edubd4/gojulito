@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server'
-import AccionesRapidas from '@/components/dashboard/AccionesRapidas'
 import DeudaTableClient from '@/components/dashboard/DeudaTableClient'
 import VisaActivosCard from '@/components/dashboard/VisaActivosCard'
 import ProximasCitasPanel from '@/components/dashboard/ProximasCitasPanel'
@@ -55,22 +54,17 @@ const DAY_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
 function buildWeeklyData(eventos: { created_at: string }[]) {
   const today = new Date()
+  today.setHours(0, 0, 0, 0)
   const days: { label: string; count: number; isToday: boolean; date: Date }[] = []
-  const monday = new Date(today)
-  const diffToMon = (today.getDay() + 6) % 7
-  monday.setDate(today.getDate() - diffToMon)
-  monday.setHours(0, 0, 0, 0)
 
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday)
-    d.setDate(monday.getDate() + i)
+  // Últimos 7 días corridos (hoy inclusive, hacia atrás)
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(today.getDate() - i)
     days.push({
       label: DAY_LABELS[d.getDay()],
       count: 0,
-      isToday:
-        d.getDate() === today.getDate() &&
-        d.getMonth() === today.getMonth() &&
-        d.getFullYear() === today.getFullYear(),
+      isToday: i === 0,
       date: d,
     })
   }
@@ -79,9 +73,7 @@ function buildWeeklyData(eventos: { created_at: string }[]) {
     const evDate = new Date(ev.created_at)
     evDate.setHours(0, 0, 0, 0)
     for (const day of days) {
-      const dayDate = new Date(day.date)
-      dayDate.setHours(0, 0, 0, 0)
-      if (evDate.getTime() === dayDate.getTime()) {
+      if (evDate.getTime() === day.date.getTime()) {
         day.count++
         break
       }
@@ -100,10 +92,9 @@ export default async function DashboardPage() {
 
   const supabase = await createServiceRoleClient()
 
-  const startOfWeek = new Date()
-  const diffToMon = (startOfWeek.getDay() + 6) % 7
-  startOfWeek.setDate(startOfWeek.getDate() - diffToMon)
-  startOfWeek.setHours(0, 0, 0, 0)
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
+  sevenDaysAgo.setHours(0, 0, 0, 0)
 
   const now = new Date().toISOString()
 
@@ -111,18 +102,17 @@ export default async function DashboardPage() {
     { data: rawMetricas },
     { data: rawTurnos },
     { data: rawDeudas },
-    { data: rawGrupos },
     { data: rawWeeklyEvs },
     { data: rawSeminario },
   ] = await Promise.all([
     supabase.from('v_metricas').select('*').returns<MetricaRow[]>(),
     supabase.from('v_turnos_semana').select('*').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
     supabase.from('v_deudas_proximas').select('*').order('fecha_vencimiento_deuda', { ascending: true }).returns<DeudaProxima[]>(),
-    supabase.from('grupos_familiares').select('id, nombre').order('nombre', { ascending: true }),
-    supabase.from('historial').select('created_at').gte('created_at', startOfWeek.toISOString()),
+    supabase.from('historial').select('created_at').gte('created_at', sevenDaysAgo.toISOString()),
     supabase
       .from('seminarios')
       .select('id, nombre, fecha, seminario_asistentes(id)')
+      .or('activo.eq.true,activo.is.null')
       .gte('fecha', now)
       .order('fecha', { ascending: true })
       .limit(1)
@@ -131,7 +121,6 @@ export default async function DashboardPage() {
 
   const turnos = rawTurnos ?? []
   const deudas = rawDeudas ?? []
-  const gruposFamiliares = (rawGrupos ?? []).map((g) => ({ id: g.id as string, nombre: g.nombre as string }))
   const weeklyData = buildWeeklyData(rawWeeklyEvs ?? [])
 
   const metricaRow = rawMetricas?.[0]
@@ -196,9 +185,6 @@ export default async function DashboardPage() {
             </Link>
           )}
         </div>
-
-        {/* ── 4 Acciones rápidas — bento cards ── */}
-        <AccionesRapidas gruposFamiliares={gruposFamiliares} />
 
         {/* ── Deudas próximas — full width ── */}
         <div className="col-span-12 bg-gj-surface-low rounded-xl border border-gj-outline/10 overflow-hidden">

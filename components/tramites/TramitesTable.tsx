@@ -27,6 +27,8 @@ interface Props {
   tramites: TramiteRow[]
   grupos: { id: string; nombre: string }[]
   isAdmin?: boolean
+  initialQuery?: string
+  metricFilter?: string
 }
 
 const BADGE_VISA: Record<EstadoVisa, { classes: string; label: string }> = {
@@ -48,12 +50,12 @@ function Spinner() {
   )
 }
 
-export default function TramitesTable({ tramites, grupos, isAdmin = false }: Props) {
+export default function TramitesTable({ tramites, grupos, isAdmin = false, initialQuery, metricFilter }: Props) {
   const router = useRouter()
   const [rows, setRows] = useState<TramiteRow[]>(tramites)
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoVisa | ''>('')
   const [grupoFiltro, setGrupoFiltro] = useState('')
-  const [busqueda, setBusqueda] = useState('')
+  const [busqueda, setBusqueda] = useState(initialQuery ?? '')
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -67,7 +69,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
   const [currentPage, setCurrentPage] = useState(1)
   const [quickFilter, setQuickFilter] = useState<'todos' | 'activos' | 'completados'>('todos')
-  const [showFiltros, setShowFiltros] = useState(false)
+  const [showFiltros, setShowFiltros] = useState(!!initialQuery)
   const PAGE_SIZE = 15
 
   useEffect(() => {
@@ -79,11 +81,24 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
 
   const filtrados = useMemo(() => {
     setCurrentPage(1)
+    const now = new Date()
+    const in30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
     return rows.filter((t) => {
       if (quickFilter === 'activos' && !ACTIVOS.includes(t.estado)) return false
       if (quickFilter === 'completados' && !COMPLETADOS.includes(t.estado)) return false
       if (estadoFiltro && t.estado !== estadoFiltro) return false
       if (grupoFiltro && t.grupo_familiar_id !== grupoFiltro) return false
+      // Metric filter from header cards
+      if (metricFilter === 'en_proceso') {
+        if (t.estado !== 'EN_PROCESO' && t.estado !== 'TURNO_ASIGNADO') return false
+      } else if (metricFilter === 'citas') {
+        if (!t.fecha_turno) return false
+        const f = new Date(t.fecha_turno)
+        if (f < now || f > in30) return false
+      } else if (metricFilter === 'aprobadas') {
+        if (t.estado !== 'APROBADA') return false
+      }
+      // 'tasa' shows no additional row filter (tooltip only)
       if (busqueda.trim()) {
         const q = busqueda.trim().toLowerCase()
         return (
@@ -94,7 +109,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
       }
       return true
     })
-  }, [rows, estadoFiltro, grupoFiltro, busqueda, quickFilter])
+  }, [rows, estadoFiltro, grupoFiltro, busqueda, quickFilter, metricFilter])
 
   const totalPages = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE))
   const paginated = filtrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -225,6 +240,26 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
         </div>
       )}
 
+      {/* Metric filter banner */}
+      {metricFilter && metricFilter !== 'tasa' && (
+        <div className="flex items-center justify-between bg-gj-amber-hv/[8%] border border-gj-amber-hv/25 rounded-lg px-3.5 py-2 text-[13px] mb-3 font-sans">
+          <span className="text-gj-amber-hv font-medium">
+            Filtrando por: <span className="font-bold">{
+              metricFilter === 'en_proceso' ? 'En Proceso / Turno Asignado'
+              : metricFilter === 'citas' ? 'Citas próximas (30 días)'
+              : metricFilter === 'aprobadas' ? 'Visas Aprobadas'
+              : metricFilter
+            }</span>
+          </span>
+          <Link
+            href="/tramites"
+            className="text-gj-secondary hover:text-gj-text text-[12px] font-semibold no-underline ml-3"
+          >
+            Limpiar ×
+          </Link>
+        </div>
+      )}
+
       {/* Tabs + Filtros row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         {/* Quick filter tabs */}
@@ -316,14 +351,29 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
             <table className="w-full border-collapse font-sans" style={{ minWidth: 700 }}>
               <thead>
                 <tr className="bg-gj-surface-mid/50">
-                  {['Visa ID', 'Cliente', 'Estado', 'Progreso', 'DS-160', 'Fecha turno', 'Aprobación', 'Vencimiento', ...(isAdmin ? [''] : [])].map((col) => (
-                    <th
-                      key={col}
-                      className="text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap"
-                    >
-                      {col}
-                    </th>
-                  ))}
+                  <th className="hidden md:table-cell text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">Visa ID</th>
+                  <th className="text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">Cliente</th>
+                  <th className="text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">Estado</th>
+                  <th className="text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">
+                    <span className="flex items-center gap-1">
+                      Progreso
+                      <span
+                        title="Progreso muestra el avance del trámite: DS-160 (formulario), Pago (cuota abonada), Cita (turno en embajada), Embajada (resultado final). ✓ = completado, ⟳ = en curso, gris = pendiente"
+                        className="cursor-help text-gj-secondary/50 hover:text-gj-secondary transition-colors"
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="12" y1="8" x2="12" y2="8"/>
+                          <line x1="12" y1="12" x2="12" y2="16"/>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th className="hidden md:table-cell text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">DS-160</th>
+                  <th className="hidden md:table-cell text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">Fecha turno</th>
+                  <th className="hidden lg:table-cell text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">Aprobación</th>
+                  <th className="hidden lg:table-cell text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap">Vencimiento</th>
+                  {isAdmin && <th className="text-left px-4 py-3.5 text-[10px] font-semibold text-gj-secondary uppercase tracking-[0.1em] border-b border-gj-outline/10 whitespace-nowrap" />}
                 </tr>
               </thead>
               <tbody>
@@ -334,7 +384,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                       key={t.id}
                       className="border-b border-white/[4%] hover:bg-white/[3%]"
                     >
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap">
                         <Link href={`/tramites/${t.id}`} className="no-underline block hover:text-gj-blue transition-colors">
                           <span className="text-[13px] text-gj-secondary hover:text-gj-blue">{t.visa_id}</span>
                         </Link>
@@ -424,13 +474,13 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                         />
                       </td>
 
-                      <td className="px-4 py-3 text-[13px] text-gj-secondary whitespace-nowrap">
+                      <td className="hidden md:table-cell px-4 py-3 text-[13px] text-gj-secondary whitespace-nowrap">
                         <Link href={`/clientes/${t.cliente_id}`} className="no-underline text-inherit">
                           {t.ds160 ?? '—'}
                         </Link>
                       </td>
                       {/* Fecha turno */}
-                      <td className="px-4 py-2 whitespace-nowrap">
+                      <td className="hidden md:table-cell px-4 py-2 whitespace-nowrap">
                         {t.estado === 'TURNO_ASIGNADO' ? (
                           <div>
                             <input
@@ -462,7 +512,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                       </td>
 
                       {/* Fecha aprobación */}
-                      <td className="px-4 py-2 whitespace-nowrap">
+                      <td className="hidden lg:table-cell px-4 py-2 whitespace-nowrap">
                         {t.estado === 'APROBADA' ? (
                           <div>
                             <input
@@ -494,7 +544,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                       </td>
 
                       {/* Fecha vencimiento */}
-                      <td className="px-4 py-2 whitespace-nowrap">
+                      <td className="hidden lg:table-cell px-4 py-2 whitespace-nowrap">
                         {t.estado === 'APROBADA' ? (
                           <div>
                             <input

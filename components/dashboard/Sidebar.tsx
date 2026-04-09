@@ -1,9 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Icon } from '@/components/ui/Icon'
+import NuevoTramiteModal from '@/components/visas/NuevoTramiteModal'
+import NuevoClienteModal, { type GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: 'dashboard', exact: true },
@@ -20,6 +23,7 @@ interface SidebarProps {
   rol: string
   isOpen: boolean
   onClose: () => void
+  gruposFamiliares: GrupoFamiliarOption[]
 }
 
 function getInitials(name: string) {
@@ -31,9 +35,11 @@ function getInitials(name: string) {
     .toUpperCase()
 }
 
-export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
+export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const [tramiteOpen, setTramiteOpen] = useState(false)
+  const [clienteOpen, setClienteOpen] = useState(false)
 
   async function handleLogout() {
     const supabase = createClient()
@@ -88,16 +94,22 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
         </div>
       </div>
 
-      {/* CTA Nuevo Trámite */}
-      <div className="px-3 mb-4">
-        <Link
-          href="/tramites/nuevo"
-          onClick={onClose}
-          className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-gj-amber-hv text-gj-surface font-sans font-semibold text-sm transition-opacity hover:opacity-90 no-underline"
+      {/* CTAs rápidos */}
+      <div className="px-3 mb-4 space-y-2">
+        <button
+          onClick={() => { onClose(); setTramiteOpen(true) }}
+          className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-gj-amber-hv text-gj-surface font-sans font-semibold text-sm transition-opacity hover:opacity-90 cursor-pointer border-none"
         >
           <Icon name="add" size="sm" />
           Nuevo Trámite
-        </Link>
+        </button>
+        <button
+          onClick={() => { onClose(); setClienteOpen(true) }}
+          className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-gj-surface-mid border border-white/5 text-gj-steel font-sans font-medium text-sm transition-colors hover:bg-gj-surface-high cursor-pointer"
+        >
+          <Icon name="person_add" size="sm" />
+          Nuevo Cliente
+        </button>
       </div>
 
       {/* Nav */}
@@ -129,12 +141,14 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
 
       {/* Footer */}
       <div className="px-3 py-4 mt-2 border-t border-white/5 space-y-0.5">
-        <button
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel transition-colors w-full text-left"
+        <Link
+          href="/ayuda"
+          onClick={onClose}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel transition-colors no-underline"
         >
           <Icon name="help_outline" size="sm" />
           Soporte
-        </button>
+        </Link>
         <button
           onClick={() => void handleLogout()}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans text-gj-secondary hover:bg-gj-red/10 hover:text-gj-red transition-colors w-full text-left"
@@ -161,6 +175,19 @@ export function Sidebar({ displayName, rol, isOpen, onClose }: SidebarProps) {
       >
         {sidebarContent}
       </aside>
+
+      {/* Modals */}
+      <NuevoTramiteModal
+        open={tramiteOpen}
+        onOpenChange={setTramiteOpen}
+        onSuccess={() => router.refresh()}
+      />
+      <NuevoClienteModal
+        open={clienteOpen}
+        onOpenChange={setClienteOpen}
+        gruposFamiliares={gruposFamiliares}
+        onSuccess={() => router.refresh()}
+      />
     </>
   )
 }

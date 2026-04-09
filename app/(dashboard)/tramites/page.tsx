@@ -7,7 +7,7 @@ import { NuevoTramiteButton } from '@/components/visas/NuevoTramiteModal'
 import { Icon } from '@/components/ui/Icon'
 import type { EstadoVisa } from '@/lib/constants'
 
-export default async function TramitesPage() {
+export default async function TramitesPage({ searchParams }: { searchParams: { q?: string; metric?: string } }) {
   const authClient = await createServerClient()
   const { data: { user } } = await authClient.auth.getUser()
   if (!user) notFound()
@@ -106,10 +106,11 @@ export default async function TramitesPage() {
         citasProximas={citasProximas}
         aprobadas={aprobadas}
         tasaExito={tasaExito}
+        activeMetric={searchParams.metric}
       />
 
       {/* ── Tabla con filtros y tabs ── */}
-      <TramitesTable tramites={tramites} grupos={grupos} isAdmin={isAdmin} />
+      <TramitesTable tramites={tramites} grupos={grupos} isAdmin={isAdmin} initialQuery={searchParams.q} metricFilter={searchParams.metric} />
     </div>
   )
 }
