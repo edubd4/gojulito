@@ -130,9 +130,9 @@ function ConfirmModal({
   } else if (action.type === 'agregar-seminario') {
     mensaje = `¿Agregar ${count} ${count === 1 ? 'cliente' : 'clientes'} al seminario "${action.label}"?`
   } else if (action.type === 'eliminar') {
-    mensaje = `¿Eliminar ${count} ${count === 1 ? 'cliente' : 'clientes'} permanentemente? Esta acción no se puede deshacer.`
+    mensaje = `¿Marcar ${count} ${count === 1 ? 'cliente' : 'clientes'} como Inactivo? Dejará de aparecer en el sistema pero sus datos se conservan.`
   } else if (action.type === 'eliminar-individual') {
-    mensaje = `¿Eliminar a "${action.nombre}" permanentemente? Esta acción no se puede deshacer.`
+    mensaje = `¿Marcar a "${action.nombre}" como Inactivo? Dejará de aparecer en el sistema pero sus datos se conservan.`
   }
 
   const isDelete = action.type === 'eliminar' || action.type === 'eliminar-individual'
@@ -523,24 +523,15 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                     className="cursor-pointer accent-gj-amber"
                   />
                 </th>
-                {[
-                  'ID',
-                  'Nombre',
-                  'Teléfono',
-                  'Canal',
-                  'Est. cliente',
-                  'Est. visa',
-                  'Est. pago',
-                  'Fecha alta',
-                  '',
-                ].map((col) => (
-                  <th
-                    key={col}
-                    className="px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs"
-                  >
-                    {col}
-                  </th>
-                ))}
+                <th className="hidden md:table-cell px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">ID</th>
+                <th className="px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Nombre</th>
+                <th className="hidden md:table-cell px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Teléfono</th>
+                <th className="hidden md:table-cell px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Canal</th>
+                <th className="px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Est. cliente</th>
+                <th className="px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Est. visa</th>
+                <th className="hidden lg:table-cell px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Est. pago</th>
+                <th className="hidden lg:table-cell px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs">Fecha alta</th>
+                <th className="px-3 py-3 text-left font-medium whitespace-nowrap text-gj-secondary text-xs" />
               </tr>
             </thead>
             <tbody>
@@ -576,7 +567,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         className="cursor-pointer accent-gj-amber"
                       />
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
+                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
                       {c.gj_id}
                     </td>
                     {/* Nombre — editable inline */}
@@ -607,7 +598,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       )}
                     </td>
                     {/* Teléfono — editable inline */}
-                    <td className="px-3 py-3 whitespace-nowrap text-gj-secondary"
+                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary"
                       onClick={(e) => {
                         e.stopPropagation()
                         setEditingCell({ id: c.id, field: 'telefono' })
@@ -634,7 +625,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                       )}
                     </td>
                     {/* Canal — dropdown inline */}
-                    <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       <select
                         value={c.canal}
                         onChange={(e) => void handleInlinePatch(c.id, 'canal', e.target.value)}
@@ -671,14 +662,14 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         <span className="text-gj-secondary">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="hidden lg:table-cell px-3 py-3">
                       {c.estado_pago ? (
                         <Badge {...BADGE_ESTADO_PAGO[c.estado_pago]} />
                       ) : (
                         <span className="text-gj-secondary">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
+                    <td className="hidden lg:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
                       {formatFecha(c.created_at)}
                     </td>
                     <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
@@ -686,7 +677,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         <Link
                           href={`/clientes/${c.id}`}
                           title="Ver detalle"
-                          className="text-gj-blue no-underline"
+                          className="text-gj-blue no-underline p-1.5 rounded hover:bg-gj-blue/10 transition-colors flex items-center"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -697,7 +688,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                           title="Editar"
                           onClick={() => abrirEdicion(c.id)}
                           disabled={fetchingEdit}
-                          className={`bg-transparent border-none p-0 text-gj-blue flex items-center ${fetchingEdit ? 'cursor-wait' : 'cursor-pointer'}`}
+                          className={`bg-transparent border-none p-1.5 rounded text-gj-blue flex items-center hover:bg-gj-blue/10 transition-colors ${fetchingEdit ? 'cursor-wait' : 'cursor-pointer'}`}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -706,11 +697,11 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         </button>
                         {isAdmin && (
                           <button
-                            title="Eliminar"
+                            title="Marcar como inactivo"
                             onClick={() =>
                               setPendingAction({ type: 'eliminar-individual', id: c.id, nombre: c.nombre })
                             }
-                            className="bg-transparent border-none p-0 cursor-pointer text-gj-red flex items-center"
+                            className="bg-transparent border-none p-1.5 cursor-pointer text-gj-red flex items-center rounded hover:bg-gj-red/10 transition-colors"
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="3 6 5 6 21 6" />

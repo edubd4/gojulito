@@ -27,16 +27,27 @@ export default async function SeminariosPage() {
 
   const supabase = await createServiceRoleClient()
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('rol')
+    .eq('id', user.id)
+    .single()
+  const isAdmin = profile?.rol === 'admin'
+
+  const hoy = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+
   const { data: rawActivos } = await supabase
     .from('seminarios')
     .select('id, sem_id, nombre, fecha, modalidad, notas, capacidad_max, seminario_asistentes(monto, estado_pago)')
     .or('activo.eq.true,activo.is.null')
     .order('fecha', { ascending: true })
 
+  // Historial: seminarios con fecha pasada (independiente de activo),
+  // excluye los que son activo=false pero tienen fecha futura (fueron desactivados por error)
   const { data: rawPasados } = await supabase
     .from('seminarios')
     .select('id, sem_id, nombre, fecha, modalidad, notas, capacidad_max, seminario_asistentes(monto, estado_pago)')
-    .eq('activo', false)
+    .lt('fecha', hoy)
     .order('fecha', { ascending: false })
     .limit(6)
 
@@ -103,6 +114,7 @@ export default async function SeminariosPage() {
 
       {/* Sección: Historial */}
       <HistorialSeminarios
+        isAdmin={isAdmin}
         seminarios={pasados.map((sem) => {
           const { asistentesCount, totalRecaudado } = calcStats(sem)
           return {

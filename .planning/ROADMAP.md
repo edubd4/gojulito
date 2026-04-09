@@ -7,7 +7,7 @@
 - ✅ **v1.2 Canales y Operacion Avanzada** — Phases 4-9 (shipped 2026-03-30)
 - ✅ **v1.3 UX Fixes** — Phase 10 (shipped 2026-04-01)
 - ✅ **v1.4 Estabilizacion y Entrega** — FIX-01/02 + FIX-A..F (shipped local 2026-04-07 / parcial en prod)
-- 🟡 **v1.5 Horizon Vista Design System** — UI deployada 2026-04-08, bugs funcionales abiertos
+- ✅ **v1.5 Horizon Vista Design System** — UI + bugs funcionales cerrados (2026-04-09)
 - 🔲 **v1.6** — Formulario externo, notificaciones, búsqueda global (sin planificar)
 
 ---
@@ -29,14 +29,14 @@
 | F4 | Tablas y listas — Clientes, Trámites, Pagos redesignados | ✅ |
 | F5 | Chips de progreso — DS-160/PAGO/CAS/EMBAJADA en tabla de Trámites | ✅ |
 
-### Bugs abiertos post-deploy v1.5
+### Bugs post-deploy v1.5 — todos cerrados (2026-04-09)
 
-| ID | Prioridad | Descripción | Fix requerido |
-|----|-----------|-------------|---------------|
-| BUG-01 | 🔴 Alta | Seminarios muestra 0 — query sin fix de `activo` | Aplicar `.or('activo.eq.true,activo.is.null')` y commitear |
-| BUG-02 | 🟡 Media | `/soporte` → 404 — link muerto en sidebar | Crear página o redirigir |
-| BUG-03 | 🟡 Media | AccionesRapidas siguen en dashboard | Eliminar bloque (FIX-B) y commitear |
-| BUG-04 | 🟡 Media | Métricas de trámites no filtran al click | Implementar filtro `?metric=` (FIX-E) y commitear |
+| ID | Prioridad | Descripción | Estado |
+|----|-----------|-------------|--------|
+| BUG-01 | 🔴 Alta | Seminarios muestra 0 — SELECT con columnas inexistentes + query `activo` | ✅ Cerrado |
+| BUG-02 | 🟡 Media | `/soporte` → 404 — link muerto en sidebar | ✅ Cerrado |
+| BUG-03 | 🟡 Media | AccionesRapidas siguen en dashboard | ✅ Cerrado |
+| BUG-04 | 🟡 Media | Métricas de trámites no filtran al click | ✅ Cerrado |
 
 ### Pendiente v1.5 (no incluido en redesign)
 
@@ -69,18 +69,49 @@ Las siguientes fases fueron planificadas para v1.4 pero no se completaron. Pasan
 
 ---
 
-## v1.6 — Backlog (sin planificar)
+## v1.6 — Estabilización + Features Core (planificado 2026-04-09)
 
-Candidatos para próximos milestones:
+**Objetivo:** Completar todas las features funcionales pendientes y dejar el proyecto listo para entrega.
 
-- Formulario externo de registro de clientes (solicitudes desde web)
-- Sistema de notificaciones real (push / email)
-- Documentos editables por seminario
-- Búsqueda global funcional
-- Paginación en listas largas
-- Página de Ayuda / Soporte integrada
-- Métricas interactivas con filtro `?metric=` (FIX-E)
-- Pagos parciales y auto-calculo de resto
+### v1.6-A — Bugs UX post-v1.5 (URGENTE)
+
+| Fix | Descripción | Estado |
+|-----|-------------|--------|
+| BUG-05 | Clientes: texto modal delete confuso + target pequeño | 🔴 En curso |
+| BUG-06 | Seminarios cards: panel imagen placeholder visible | 🔴 En curso |
+| BUG-07 | Seminarios historial: muestra inactivos-por-error, sin delete | 🔴 En curso |
+
+### v1.6-B — Fases prioritarias (Julio)
+
+| Fase | Descripción | Prioridad |
+|------|-------------|-----------|
+| F11 | **Pago parcial** — auto-cálculo remanente, toggle archivar como PENDIENTE | 🔴 Alta |
+| F15 | **Dashboard chart interactivo** — datos reales, hover tooltips, drill-down | 🟡 Media |
+| F17 | **Página /ayuda mejorada** — acordeón por módulo, videos/capturas, FAQ | 🟡 Media |
+
+### v1.6-C — Fases secundarias
+
+| Fase | Descripción | Prioridad |
+|------|-------------|-----------|
+| F12 | **Calendario mejorado** — cap de chips (máx 2+N), labels compactos, popup de detalle | 🟡 Media |
+| F14 | **Seminarios visibilidad** — toggle activo/inactivo UI, responsive cards | 🟡 Media |
+| F16 | **Tablas responsive** — mobile-first, badge CAS en trámites | 🟡 Media |
+
+### v1.6-D — Infraestructura
+
+| Item | Descripción |
+|------|-------------|
+| Paginación | Server-side pagination en clientes, tramites, pagos |
+| Responsive | Layout móvil completo (sidebar colapsable, tablas scroll horizontal) |
+| Deuda técnica | Unificar `{ success }` → `{ data, error }` en bulk routes; focus rings; tokens HV completos |
+
+### v1.6-E — Entrega final
+
+| Feature | Descripción |
+|---------|-------------|
+| Formulario externo | Página pública `/solicitud` — registro de interesados desde web, sin login |
+| Búsqueda global | SearchBar en topbar funcional (clientes + trámites + seminarios) |
+| Cierre de proyecto | README final, backup BD, entrega documentación |
 
 ---
 

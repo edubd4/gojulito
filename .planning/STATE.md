@@ -1,13 +1,13 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.5
-milestone_name: Horizon Vista Design System
-status: bugs_pendientes
-last_updated: "2026-04-08T23:00:00.000Z"
+milestone: v1.6
+milestone_name: Estabilizacion + Features Core
+status: en_progreso
+last_updated: "2026-04-09T14:00:00.000Z"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  bugs_open: 4
+  fase_actual: v1.6-A
+  bugs_open: 3
+  bugs_closed: 4
 ---
 
 # Project State
@@ -23,7 +23,8 @@ See: .planning/PROJECT.md
 
 ## Current Position
 
-Milestone: v1.5 — Horizon Vista Design System — **DEPLOYED 2026-04-08** (UI completa, bugs funcionales pendientes)
+Milestone activo: **v1.6-A** — Bugs UX + Plan de fases completo (2026-04-09)
+Milestone anterior: v1.5 Horizon Vista — ✅ ESTABLE (bugs BUG-01..04 cerrados)
 
 ### Qué se deployó
 
@@ -42,20 +43,16 @@ Build time: 3m 31s — Estado Dokploy: ✅ Done
 
 ---
 
-## Bugs abiertos post-deploy (2026-04-08)
+## Bugs cerrados post-deploy v1.5 (2026-04-09)
 
-| ID | Página | Bug | Prioridad | Causa |
-|----|--------|-----|-----------|-------|
-| BUG-01 | Seminarios | "0 próximos · 0 en historial" aunque hay datos con `activo=true` | 🔴 Alta | Redesign no incluyó el fix de query `.or('activo.eq.true,activo.is.null')` — FIX-D no commiteado antes del redesign |
-| BUG-02 | Sidebar | Link "Soporte" lleva a 404 (`/soporte` no existe) | 🟡 Media | Nueva feature en sidebar sin página construida |
-| BUG-03 | Dashboard | AccionesRapidas siguen en dashboard (Nuevo Cliente, Facturación, Archivo, Nuevo Trámite) | 🟡 Media | FIX-B no commiteado antes del redesign |
-| BUG-04 | Trámites | Métricas no filtran al hacer click (FIX-E sin efecto) | 🟡 Media | FIX-E no commiteado antes del redesign |
+| ID | Página | Bug | Prioridad | Estado | Commits |
+|----|--------|-----|-----------|--------|---------|
+| BUG-01 | Seminarios | "0 próximos · 0 en historial" — SELECT con columnas inexistentes + query `activo` | 🔴 Alta | ✅ Cerrado | d3dc4f2, 80ff7f4, 8892f91 |
+| BUG-02 | Sidebar | Link "Soporte" → 404 | 🟡 Media | ✅ Cerrado | d3dc4f2 |
+| BUG-03 | Dashboard | AccionesRapidas siguen visibles | 🟡 Media | ✅ Cerrado | d3dc4f2 |
+| BUG-04 | Trámites | Métricas no filtran al click | 🟡 Media | ✅ Cerrado | d3dc4f2 |
 
-### Nota de proceso — causa raíz
-
-Los fixes FIX-B, FIX-D, FIX-E, FIX-F de v1.4 se aplicaron al directorio local pero **no se commitearon a git** antes de que se hiciera el commit del redesign. El redesign fue hecho sobre una rama que no tenía esos cambios. Al deployar el redesign, los fixes funcionales quedaron fuera de producción.
-
-**Acción correctiva:** commitear los fixes al repo y hacer un nuevo deploy.
+Verificado en producción 2026-04-09 en `gojulito.automatizacionestuc.online`.
 
 ---
 
@@ -102,7 +99,7 @@ Los fixes FIX-B, FIX-D, FIX-E, FIX-F de v1.4 se aplicaron al directorio local pe
 - SEM IDs via RPC
 - Bot endpoints siempre via API routes
 - Todos los `<select>` nativos requieren `style={{ colorScheme: 'dark' }}` (2026-04-06)
-- Seminarios: query usa `.or('activo.eq.true,activo.is.null')` — null tratado como activo (2026-04-07) ← **pendiente deployar**
+- Seminarios: query usa `.or('activo.eq.true,activo.is.null')` — null tratado como activo (deployado 2026-04-09)
 - Sistema de iconos: Material Symbols (Horizon Vista) — reemplaza lucide-react progresivamente
 - Sidebar: "Soporte" y "Cerrar sesión" como nuevos items fijos al fondo
 
@@ -113,8 +110,8 @@ Los fixes FIX-B, FIX-D, FIX-E, FIX-F de v1.4 se aplicaron al directorio local pe
 - Sin paginación en listas (clientes, tramites, pagos)
 - Focus rings ausentes en inputs (accesibilidad)
 - `verificarAdmin` no es helper compartido — inline en `api/usuarios/route.ts`
-- Página `/soporte` no existe (BUG-02)
+- Página `/ayuda` creada — link Soporte funcional (BUG-02 cerrado)
 - Fases 11, 12, 14, 15, 16, 17 de v1.4 siguen pendientes (absorbidas en backlog)
 
 ---
-*Last updated: 2026-04-08*
+*Last updated: 2026-04-09*
