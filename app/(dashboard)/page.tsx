@@ -52,21 +52,28 @@ function formatFechaHoy(): string {
 
 const DAY_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
-function buildWeeklyData(eventos: { created_at: string }[]) {
+interface HistorialEvento {
+  created_at: string
+  tipo: string
+  descripcion: string
+}
+
+function buildWeeklyData(eventos: HistorialEvento[]) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const days: { label: string; count: number; isToday: boolean; date: Date }[] = []
+  const days: {
+    label: string
+    count: number
+    isToday: boolean
+    date: Date
+    events: { tipo: string; descripcion: string }[]
+  }[] = []
 
   // Últimos 7 días corridos (hoy inclusive, hacia atrás)
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today)
     d.setDate(today.getDate() - i)
-    days.push({
-      label: DAY_LABELS[d.getDay()],
-      count: 0,
-      isToday: i === 0,
-      date: d,
-    })
+    days.push({ label: DAY_LABELS[d.getDay()], count: 0, isToday: i === 0, date: d, events: [] })
   }
 
   for (const ev of eventos) {
@@ -75,12 +82,13 @@ function buildWeeklyData(eventos: { created_at: string }[]) {
     for (const day of days) {
       if (evDate.getTime() === day.date.getTime()) {
         day.count++
+        day.events.push({ tipo: ev.tipo, descripcion: ev.descripcion })
         break
       }
     }
   }
 
-  return days.map(({ label, count, isToday }) => ({ label, count, isToday }))
+  return days.map(({ label, count, isToday, events }) => ({ label, count, isToday, events }))
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -108,7 +116,7 @@ export default async function DashboardPage() {
     supabase.from('v_metricas').select('*').returns<MetricaRow[]>(),
     supabase.from('v_turnos_semana').select('*').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
     supabase.from('v_deudas_proximas').select('*').order('fecha_vencimiento_deuda', { ascending: true }).returns<DeudaProxima[]>(),
-    supabase.from('historial').select('created_at').gte('created_at', sevenDaysAgo.toISOString()),
+    supabase.from('historial').select('created_at, tipo, descripcion').gte('created_at', sevenDaysAgo.toISOString()),
     supabase
       .from('seminarios')
       .select('id, nombre, fecha, seminario_asistentes(id)')

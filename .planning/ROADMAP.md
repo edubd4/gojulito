@@ -81,13 +81,13 @@ Las siguientes fases fueron planificadas para v1.4 pero no se completaron. Pasan
 | BUG-06 | Seminarios cards: panel imagen placeholder visible | 🔴 En curso |
 | BUG-07 | Seminarios historial: muestra inactivos-por-error, sin delete | 🔴 En curso |
 
-### v1.6-B — Fases prioritarias (Julio)
+### v1.6-B — Fases prioritarias (Julio) ✅ COMPLETADAS (2026-04-09)
 
-| Fase | Descripción | Prioridad |
-|------|-------------|-----------|
-| F11 | **Pago parcial** — auto-cálculo remanente, toggle archivar como PENDIENTE | 🔴 Alta |
-| F15 | **Dashboard chart interactivo** — datos reales, hover tooltips, drill-down | 🟡 Media |
-| F17 | **Página /ayuda mejorada** — acordeón por módulo, videos/capturas, FAQ | 🟡 Media |
+| Fase | Descripción | Estado |
+|------|-------------|--------|
+| F11 | **Pago parcial** — auto-cálculo remanente, toggle archivar como PENDIENTE | ✅ Ya implementado (NuevoPagoModal + PATCH /api/pagos/[id]) |
+| F15 | **Dashboard chart interactivo** — hover + click drill-down por día | ✅ WeeklyActivityChart con panel de eventos |
+| F17 | **Página /ayuda mejorada** — acordeón por módulo + FAQ con 5 preguntas | ✅ Contenido actualizado |
 
 ### v1.6-C — Fases secundarias
 

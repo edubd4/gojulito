@@ -23,16 +23,17 @@ export default function AyudaPage() {
         <div className="px-6 pb-6 pt-0">
           <div className="border-t border-gj-surface-high pt-4 space-y-3">
             <p className="text-sm text-gj-secondary leading-relaxed">
-              La pantalla principal resume el estado del negocio con métricas y acciones rápidas.
+              La pantalla principal resume el estado del negocio con métricas clave y alertas de deudas próximas.
             </p>
             <ul className="list-disc list-inside text-sm text-gj-secondary leading-relaxed space-y-1">
-              <li><span className="text-gj-text">4 métricas</span>: Clientes activos, Visas en proceso, Deudas pendientes y Turnos esta semana</li>
-              <li><span className="text-gj-text">Acciones rápidas</span>: botones para crear nuevo cliente, trámite o pago sin ir al menú</li>
-              <li><span className="text-gj-text">Chart semanal</span>: muestra la actividad (clientes, pagos) de los últimos 7 días</li>
-              <li><span className="text-gj-text">Próximo seminario</span>: el seminario más cercano con fecha, modalidad y cupos</li>
+              <li><span className="text-gj-text">Trámites activos</span>: visas en proceso, con turno asignado y entregadas — con barra de actividad semanal</li>
+              <li><span className="text-gj-text">Actividad semanal</span>: hacé click en cualquier barra para ver los eventos de ese día (pagos, cambios de estado, notas)</li>
+              <li><span className="text-gj-text">Próximas citas</span>: turnos de embajada agendados para los próximos días</li>
+              <li><span className="text-gj-text">Próximo seminario</span>: el seminario más cercano con fecha, modalidad y cupos disponibles</li>
+              <li><span className="text-gj-text">Deudas próximas</span>: pagos en DEUDA con vencimiento en los próximos 30 días</li>
             </ul>
             <p className="text-xs text-gj-amber mt-2">
-              💡 Tip: usá las acciones rápidas para registrar pagos o clientes sin salir del dashboard.
+              💡 Tip: el chart semanal es interactivo — hacé click en el día para ver qué se registró.
             </p>
           </div>
         </div>
@@ -57,6 +58,7 @@ export default function AyudaPage() {
               <li><span className="text-gj-text">Búsqueda</span>: filtrá por nombre del cliente o ID del trámite (ej: VISA-0012)</li>
               <li><span className="text-gj-text">Progress badges</span>: DS-160, Pago, Cita y Embajada — indican qué pasos están completos</li>
               <li><span className="text-gj-text">Nuevo trámite</span>: wizard de 4 pasos — datos, tipo de visa, documentación y resumen</li>
+              <li><span className="text-gj-text">Filtros de métricas</span>: hacé click en las métricas superiores para filtrar por estado</li>
             </ul>
             <p className="text-xs text-gj-amber mt-2">
               💡 Tip: los badges de progreso se actualizan desde el detalle del trámite, no desde la tabla.
@@ -77,16 +79,16 @@ export default function AyudaPage() {
         <div className="px-6 pb-6 pt-0">
           <div className="border-t border-gj-surface-high pt-4 space-y-3">
             <p className="text-sm text-gj-secondary leading-relaxed">
-              Base de datos de todos los clientes con vista detallada y acciones en lote.
+              Base de datos de todos los clientes con vista detallada e historial completo.
             </p>
             <ul className="list-disc list-inside text-sm text-gj-secondary leading-relaxed space-y-1">
               <li><span className="text-gj-text">Filtros por estado</span>: PROSPECTO, ACTIVO, FINALIZADO, INACTIVO</li>
               <li><span className="text-gj-text">Búsqueda</span>: por nombre, teléfono o ID (ej: GJ-0034)</li>
-              <li><span className="text-gj-text">Acciones en lote</span>: seleccioná varios clientes para cambiar estado o eliminar</li>
               <li><span className="text-gj-text">Detalle del cliente</span>: datos personales, visas asociadas, historial de pagos y auditoría</li>
+              <li><span className="text-gj-text">Marcar como inactivo</span>: el botón de papelera no elimina — desactiva al cliente conservando todos sus datos</li>
             </ul>
             <p className="text-xs text-gj-amber mt-2">
-              💡 Tip: nunca se elimina un cliente — se marca como INACTIVO para mantener el historial.
+              💡 Tip: nunca se elimina un cliente — se marca como INACTIVO para mantener el historial completo.
             </p>
           </div>
         </div>
@@ -108,12 +110,13 @@ export default function AyudaPage() {
             </p>
             <ul className="list-disc list-inside text-sm text-gj-secondary leading-relaxed space-y-1">
               <li><span className="text-gj-green">PAGADO</span> (verde): el pago fue recibido en su totalidad</li>
-              <li><span className="text-gj-red">DEUDA</span> (rojo): hay un monto pendiente de cobro</li>
+              <li><span className="text-gj-red">DEUDA</span> (rojo): hay un monto pendiente de cobro, con fecha de vencimiento</li>
               <li><span className="text-gj-secondary">PENDIENTE</span> (gris): pago acordado pero aún no recibido</li>
-              <li><span className="text-gj-text">Pago parcial</span>: ingresá un monto menor al total — el sistema calcula el remanente y lo archiva como PENDIENTE</li>
+              <li><span className="text-gj-text">Pago parcial</span>: al registrar un nuevo pago, el sistema detecta deudas existentes y calcula el remanente automáticamente — podés archivar la diferencia como PENDIENTE</li>
+              <li><span className="text-gj-text">Cambio de estado</span>: usá el dropdown de estado en la tabla para actualizar pagos individualmente</li>
             </ul>
             <p className="text-xs text-gj-amber mt-2">
-              💡 Tip: cada pago queda vinculado a un trámite o seminario para mantener el historial ordenado.
+              💡 Tip: cada pago queda vinculado al trámite o seminario para mantener el historial ordenado.
             </p>
           </div>
         </div>
@@ -134,13 +137,14 @@ export default function AyudaPage() {
               Creación y gestión de seminarios presenciales o virtuales.
             </p>
             <ul className="list-disc list-inside text-sm text-gj-secondary leading-relaxed space-y-1">
-              <li><span className="text-gj-text">Modalidades</span>: PRESENCIAL o VIRTUAL, con capacidad y precio configurable</li>
-              <li><span className="text-gj-text">Asistentes</span>: agregá, editá y gestioná quiénes participaron en cada seminario</li>
-              <li><span className="text-gj-text">Conversión a visa</span>: marcá qué asistentes luego contrataron un trámite de visa</li>
-              <li><span className="text-gj-text">Visibilidad</span>: los seminarios inactivos no aparecen en el dashboard ni en el calendario</li>
+              <li><span className="text-gj-text">Próximos seminarios</span>: cards con capacidad disponible, fecha y modalidad</li>
+              <li><span className="text-gj-text">Historial</span>: seminarios pasados (fecha anterior a hoy) — podés archivarlos con el botón &quot;Archivar&quot;</li>
+              <li><span className="text-gj-text">Asistentes</span>: agregá y gestioná quiénes participaron en cada seminario</li>
+              <li><span className="text-gj-text">Conversión a visa</span>: marcá qué asistentes luego contrataron un trámite — clave para medir el ROI</li>
+              <li><span className="text-gj-text">Archivar</span>: los seminarios archivados dejan de aparecer en el historial visible</li>
             </ul>
             <p className="text-xs text-gj-amber mt-2">
-              💡 Tip: la conversión a visa es clave para medir el ROI de cada seminario.
+              💡 Tip: la conversión a visa te permite medir cuántos asistentes terminan siendo clientes.
             </p>
           </div>
         </div>
@@ -192,20 +196,88 @@ export default function AyudaPage() {
             </p>
             <ul className="list-disc list-inside text-sm text-gj-secondary leading-relaxed space-y-1">
               <li><span className="text-gj-text">Gestión de usuarios</span>: crear colaboradores, editar datos y activar/desactivar accesos</li>
-              <li><span className="text-gj-text">Precios</span>: definí el precio base de visa y seminario — se usa como referencia al crear pagos</li>
+              <li><span className="text-gj-text">Precios</span>: precio base de visa y seminario — se usa como referencia al crear pagos nuevos</li>
               <li><span className="text-gj-text">Grupos familiares</span>: asociá clientes en un mismo grupo para gestionar trámites relacionados</li>
             </ul>
             <p className="text-xs text-gj-amber mt-2">
-              💡 Tip: actualizá los precios en Configuración antes de empezar a registrar pagos nuevos cada ciclo.
+              💡 Tip: actualizá los precios en Configuración antes de empezar cada ciclo de pagos nuevo.
             </p>
           </div>
         </div>
       </details>
 
+      {/* FAQ */}
+      <div className="mt-8 mb-2">
+        <h2 className="text-lg font-display font-bold text-gj-text mb-4">Preguntas frecuentes</h2>
+        <div className="space-y-3">
+
+          <details className="group bg-gj-surface-low rounded-xl border border-gj-outline/20 overflow-hidden">
+            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-gj-surface-mid/50 transition-colors">
+              <span className="text-sm font-medium text-gj-text">¿Se puede eliminar un cliente o trámite?</span>
+              <span className="text-gj-secondary text-xs group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div className="px-5 pb-4 pt-0 border-t border-gj-outline/10">
+              <p className="text-sm text-gj-secondary leading-relaxed">
+                No. GoJulito usa <strong className="text-gj-text">soft-delete</strong>: los clientes se marcan como INACTIVO y los seminarios se archivan, pero los datos nunca se borran. Esto garantiza el historial completo y evita pérdidas accidentales.
+              </p>
+            </div>
+          </details>
+
+          <details className="group bg-gj-surface-low rounded-xl border border-gj-outline/20 overflow-hidden">
+            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-gj-surface-mid/50 transition-colors">
+              <span className="text-sm font-medium text-gj-text">¿Cómo registro un pago parcial?</span>
+              <span className="text-gj-secondary text-xs group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div className="px-5 pb-4 pt-0 border-t border-gj-outline/10">
+              <p className="text-sm text-gj-secondary leading-relaxed">
+                Andá a Pagos → <strong className="text-gj-text">Nuevo Pago</strong>. Al seleccionar un cliente con deuda existente, el sistema muestra automáticamente el panel de resolución con el total adeudado. Ingresá el monto que pagó — si es menor, podés marcar <em>Archivar remanente como PENDIENTE</em> para guardar la diferencia como pago pendiente.
+              </p>
+            </div>
+          </details>
+
+          <details className="group bg-gj-surface-low rounded-xl border border-gj-outline/20 overflow-hidden">
+            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-gj-surface-mid/50 transition-colors">
+              <span className="text-sm font-medium text-gj-text">¿Por qué no aparece un seminario en el dashboard?</span>
+              <span className="text-gj-secondary text-xs group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div className="px-5 pb-4 pt-0 border-t border-gj-outline/10">
+              <p className="text-sm text-gj-secondary leading-relaxed">
+                El widget "Próximo Seminario" solo muestra seminarios activos con fecha futura. Si un seminario está archivado (inactivo) o ya pasó su fecha, no aparece. Verificá en la sección Seminarios que esté activo y con fecha correcta.
+              </p>
+            </div>
+          </details>
+
+          <details className="group bg-gj-surface-low rounded-xl border border-gj-outline/20 overflow-hidden">
+            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-gj-surface-mid/50 transition-colors">
+              <span className="text-sm font-medium text-gj-text">¿Qué es el historial y por qué no se puede editar?</span>
+              <span className="text-gj-secondary text-xs group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div className="px-5 pb-4 pt-0 border-t border-gj-outline/10">
+              <p className="text-sm text-gj-secondary leading-relaxed">
+                El historial es un <strong className="text-gj-text">registro de auditoría inmutable</strong>. Cada cambio de estado, pago o nota queda registrado con fecha, hora y quién lo realizó. No se puede editar ni borrar para garantizar la trazabilidad completa de cada cliente.
+              </p>
+            </div>
+          </details>
+
+          <details className="group bg-gj-surface-low rounded-xl border border-gj-outline/20 overflow-hidden">
+            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-gj-surface-mid/50 transition-colors">
+              <span className="text-sm font-medium text-gj-text">¿Cómo sé si el bot de Telegram está funcionando?</span>
+              <span className="text-gj-secondary text-xs group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <div className="px-5 pb-4 pt-0 border-t border-gj-outline/10">
+              <p className="text-sm text-gj-secondary leading-relaxed">
+                El bot envía notificaciones automáticas cuando se registra un nuevo cliente o se actualiza el estado de una visa. Si no llegan mensajes, verificá con el administrador del sistema que el servicio n8n esté activo en el servidor.
+              </p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
       {/* Footer note */}
-      <div className="pt-4 pb-2 text-center">
+      <div className="pt-2 pb-4 text-center">
         <p className="text-xs text-gj-secondary">
-          ¿Encontraste algo que no funciona como esperabas? Contactá al administrador del sistema.
+          GoJulito v1.6 · Sistema operativo de Julio Correa · Tucumán, Argentina
         </p>
       </div>
     </div>

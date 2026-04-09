@@ -3,11 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Estabilizacion + Features Core
 status: en_progreso
-last_updated: "2026-04-09T14:00:00.000Z"
+last_updated: "2026-04-09T18:00:00.000Z"
 progress:
-  fase_actual: v1.6-A
-  bugs_open: 3
-  bugs_closed: 4
+  fase_actual: v1.6-C
+  bugs_open: 0
+  bugs_closed: 7
+  fases_completadas: v1.6-A (BUG-05..07), v1.6-B (F11, F15, F17)
 ---
 
 # Project State

@@ -1,10 +1,16 @@
 import MetricaMiniCard from './MetricaMiniCard'
 import WeeklyActivityChart from './WeeklyActivityChart'
 
+interface EventItem {
+  tipo: string
+  descripcion: string
+}
+
 interface WeekDay {
   label: string
   count: number
   isToday: boolean
+  events?: EventItem[]
 }
 
 interface Props {
