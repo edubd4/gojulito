@@ -242,7 +242,7 @@ export default function AyudaPage() {
             </summary>
             <div className="px-5 pb-4 pt-0 border-t border-gj-outline/10">
               <p className="text-sm text-gj-secondary leading-relaxed">
-                El widget "Próximo Seminario" solo muestra seminarios activos con fecha futura. Si un seminario está archivado (inactivo) o ya pasó su fecha, no aparece. Verificá en la sección Seminarios que esté activo y con fecha correcta.
+                El widget &ldquo;Próximo Seminario&rdquo; solo muestra seminarios activos con fecha futura. Si un seminario está archivado (inactivo) o ya pasó su fecha, no aparece. Verificá en la sección Seminarios que esté activo y con fecha correcta.
               </p>
             </div>
           </details>
