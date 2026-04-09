@@ -105,6 +105,7 @@ export default async function SeminariosPage() {
                   asistentesCount={asistentesCount}
                   totalRecaudado={totalRecaudado}
                   capacidadMax={sem.capacidad_max ?? 50}
+                  isAdmin={isAdmin}
                 />
               )
             })}

@@ -5,10 +5,10 @@ milestone_name: Estabilizacion + Features Core
 status: en_progreso
 last_updated: "2026-04-09T18:00:00.000Z"
 progress:
-  fase_actual: v1.6-C
+  fase_actual: v1.6-D
   bugs_open: 0
   bugs_closed: 7
-  fases_completadas: v1.6-A (BUG-05..07), v1.6-B (F11, F15, F17)
+  fases_completadas: v1.6-A (BUG-05..07), v1.6-B (F11, F15, F17), v1.6-C (F12, F14, F16)
 ---
 
 # Project State

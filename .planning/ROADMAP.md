@@ -89,13 +89,13 @@ Las siguientes fases fueron planificadas para v1.4 pero no se completaron. Pasan
 | F15 | **Dashboard chart interactivo** — hover + click drill-down por día | ✅ WeeklyActivityChart con panel de eventos |
 | F17 | **Página /ayuda mejorada** — acordeón por módulo + FAQ con 5 preguntas | ✅ Contenido actualizado |
 
-### v1.6-C — Fases secundarias
+### v1.6-C — Fases secundarias ✅ COMPLETADAS (2026-04-09)
 
-| Fase | Descripción | Prioridad |
-|------|-------------|-----------|
-| F12 | **Calendario mejorado** — cap de chips (máx 2+N), labels compactos, popup de detalle | 🟡 Media |
-| F14 | **Seminarios visibilidad** — toggle activo/inactivo UI, responsive cards | 🟡 Media |
-| F16 | **Tablas responsive** — mobile-first, badge CAS en trámites | 🟡 Media |
+| Fase | Descripción | Estado |
+|------|-------------|--------|
+| F12 | **Calendario mejorado** — overflow "+N más" clickeable, DayDetailPopup con todos los eventos del día | ✅ |
+| F14 | **Seminarios visibilidad** — botón "Marcar inactivo" directamente en SeminarioCard (admin only) | ✅ |
+| F16 | **Badge CAS** — renombrado CITA→CAS en VisaProgressBadges + tooltip actualizado en TramitesTable | ✅ |
 
 ### v1.6-D — Infraestructura
 

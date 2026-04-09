@@ -358,7 +358,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
                     <span className="flex items-center gap-1">
                       Progreso
                       <span
-                        title="Progreso muestra el avance del trámite: DS-160 (formulario), Pago (cuota abonada), Cita (turno en embajada), Embajada (resultado final). ✓ = completado, ⟳ = en curso, gris = pendiente"
+                        title="Progreso muestra el avance del trámite: DS-160 (formulario), Pago (cuota abonada), CAS (cita consular), Embajada (resultado final). ✓ = completado, ⟳ = en curso, gris = pendiente"
                         className="cursor-help text-gj-secondary/50 hover:text-gj-secondary transition-colors"
                       >
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

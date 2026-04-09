@@ -26,7 +26,7 @@ function getSteps(estado: EstadoVisa, ds160: string | null, fechaTurno: string |
   // PAGO
   const pagoState: BadgeState = pagoDone ? 'done' : ds160Done ? 'active' : 'pending'
 
-  // CITA CAS
+  // CITA
   const casState: BadgeState = casDone
     ? 'done'
     : tieneTurno

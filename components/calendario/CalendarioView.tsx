@@ -289,6 +289,12 @@ export default function CalendarioView({
   const [selectedTurno, setSelectedTurno] = useState<TurnoItem | null>(null)
   const [selectedPago, setSelectedPago] = useState<PagoCalItem | null>(null)
   const [selectedSeminario, setSelectedSeminario] = useState<SeminarioCalItem | null>(null)
+  const [selectedDayPopup, setSelectedDayPopup] = useState<{
+    label: string
+    turnos: TurnoItem[]
+    pagos: PagoCalItem[]
+    seminarios: SeminarioCalItem[]
+  } | null>(null)
 
   const todayKey = dateKey(new Date())
 
@@ -412,6 +418,67 @@ export default function CalendarioView({
         <SeminarioPopup seminario={selectedSeminario} onClose={() => setSelectedSeminario(null)} />
       )}
 
+      {/* Popup día — todos los eventos */}
+      {selectedDayPopup && (
+        <>
+          <div className="fixed inset-0 z-[60]" onClick={() => setSelectedDayPopup(null)} />
+          <div
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/[12%] rounded-[14px] p-6 w-[340px] max-h-[80vh] font-sans flex flex-col"
+            style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4 shrink-0">
+              <div className="text-base font-bold text-gj-text">{selectedDayPopup.label}</div>
+              <button
+                onClick={() => setSelectedDayPopup(null)}
+                className="bg-transparent border-none cursor-pointer text-gj-secondary p-1 leading-none"
+                aria-label="Cerrar"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-1.5 overflow-y-auto">
+              {selectedDayPopup.turnos.map((t) => {
+                const chipStyle = CHIP[t.estado] ?? CHIP.EN_PROCESO
+                const badge = BADGE[t.estado] ?? BADGE.EN_PROCESO
+                return (
+                  <button
+                    key={t.visa_id}
+                    onClick={() => { setSelectedDayPopup(null); setSelectedTurno(t) }}
+                    className={`flex items-center justify-between w-full text-left px-3 py-2 rounded-lg border-none cursor-pointer font-sans ${chipStyle.classes}`}
+                  >
+                    <span className="text-[13px] font-semibold">{t.nombre}</span>
+                    <span className="text-[11px] opacity-80">{badge.label}</span>
+                  </button>
+                )
+              })}
+              {selectedDayPopup.pagos.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => { setSelectedDayPopup(null); setSelectedPago(p) }}
+                  className={`flex items-center justify-between w-full text-left px-3 py-2 rounded-lg border-none cursor-pointer font-sans ${p.estado === 'DEUDA' ? 'bg-gj-red/[18%] text-gj-red' : 'bg-gj-green/[18%] text-gj-green'}`}
+                >
+                  <span className="text-[13px] font-semibold">{p.cliente_nombre}</span>
+                  <span className="text-[11px] opacity-80">${p.monto.toLocaleString('es-AR')}</span>
+                </button>
+              ))}
+              {selectedDayPopup.seminarios.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => { setSelectedDayPopup(null); setSelectedSeminario(s) }}
+                  className={`flex items-center justify-between w-full text-left px-3 py-2 rounded-lg border-none cursor-pointer font-sans ${SEMINARIO_CHIP_CLASSES}`}
+                >
+                  <span className="text-[13px] font-semibold">{s.sem_id}</span>
+                  <span className="text-[11px] opacity-80">{s.modalidad === 'PRESENCIAL' ? 'Presencial' : 'Virtual'}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Page title */}
       <h1 className="font-display text-[26px] font-bold text-gj-text mb-6">
         Calendario
@@ -486,13 +553,86 @@ export default function CalendarioView({
                 style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}
               >
                 {week.map((cell, ci) => {
-                  const key = dateKey(cell.date)
+                   const key = dateKey(cell.date)
                   const isToday = key === todayKey
                   const cellTurnos = turnosByDate.get(key) ?? []
                   const cellPagos = pagosByDate.get(key) ?? []
                   const cellSeminarios = seminariosByDate.get(key) ?? []
-                  const visible = cellTurnos.slice(0, 3)
-                  const overflow = cellTurnos.length - 3
+
+                  // Build unified chip list with type tags (CAL-01: unified cap)
+                  type ChipItem =
+                    | { type: 'turno'; data: TurnoItem }
+                    | { type: 'pago'; data: PagoCalItem }
+                    | { type: 'seminario'; data: SeminarioCalItem }
+
+                  const allChips: ChipItem[] = [
+                    ...cellTurnos.map((t): ChipItem => ({ type: 'turno', data: t })),
+                    ...cellPagos.map((p): ChipItem => ({ type: 'pago', data: p })),
+                    ...cellSeminarios.map((s): ChipItem => ({ type: 'seminario', data: s })),
+                  ]
+
+                  const MAX_CHIPS = 2
+                  const visibleChips = allChips.slice(0, MAX_CHIPS)
+                  const overflow = allChips.length - MAX_CHIPS
+
+                  // Track which group types are visible (for CAL-04 separators)
+                  const hasTurno = visibleChips.some((c) => c.type === 'turno')
+                  const hasPago = visibleChips.some((c) => c.type === 'pago')
+                  const hasSeminario = visibleChips.some((c) => c.type === 'seminario')
+
+                  const needsSepBeforePago = hasPago && hasTurno
+                  const needsSepBeforeSeminario = hasSeminario && (hasTurno || hasPago)
+
+                  // Render chip by type
+                  function renderChip(chip: ChipItem) {
+                    if (chip.type === 'turno') {
+                      const t = chip.data
+                      const chipStyle = CHIP[t.estado] ?? CHIP.EN_PROCESO
+                      const firstName = (t.nombre ?? '—').split(' ')[0]
+                      const lastName = t.nombre.split(' ')[1]
+                      const label = lastName ? `${firstName} ${lastName[0]}.` : firstName
+                      return (
+                        <button
+                          key={t.visa_id}
+                          onClick={() => setSelectedTurno(t)}
+                          className={`block w-full text-left px-[5px] py-[2px] rounded text-[11px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] ${chipStyle.classes}`}
+                          title={`${t.nombre} — ${BADGE[t.estado]?.label ?? t.estado}`}
+                        >
+                          {label}
+                        </button>
+                      )
+                    }
+                    if (chip.type === 'pago') {
+                      const p = chip.data
+                      // CAL-02: compact amount — show $XX.XXX without currency name
+                      const montoCompacto = `$${p.monto.toLocaleString('es-AR')}`
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => setSelectedPago(p)}
+                          className={`flex items-center gap-[3px] w-full text-left px-[5px] py-[2px] rounded text-[10px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] ${p.estado === 'DEUDA' ? 'bg-gj-red/[18%] text-gj-red' : 'bg-gj-green/[18%] text-gj-green'}`}
+                          title={`${p.cliente_nombre} — ${montoCompacto} (${p.estado})`}
+                        >
+                          <span className="shrink-0">{p.estado === 'DEUDA' ? '↓' : '↑'}</span>
+                          <span className="overflow-hidden text-ellipsis">{montoCompacto}</span>
+                        </button>
+                      )
+                    }
+                    // chip.type === 'seminario'
+                    const s = chip.data
+                    // CAL-03: show modalidad abbreviation
+                    const modalidadLabel = s.modalidad === 'PRESENCIAL' ? 'Pres.' : 'Virt.'
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => setSelectedSeminario(s)}
+                        className={`block w-full text-left px-[5px] py-[2px] rounded text-[11px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] ${SEMINARIO_CHIP_CLASSES}`}
+                        title={`Seminario — ${s.sem_id} (${s.modalidad})`}
+                      >
+                        {s.sem_id} · {modalidadLabel}
+                      </button>
+                    )
+                  }
 
                   return (
                     <div
@@ -506,52 +646,36 @@ export default function CalendarioView({
                         {cell.date.getDate()}
                       </div>
 
-                      {/* Turno chips */}
+                      {/* Chips (all types, capped at MAX_CHIPS) */}
                       <div className="flex flex-col gap-0.5">
-                        {visible.map((t) => {
-                          const chip = CHIP[t.estado] ?? CHIP.EN_PROCESO
-                          const firstName = (t.nombre ?? '—').split(' ')[0]
-                          const lastName = t.nombre.split(' ')[1]
-                          const label = lastName ? `${firstName} ${lastName[0]}.` : firstName
+                        {visibleChips.map((chip, idx) => {
+                          // CAL-04: visual separator between groups
+                          const isFirstPago = chip.type === 'pago' && needsSepBeforePago && visibleChips[idx - 1]?.type === 'turno'
+                          const isFirstSeminario = chip.type === 'seminario' && needsSepBeforeSeminario && visibleChips[idx - 1]?.type !== 'seminario'
+                          const needsSep = isFirstPago || isFirstSeminario
                           return (
-                            <button
-                              key={t.visa_id}
-                              onClick={() => setSelectedTurno(t)}
-                              className={`block w-full text-left px-[5px] py-[2px] rounded text-[11px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] ${chip.classes}`}
-                              title={`${t.nombre} — ${BADGE[t.estado]?.label ?? t.estado}`}
-                            >
-                              {label}
-                            </button>
+                            <div key={`${chip.type}-${chip.type === 'turno' ? chip.data.visa_id : chip.type === 'pago' ? chip.data.id : chip.data.id}`}>
+                              {needsSep && (
+                                <div className="border-t border-white/[10%] my-0.5" />
+                              )}
+                              {renderChip(chip)}
+                            </div>
                           )
                         })}
+                        {/* CAL-01: overflow indicator — clickable day popup */}
                         {overflow > 0 && (
-                          <span className="text-[10px] text-gj-secondary font-sans pl-0.5">
+                          <button
+                            onClick={() => setSelectedDayPopup({
+                              label: `${cell.date.getDate()} de ${MESES[mes - 1]}`,
+                              turnos: cellTurnos,
+                              pagos: cellPagos,
+                              seminarios: cellSeminarios,
+                            })}
+                            className="text-[10px] text-gj-amber-hv cursor-pointer font-sans pl-0.5 bg-transparent border-none text-left leading-[1.4] hover:underline"
+                          >
                             +{overflow} más
-                          </span>
+                          </button>
                         )}
-                        {/* Pagos del día */}
-                        {cellPagos.map((p) => (
-                          <button
-                            key={p.id}
-                            onClick={() => setSelectedPago(p)}
-                            className={`flex items-center gap-[3px] w-full text-left px-[5px] py-[2px] rounded text-[10px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] mt-[1px] ${p.estado === 'DEUDA' ? 'bg-gj-red/[18%] text-gj-red' : 'bg-gj-green/[18%] text-gj-green'}`}
-                            title={`${p.cliente_nombre} — $${p.monto.toLocaleString('es-AR')} (${p.estado})`}
-                          >
-                            <span className="text-[8px]">$</span>
-                            {p.cliente_nombre.split(' ')[0]}
-                          </button>
-                        ))}
-                        {/* Seminarios del dia */}
-                        {cellSeminarios.map((s) => (
-                          <button
-                            key={s.id}
-                            onClick={() => setSelectedSeminario(s)}
-                            className={`block w-full text-left px-[5px] py-[2px] rounded text-[11px] font-semibold border-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap font-sans leading-[1.4] mt-[1px] ${SEMINARIO_CHIP_CLASSES}`}
-                            title={`Seminario — ${s.sem_id} (${s.modalidad})`}
-                          >
-                            {s.sem_id}
-                          </button>
-                        ))}
                       </div>
                     </div>
                   )
