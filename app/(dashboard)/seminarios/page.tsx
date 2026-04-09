@@ -94,8 +94,6 @@ export default async function SeminariosPage() {
                   asistentesCount={asistentesCount}
                   totalRecaudado={totalRecaudado}
                   capacidadMax={sem.capacidad_max ?? 50}
-                  categoria={sem.categoria}
-                  imagenUrl={sem.imagen_url}
                 />
               )
             })}
@@ -114,7 +112,6 @@ export default async function SeminariosPage() {
             fecha: sem.fecha,
             asistentesCount,
             totalRecaudado,
-            imagenUrl: sem.imagen_url,
           }
         })}
       />
