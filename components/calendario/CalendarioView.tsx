@@ -614,7 +614,7 @@ export default function CalendarioView({
                           title={`${p.cliente_nombre} — ${montoCompacto} (${p.estado})`}
                         >
                           <span className="shrink-0">{p.estado === 'DEUDA' ? '↓' : '↑'}</span>
-                          <span className="overflow-hidden text-ellipsis">{montoCompacto}</span>
+                          <span className="overflow-hidden text-ellipsis">{p.cliente_nombre}</span>
                         </button>
                       )
                     }

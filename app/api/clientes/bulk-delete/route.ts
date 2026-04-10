@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   // Soft-delete: mark clients as INACTIVO instead of physical delete
   const { error, count } = await supabase
     .from('clientes')
-    .update({ estado: 'INACTIVO', updated_at: new Date().toISOString() })
+    .update({ estado: 'INACTIVO', activo: false, updated_at: new Date().toISOString() })
     .in('id', ids)
     .select()
 

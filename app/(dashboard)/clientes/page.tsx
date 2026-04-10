@@ -31,6 +31,7 @@ export default async function ClientesPage() {
       estado,
       created_at
     `)
+    .neq('estado', 'INACTIVO')
     .order('created_at', { ascending: false })
 
   // Query 2: all visas with estado and created_at, ordered by created_at desc

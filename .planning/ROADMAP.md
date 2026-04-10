@@ -8,7 +8,8 @@
 - ✅ **v1.3 UX Fixes** — Phase 10 (shipped 2026-04-01)
 - ✅ **v1.4 Estabilizacion y Entrega** — FIX-01/02 + FIX-A..F (shipped local 2026-04-07 / parcial en prod)
 - ✅ **v1.5 Horizon Vista Design System** — UI + bugs funcionales cerrados (2026-04-09)
-- 🔲 **v1.6** — Formulario externo, notificaciones, búsqueda global (sin planificar)
+- ✅ **v1.6** — Estabilización + Features Core (A..C completadas, BUG-05..09 cerrados)
+- 🔲 **v1.7** — Financiamientos + Google Sheets + Entrega final (en curso 2026-04-10)
 
 ---
 
@@ -66,6 +67,52 @@ Las siguientes fases fueron planificadas para v1.4 pero no se completaron. Pasan
 | 15 | Dashboard — Header + Chart interactivo |
 | 16 | Tablas — Responsive + Badge CAS |
 | 17 | Página de Ayuda con instrucciones por sección |
+
+---
+
+## v1.7 — Financiamientos + Google Sheets + Entrega final (2026-04-10)
+
+**Objetivo:** Nuevas funcionalidades de negocio (financiamientos, captura automática de formularios) y cierre del proyecto.
+
+### v1.7-A — Financiamientos: DB + API 🔲
+
+| Ítem | Descripción |
+|------|-------------|
+| DB | Tablas `financiamientos` + `cuotas_financiamiento` + RLS |
+| API | CRUD completo: `/api/financiamientos`, `/api/financiamientos/[id]`, cuotas |
+| Auto-completar | Cuando todas las cuotas = PAGADO → financiamiento COMPLETADO automático |
+
+**TASK:** `.planning/TASK-17A-financiamientos-db-api.md`
+
+### v1.7-B — Financiamientos: UI 🔲
+
+| Ítem | Descripción |
+|------|-------------|
+| Sidebar | Nuevo ítem "Financiamientos" |
+| Lista | `/financiamientos` con stats y tabla |
+| Detalle | `/financiamientos/[id]` con cuotas y registro de pago |
+| Cliente | Sección de financiamientos en `/clientes/[id]` |
+
+**TASK:** `.planning/TASK-17B-financiamientos-ui.md`
+
+### v1.7-C — Google Sheets → n8n → GoJulito 🔲
+
+| Ítem | Descripción |
+|------|-------------|
+| Webhook | `POST /api/webhook/solicitud` — crea PROSPECTO desde form |
+| Anti-dup | Detecta duplicados por email/teléfono |
+| n8n | Instrucciones de workflow para Eduardo |
+
+**TASK:** `.planning/TASK-17C-google-sheets-webhook.md`
+
+### v1.7-D — Estabilización final + Entrega 🔲
+
+| Ítem | Descripción |
+|------|-------------|
+| Paginación | Server-side en clientes, trámites, pagos |
+| Responsive | Sidebar colapsable + tablas scroll horizontal |
+| types.ts | Regenerar con schema real (financiamientos + cuotas) |
+| Entrega | README final + documentación para Julio |
 
 ---
 
