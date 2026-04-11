@@ -23,7 +23,7 @@ export default async function FinanciamientosPage() {
     .from('financiamientos')
     .select(`
       id, financiamiento_id, concepto, descripcion, monto_total, estado, created_at,
-      clientes ( id, codigo, nombre, apellido ),
+      clientes ( id, gj_id, nombre ),
       cuotas_financiamiento ( id, estado, monto )
     `)
     .eq('activo', true)
@@ -31,8 +31,8 @@ export default async function FinanciamientosPage() {
 
   const financiamientos: FinanciamientoRow[] = (rawData ?? []).map((row) => {
     const cliente = Array.isArray(row.clientes)
-      ? (row.clientes[0] as { id: string; codigo: string; nombre: string; apellido: string } | undefined)
-      : (row.clientes as { id: string; codigo: string; nombre: string; apellido: string } | null)
+      ? (row.clientes[0] as { id: string; gj_id: string; nombre: string } | undefined)
+      : (row.clientes as { id: string; gj_id: string; nombre: string } | null)
 
     const cuotas = (row.cuotas_financiamiento ?? []) as { id: string; estado: string; monto: number }[]
     const cuotasPagadas = cuotas.filter((c) => c.estado === 'PAGADO')
@@ -49,8 +49,8 @@ export default async function FinanciamientosPage() {
       estado: row.estado as 'ACTIVO' | 'COMPLETADO' | 'CANCELADO',
       created_at: row.created_at as string,
       cliente_id: cliente?.id ?? '',
-      cliente_nombre: cliente ? `${cliente.nombre} ${cliente.apellido}` : '—',
-      cliente_codigo: cliente?.codigo ?? '—',
+      cliente_nombre: cliente?.nombre ?? '—',
+      cliente_codigo: cliente?.gj_id ?? '—',
       cuotas_total: cuotas.length,
       cuotas_pagadas: cuotasPagadas.length,
       monto_cobrado: montoCobrado,

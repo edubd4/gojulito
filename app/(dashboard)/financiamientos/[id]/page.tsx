@@ -31,7 +31,7 @@ export default async function FinanciamientoDetallePage({
 
   const { data: financiamiento, error } = await supabase
     .from('financiamientos')
-    .select('*, clientes(id, codigo, nombre, apellido)')
+    .select('*, clientes(id, gj_id, nombre)')
     .eq('id', params.id)
     .single()
 
@@ -54,8 +54,8 @@ export default async function FinanciamientoDetallePage({
   }))
 
   const cliente = Array.isArray(financiamiento.clientes)
-    ? (financiamiento.clientes[0] as { id: string; codigo: string; nombre: string; apellido: string } | undefined)
-    : (financiamiento.clientes as { id: string; codigo: string; nombre: string; apellido: string } | null)
+    ? (financiamiento.clientes[0] as { id: string; gj_id: string; nombre: string } | undefined)
+    : (financiamiento.clientes as { id: string; gj_id: string; nombre: string } | null)
 
   const finId = financiamiento.financiamiento_id as string
   const concepto = financiamiento.concepto as string
@@ -101,9 +101,9 @@ export default async function FinanciamientoDetallePage({
         {cliente && (
           <p className="text-gj-secondary text-sm m-0">
             <Link href={`/clientes/${cliente.id}`} className="text-gj-amber no-underline hover:underline">
-              {cliente.nombre} {cliente.apellido}
+              {cliente.nombre}
             </Link>
-            <span className="ml-2 text-gj-secondary text-xs">{cliente.codigo}</span>
+            <span className="ml-2 text-gj-secondary text-xs">{cliente.gj_id}</span>
           </p>
         )}
 

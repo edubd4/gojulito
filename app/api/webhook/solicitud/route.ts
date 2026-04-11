@@ -54,17 +54,17 @@ export async function POST(req: NextRequest) {
 
     const { data: existentes } = await supabase
       .from('clientes')
-      .select('id, codigo')
+      .select('id, gj_id')
       .or(conditions.join(','))
       .limit(1)
 
     if (existentes && existentes.length > 0) {
-      const existente = existentes[0] as { id: string; codigo: string }
+      const existente = existentes[0] as { id: string; gj_id: string }
       return NextResponse.json({
         success: false,
         code: 'DUPLICATE',
         cliente_id: existente.id,
-        gj_id: existente.codigo,
+        gj_id: existente.gj_id,
       })
     }
   }

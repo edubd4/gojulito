@@ -14,7 +14,7 @@ export async function GET() {
 
   const { data: financiamientos, error } = await supabase
     .from('financiamientos')
-    .select('*, clientes(id, nombre, apellido, codigo)')
+    .select('*, clientes(id, nombre, gj_id)')
     .eq('activo', true)
     .order('created_at', { ascending: false })
 
