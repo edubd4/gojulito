@@ -73,6 +73,31 @@ export const TIPO_EVENTO = {
 
 export type TipoEvento = typeof TIPO_EVENTO[keyof typeof TIPO_EVENTO]
 
+export const CONCEPTO_FINANCIAMIENTO = {
+  VUELO: 'VUELO',
+  VISA: 'VISA',
+  VIAJE: 'VIAJE',
+  OTRO: 'OTRO',
+} as const
+
+export type ConceptoFinanciamiento = typeof CONCEPTO_FINANCIAMIENTO[keyof typeof CONCEPTO_FINANCIAMIENTO]
+
+export const ESTADO_FINANCIAMIENTO = {
+  ACTIVO: 'ACTIVO',
+  COMPLETADO: 'COMPLETADO',
+  CANCELADO: 'CANCELADO',
+} as const
+
+export type EstadoFinanciamiento = typeof ESTADO_FINANCIAMIENTO[keyof typeof ESTADO_FINANCIAMIENTO]
+
+export const ESTADO_CUOTA = {
+  PENDIENTE: 'PENDIENTE',
+  PAGADO: 'PAGADO',
+  VENCIDO: 'VENCIDO',
+} as const
+
+export type EstadoCuota = typeof ESTADO_CUOTA[keyof typeof ESTADO_CUOTA]
+
 export const ROL = {
   ADMIN: 'admin',
   COLABORADOR: 'colaborador',

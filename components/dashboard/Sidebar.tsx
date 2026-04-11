@@ -13,6 +13,7 @@ const navItems = [
   { href: '/clientes', label: 'Clientes', icon: 'group', exact: false },
   { href: '/tramites', label: 'Trámites', icon: 'folder_open', exact: false },
   { href: '/pagos', label: 'Pagos', icon: 'payments', exact: false },
+  { href: '/financiamientos', label: 'Financiamientos', icon: 'account_balance', exact: false },
   { href: '/seminarios', label: 'Seminarios', icon: 'school', exact: false },
   { href: '/calendario', label: 'Calendario', icon: 'calendar_month', exact: false },
   { href: '/configuracion', label: 'Configuración', icon: 'settings', exact: false },

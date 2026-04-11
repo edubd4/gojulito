@@ -103,6 +103,38 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['seminarios']['Row'], 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Database['public']['Tables']['seminarios']['Insert']>
       }
+      financiamientos: {
+        Row: {
+          id: string
+          financiamiento_id: string
+          cliente_id: string
+          concepto: 'VUELO' | 'VISA' | 'VIAJE' | 'OTRO'
+          descripcion: string | null
+          monto_total: number
+          estado: 'ACTIVO' | 'COMPLETADO' | 'CANCELADO'
+          activo: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['financiamientos']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['financiamientos']['Insert']>
+      }
+      cuotas_financiamiento: {
+        Row: {
+          id: string
+          financiamiento_id: string
+          numero: number
+          monto: number
+          fecha_vencimiento: string
+          fecha_pago: string | null
+          estado: 'PENDIENTE' | 'PAGADO' | 'VENCIDO'
+          notas: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['cuotas_financiamiento']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['cuotas_financiamiento']['Insert']>
+      }
       historial: {
         Row: {
           id: string

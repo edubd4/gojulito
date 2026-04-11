@@ -243,6 +243,31 @@ export default async function ClienteDetallePage({
   const puedeIniciarNueva = visa !== null &&
     (visa.estado === 'APROBADA' || visa.estado === 'RECHAZADA' || visa.estado === 'PAUSADA')
 
+  // Financiamientos
+  const { data: rawFinanciamientos } = await supabase
+    .from('financiamientos')
+    .select(`
+      id, financiamiento_id, concepto, monto_total, estado,
+      cuotas_financiamiento ( id, estado, monto )
+    `)
+    .eq('cliente_id', params.id)
+    .eq('activo', true)
+    .order('created_at', { ascending: false })
+
+  const financiamientos = (rawFinanciamientos ?? []).map((f) => {
+    const cuotas = (f.cuotas_financiamiento ?? []) as { id: string; estado: string; monto: number }[]
+    const pagadas = cuotas.filter((c) => c.estado === 'PAGADO').length
+    return {
+      id: f.id as string,
+      financiamiento_id: f.financiamiento_id as string,
+      concepto: f.concepto as string,
+      monto_total: f.monto_total as number,
+      estado: f.estado as string,
+      cuotas_total: cuotas.length,
+      cuotas_pagadas: pagadas,
+    }
+  })
+
   // Pagos
   const { data: rawPagos } = await supabase
     .from('pagos')
@@ -421,6 +446,55 @@ export default async function ClienteDetallePage({
         <Card>
           <CardTitle>Pagos</CardTitle>
           <ClientePagosTable initialPagos={pagos} />
+        </Card>
+
+        {/* ── Bloque 3.5: Financiamientos ── */}
+        <Card>
+          <CardTitle>Financiamientos</CardTitle>
+          {financiamientos.length === 0 ? (
+            <p className="text-gj-secondary text-sm m-0">Sin financiamientos registrados</p>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {financiamientos.map((fin) => {
+                const conceptoColors: Record<string, string> = {
+                  VUELO: 'text-gj-blue bg-gj-blue/15',
+                  VISA: 'text-gj-amber bg-gj-amber/15',
+                  VIAJE: 'text-gj-green bg-gj-green/15',
+                  OTRO: 'text-gj-secondary bg-gj-secondary/15',
+                }
+                const estadoColors: Record<string, string> = {
+                  ACTIVO: 'text-gj-amber bg-gj-amber/15',
+                  COMPLETADO: 'text-gj-green bg-gj-green/15',
+                  CANCELADO: 'text-gj-secondary bg-gj-secondary/15',
+                }
+                return (
+                  <div key={fin.id} className="bg-gj-surface-mid rounded-lg px-4 py-3 border border-white/[6%]">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-sm font-semibold text-gj-text font-sans">{fin.financiamiento_id}</span>
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold font-sans ${conceptoColors[fin.concepto] ?? conceptoColors.OTRO}`}>
+                          {fin.concepto.charAt(0) + fin.concepto.slice(1).toLowerCase()}
+                        </span>
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold font-sans ${estadoColors[fin.estado] ?? estadoColors.ACTIVO}`}>
+                          {fin.estado.charAt(0) + fin.estado.slice(1).toLowerCase()}
+                        </span>
+                      </div>
+                      <Link
+                        href={`/financiamientos/${fin.id}`}
+                        className="text-xs text-gj-amber font-semibold no-underline hover:underline font-sans"
+                      >
+                        Ver detalle
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gj-secondary font-sans">
+                      <span>Total: <span className="text-gj-text font-semibold">${fin.monto_total.toLocaleString('es-AR')}</span></span>
+                      <span>Cuotas: <span className="text-gj-green font-semibold">{fin.cuotas_pagadas}</span>/{fin.cuotas_total}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </Card>
 
         {/* ── Bloque 4: Historial ── */}
