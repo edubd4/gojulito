@@ -18,6 +18,7 @@ export interface ClienteRow {
   canal: CanalIngreso
   estado: EstadoCliente
   created_at: string
+  visa_id: string | null
   estado_visa: EstadoVisa | null
   estado_pago: EstadoPago | null
 }
@@ -72,9 +73,10 @@ const BADGE_ESTADO_VISA: Record<EstadoVisa, { label: string; classes: string }> 
 }
 
 const BADGE_ESTADO_PAGO: Record<EstadoPago, { label: string; classes: string }> = {
-  PAGADO:    { label: 'Pagado',    classes: 'text-gj-green bg-gj-green/15'       },
-  DEUDA:     { label: 'Deuda',     classes: 'text-gj-red bg-gj-red/15'           },
-  PENDIENTE: { label: 'Pendiente', classes: 'text-gj-amber bg-gj-amber/15'       },
+  PAGADO:     { label: 'Pagado',     classes: 'text-gj-green bg-gj-green/15'       },
+  DEUDA:      { label: 'Deuda',      classes: 'text-gj-red bg-gj-red/15'           },
+  PENDIENTE:  { label: 'Pendiente',  classes: 'text-gj-amber bg-gj-amber/15'       },
+  FINANCIADO: { label: 'Financiado', classes: 'text-gj-blue bg-gj-blue/15'         },
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -198,10 +200,8 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
     }
   }
 
-  // Edición inline en tabla
+  // Estado local de filas
   const [localRows, setLocalRows] = useState<ClienteRow[]>(clientes)
-  const [editingCell, setEditingCell] = useState<{ id: string; field: 'nombre' | 'telefono' } | null>(null)
-  const [editingValue, setEditingValue] = useState('')
 
   useEffect(() => { setLocalRows(clientes) }, [clientes])
 
@@ -216,6 +216,21 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
       if (res.ok) {
         setLocalRows((prev) =>
           prev.map((r) => r.id === clienteId ? { ...r, [field]: trimmed || null } : r)
+        )
+      }
+    } catch { /* silencioso */ }
+  }
+
+  async function handleVisaEstadoChange(visaId: string, clienteId: string, nuevoEstado: string) {
+    try {
+      const res = await fetch(`/api/visas/${visaId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      })
+      if (res.ok) {
+        setLocalRows((prev) =>
+          prev.map((r) => r.id === clienteId ? { ...r, estado_visa: nuevoEstado as EstadoVisa } : r)
         )
       }
     } catch { /* silencioso */ }
@@ -470,6 +485,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           <option value="PAGADO">Pagado</option>
           <option value="DEUDA">Deuda</option>
           <option value="PENDIENTE">Pendiente</option>
+          <option value="FINANCIADO">Financiado</option>
         </select>
 
         <select
@@ -570,72 +586,17 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                     <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
                       {c.gj_id}
                     </td>
-                    {/* Nombre — editable inline */}
-                    <td className="px-3 py-3 font-medium text-gj-text"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setEditingCell({ id: c.id, field: 'nombre' })
-                        setEditingValue(c.nombre)
-                      }}
-                    >
-                      {editingCell?.id === c.id && editingCell.field === 'nombre' ? (
-                        <input
-                          autoFocus
-                          value={editingValue}
-                          onChange={(e) => setEditingValue(e.target.value)}
-                          onBlur={() => {
-                            setEditingCell(null)
-                            if (editingValue.trim() && editingValue.trim() !== c.nombre) {
-                              void handleInlinePatch(c.id, 'nombre', editingValue)
-                            }
-                          }}
-                          onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
-                          onClick={(e) => e.stopPropagation()}
-                          className="bg-gj-surface-mid text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-sm font-sans outline-none min-w-[120px]"
-                        />
-                      ) : (
-                        <span className="border-b border-dashed border-white/20 cursor-text">{c.nombre}</span>
-                      )}
+                    {/* Nombre — solo lectura */}
+                    <td className="px-3 py-3 font-medium text-gj-text">
+                      {c.nombre}
                     </td>
-                    {/* Teléfono — editable inline */}
-                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setEditingCell({ id: c.id, field: 'telefono' })
-                        setEditingValue(c.telefono ?? '')
-                      }}
-                    >
-                      {editingCell?.id === c.id && editingCell.field === 'telefono' ? (
-                        <input
-                          autoFocus
-                          value={editingValue}
-                          onChange={(e) => setEditingValue(e.target.value)}
-                          onBlur={() => {
-                            setEditingCell(null)
-                            if (editingValue !== (c.telefono ?? '')) {
-                              void handleInlinePatch(c.id, 'telefono', editingValue)
-                            }
-                          }}
-                          onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
-                          onClick={(e) => e.stopPropagation()}
-                          className="bg-gj-surface-mid text-gj-text border border-gj-blue/50 rounded-md px-2 py-[3px] text-[13px] font-sans outline-none min-w-[110px]"
-                        />
-                      ) : (
-                        <span className="border-b border-dashed border-white/20 cursor-text">{c.telefono ?? '—'}</span>
-                      )}
+                    {/* Teléfono — solo lectura */}
+                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary">
+                      {c.telefono ?? '—'}
                     </td>
-                    {/* Canal — dropdown inline */}
-                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                      <select
-                        value={c.canal}
-                        onChange={(e) => void handleInlinePatch(c.id, 'canal', e.target.value)}
-                        className="bg-gj-surface-mid text-gj-secondary border border-white/[8%] rounded-md px-1.5 py-[3px] text-[13px] font-sans cursor-pointer outline-none"
-                        style={{ colorScheme: 'dark' }}
-                      >
-                        {(['SEMINARIO', 'WHATSAPP', 'INSTAGRAM', 'REFERIDO', 'CHARLA', 'OTRO'] as const).map((opt) => (
-                          <option key={opt} value={opt}>{opt.charAt(0) + opt.slice(1).toLowerCase()}</option>
-                        ))}
-                      </select>
+                    {/* Canal — solo lectura */}
+                    <td className="hidden md:table-cell px-3 py-3 whitespace-nowrap text-gj-secondary text-xs">
+                      {c.canal.charAt(0) + c.canal.slice(1).toLowerCase()}
                     </td>
                     {/* Estado cliente — dropdown inline */}
                     <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
@@ -655,9 +616,19 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
                         )}
                       </select>
                     </td>
-                    <td className="px-3 py-3">
-                      {c.estado_visa ? (
-                        <Badge {...BADGE_ESTADO_VISA[c.estado_visa]} />
+                    {/* Estado visa — dropdown inline */}
+                    <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                      {c.visa_id && c.estado_visa ? (
+                        <select
+                          value={c.estado_visa}
+                          onChange={(e) => void handleVisaEstadoChange(c.visa_id!, c.id, e.target.value)}
+                          className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-md px-1.5 py-0.5 text-xs font-semibold cursor-pointer font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
+                          style={{ colorScheme: 'dark' }}
+                        >
+                          {(['EN_PROCESO', 'TURNO_ASIGNADO', 'APROBADA', 'RECHAZADA', 'PAUSADA', 'CANCELADA'] as const).map((opt) => (
+                            <option key={opt} value={opt} className="bg-gj-surface-mid text-gj-text">{BADGE_ESTADO_VISA[opt].label}</option>
+                          ))}
+                        </select>
                       ) : (
                         <span className="text-gj-secondary">—</span>
                       )}
@@ -785,6 +756,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
               PAGADO: 'Pagado',
               DEUDA: 'Deuda',
               PENDIENTE: 'Pendiente',
+              FINANCIADO: 'Financiado',
             }
             setPendingAction({ type: 'cambiar-pago', valor: val, label: labels[val] })
             e.target.value = ''
@@ -796,6 +768,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           <option value="PAGADO">Pagado</option>
           <option value="DEUDA">Deuda</option>
           <option value="PENDIENTE">Pendiente</option>
+          <option value="FINANCIADO">Financiado</option>
         </select>
 
         {/* Agregar a seminario */}

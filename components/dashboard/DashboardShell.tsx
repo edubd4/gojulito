@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { Sidebar } from './Sidebar'
 import { Icon } from '@/components/ui/Icon'
 
@@ -31,6 +32,9 @@ export function DashboardShell({ displayName, rol, children, gruposFamiliares }:
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const router = useRouter()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   return (
     <div className="min-h-screen flex bg-gj-surface">
@@ -93,6 +97,15 @@ export function DashboardShell({ displayName, rol, children, gruposFamiliares }:
             >
               <Icon name="help_outline" size="sm" />
             </Link>
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-9 h-9 flex items-center justify-center rounded-xl text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel transition-colors"
+                aria-label="Cambiar tema"
+              >
+                <Icon name={theme === 'dark' ? 'light_mode' : 'dark_mode'} size="sm" />
+              </button>
+            )}
             <div className="w-px h-5 bg-white/10 mx-1" />
             <div className="w-8 h-8 rounded-full bg-gj-amber-hv/20 flex items-center justify-center">
               <span className="text-gj-amber-hv text-xs font-bold font-sans">
@@ -112,10 +125,21 @@ export function DashboardShell({ displayName, rol, children, gruposFamiliares }:
             <Icon name="menu" size="md" />
           </button>
           <Link href="/" className="font-display text-gj-steel text-sm font-bold no-underline">GoJulito</Link>
-          <div className="w-8 h-8 rounded-full bg-gj-amber-hv/20 flex items-center justify-center">
-            <span className="text-gj-amber-hv text-xs font-bold font-sans">
-              {getInitials(displayName)}
-            </span>
+          <div className="flex items-center gap-2">
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-8 h-8 flex items-center justify-center rounded-full text-gj-secondary hover:text-gj-steel transition-colors"
+                aria-label="Cambiar tema"
+              >
+                <Icon name={theme === 'dark' ? 'light_mode' : 'dark_mode'} size="sm" />
+              </button>
+            )}
+            <div className="w-8 h-8 rounded-full bg-gj-amber-hv/20 flex items-center justify-center">
+              <span className="text-gj-amber-hv text-xs font-bold font-sans">
+                {getInitials(displayName)}
+              </span>
+            </div>
           </div>
         </header>
 

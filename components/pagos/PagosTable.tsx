@@ -28,9 +28,10 @@ interface Props {
 }
 
 const BADGE_ESTADO: Record<EstadoPago, { classes: string; label: string }> = {
-  PAGADO:    { classes: 'text-gj-green bg-gj-green/15',            label: 'Pagado'    },
-  DEUDA:     { classes: 'text-gj-red bg-gj-red/15',               label: 'Deuda'     },
-  PENDIENTE: { classes: 'text-gj-amber bg-gj-amber/15',           label: 'Pendiente' },
+  PAGADO:     { classes: 'text-gj-green bg-gj-green/15',            label: 'Pagado'     },
+  DEUDA:      { classes: 'text-gj-red bg-gj-red/15',               label: 'Deuda'      },
+  PENDIENTE:  { classes: 'text-gj-amber bg-gj-amber/15',           label: 'Pendiente'  },
+  FINANCIADO: { classes: 'text-gj-blue bg-gj-blue/15',             label: 'Financiado' },
 }
 
 const BADGE_TIPO: Record<'VISA' | 'SEMINARIO', { classes: string; label: string }> = {
@@ -284,6 +285,7 @@ export default function PagosTable({ pagos }: Props) {
           <option value="PAGADO">Pagado</option>
           <option value="DEUDA">Deuda</option>
           <option value="PENDIENTE">Pendiente</option>
+          <option value="FINANCIADO">Financiado</option>
         </select>
         <select
           className={`${inputClass} cursor-pointer`}

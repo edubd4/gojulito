@@ -13,7 +13,7 @@ export interface AsistenteRow {
   telefono: string | null
   provincia: string | null
   modalidad: string
-  estado_pago: 'PAGADO' | 'DEUDA' | 'PENDIENTE'
+  estado_pago: 'PAGADO' | 'DEUDA' | 'PENDIENTE' | 'FINANCIADO'
   monto: number
   convirtio: 'SI' | 'NO' | 'EN_SEGUIMIENTO'
   cliente_id: string | null
@@ -27,7 +27,7 @@ interface Props {
   clientes: ClienteOption[]
 }
 
-type EstadoPago = 'PAGADO' | 'DEUDA' | 'PENDIENTE'
+type EstadoPago = 'PAGADO' | 'DEUDA' | 'PENDIENTE' | 'FINANCIADO'
 
 const BADGE_MODALIDAD: Record<string, { classes: string; label: string }> = {
   PRESENCIAL: { classes: 'text-gj-blue bg-gj-blue/15',   label: 'Presencial'           },
@@ -36,9 +36,10 @@ const BADGE_MODALIDAD: Record<string, { classes: string; label: string }> = {
 }
 
 const BADGE_PAGO: Record<EstadoPago, { classes: string; label: string }> = {
-  PAGADO:    { classes: 'text-gj-green bg-gj-green/15', label: 'Pagado'    },
-  DEUDA:     { classes: 'text-gj-red bg-gj-red/15',     label: 'Deuda'     },
-  PENDIENTE: { classes: 'text-gj-amber bg-gj-amber/15', label: 'Pendiente' },
+  PAGADO:     { classes: 'text-gj-green bg-gj-green/15', label: 'Pagado'     },
+  DEUDA:      { classes: 'text-gj-red bg-gj-red/15',     label: 'Deuda'      },
+  PENDIENTE:  { classes: 'text-gj-amber bg-gj-amber/15', label: 'Pendiente'  },
+  FINANCIADO: { classes: 'text-gj-blue bg-gj-blue/15',   label: 'Financiado' },
 }
 
 const BADGE_CONVIRTIO: Record<string, { classes: string; label: string }> = {

@@ -24,6 +24,7 @@ export const ESTADO_PAGO = {
   PAGADO: 'PAGADO',
   DEUDA: 'DEUDA',
   PENDIENTE: 'PENDIENTE',
+  FINANCIADO: 'FINANCIADO',
 } as const
 
 export type EstadoPago = typeof ESTADO_PAGO[keyof typeof ESTADO_PAGO]

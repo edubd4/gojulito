@@ -20,9 +20,10 @@ interface Props {
 }
 
 const BADGE_PAGO: Record<EstadoPago, { label: string; classes: string }> = {
-  PAGADO:    { label: 'Pagado',    classes: 'text-gj-green bg-gj-green/15'  },
-  DEUDA:     { label: 'Deuda',     classes: 'text-gj-red bg-gj-red/15'      },
-  PENDIENTE: { label: 'Pendiente', classes: 'text-gj-amber bg-gj-amber/15'  },
+  PAGADO:     { label: 'Pagado',     classes: 'text-gj-green bg-gj-green/15'  },
+  DEUDA:      { label: 'Deuda',      classes: 'text-gj-red bg-gj-red/15'      },
+  PENDIENTE:  { label: 'Pendiente',  classes: 'text-gj-amber bg-gj-amber/15'  },
+  FINANCIADO: { label: 'Financiado', classes: 'text-gj-blue bg-gj-blue/15'    },
 }
 
 function getOpciones(estado: EstadoPago): EstadoPago[] {
