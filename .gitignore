@@ -38,3 +38,8 @@ next-env.d.ts
 # claude local config
 .claude/settings.local.json
 .claude/worktrees/
+
+# dev tooling (GSD, Agent Teams)
+.planning/
+.atl/
+.agent/
