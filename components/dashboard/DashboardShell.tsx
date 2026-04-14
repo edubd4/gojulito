@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { Sidebar } from './Sidebar'
 import { Icon } from '@/components/ui/Icon'
+import NotificationBell from './NotificationBell'
 
 interface GrupoFamiliarOption {
   id: string
@@ -83,13 +84,7 @@ export function DashboardShell({ displayName, rol, children, gruposFamiliares }:
 
           {/* Right actions */}
           <div className="flex items-center gap-1 ml-auto">
-            <Link
-              href="/tramites"
-              className="w-9 h-9 flex items-center justify-center rounded-xl text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel transition-colors"
-              aria-label="Notificaciones"
-            >
-              <Icon name="notifications" size="sm" />
-            </Link>
+            <NotificationBell />
             <Link
               href="/ayuda"
               className="w-9 h-9 flex items-center justify-center rounded-xl text-gj-secondary hover:bg-gj-surface-mid hover:text-gj-steel transition-colors"

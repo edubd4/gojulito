@@ -106,3 +106,12 @@ export const ROL = {
 } as const
 
 export type Rol = typeof ROL[keyof typeof ROL]
+
+export const TIPO_NOTIFICACION = {
+  DEUDA_PROXIMA:   'DEUDA_PROXIMA',
+  TURNO_PROXIMO:   'TURNO_PROXIMO',
+  NUEVA_SOLICITUD: 'NUEVA_SOLICITUD',
+  CUOTA_VENCIDA:   'CUOTA_VENCIDA',
+} as const
+
+export type TipoNotificacion = typeof TIPO_NOTIFICACION[keyof typeof TIPO_NOTIFICACION]

@@ -12,6 +12,7 @@ const navItems = [
   { href: '/', label: 'Dashboard', icon: 'dashboard', exact: true },
   { href: '/clientes', label: 'Clientes', icon: 'group', exact: false },
   { href: '/solicitudes', label: 'Solicitudes', icon: 'description', exact: false },
+  { href: '/notificaciones', label: 'Notificaciones', icon: 'notifications', exact: false },
   { href: '/tramites', label: 'Trámites', icon: 'folder_open', exact: false },
   { href: '/pagos', label: 'Pagos', icon: 'payments', exact: false },
   { href: '/financiamientos', label: 'Financiamientos', icon: 'account_balance', exact: false },
@@ -43,6 +44,7 @@ export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }:
   const [tramiteOpen, setTramiteOpen] = useState(false)
   const [clienteOpen, setClienteOpen] = useState(false)
   const [solicitudesPendientes, setSolicitudesPendientes] = useState(0)
+  const [notifUnread, setNotifUnread] = useState(0)
 
   useEffect(() => {
     if (rol !== 'admin') return
@@ -50,6 +52,12 @@ export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }:
       .then((r) => r.json())
       .then((data: { total?: number }) => {
         if (typeof data.total === 'number') setSolicitudesPendientes(data.total)
+      })
+      .catch(() => { /* silencioso */ })
+    fetch('/api/notificaciones/count')
+      .then((r) => r.json())
+      .then((data: { unread?: number }) => {
+        if (typeof data.unread === 'number') setNotifUnread(data.unread)
       })
       .catch(() => { /* silencioso */ })
   }, [rol])
@@ -150,6 +158,11 @@ export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }:
               {item.href === '/solicitudes' && solicitudesPendientes > 0 && (
                 <span className="ml-auto px-1.5 py-px rounded text-[10px] font-bold font-sans bg-gj-amber-hv/15 text-gj-amber-hv">
                   {solicitudesPendientes}
+                </span>
+              )}
+              {item.href === '/notificaciones' && notifUnread > 0 && (
+                <span className="ml-auto px-1.5 py-px rounded text-[10px] font-bold font-sans bg-gj-red/15 text-gj-red">
+                  {notifUnread}
                 </span>
               )}
             </Link>

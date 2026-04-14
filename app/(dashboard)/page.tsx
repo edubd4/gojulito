@@ -5,6 +5,7 @@ import DeudaTableClient from '@/components/dashboard/DeudaTableClient'
 import VisaActivosCard from '@/components/dashboard/VisaActivosCard'
 import ProximasCitasPanel from '@/components/dashboard/ProximasCitasPanel'
 import SeminarTicketCard from '@/components/dashboard/SeminarTicketCard'
+import SolicitudesPendientesCard from '@/components/dashboard/SolicitudesPendientesCard'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -112,6 +113,7 @@ export default async function DashboardPage() {
     { data: rawDeudas },
     { data: rawWeeklyEvs },
     { data: rawSeminario },
+    { count: solicitudesPendientes },
   ] = await Promise.all([
     supabase.from('v_metricas').select('*').returns<MetricaRow[]>(),
     supabase.from('v_turnos_semana').select('*').order('fecha_turno', { ascending: true }).returns<TurnoSemana[]>(),
@@ -125,6 +127,7 @@ export default async function DashboardPage() {
       .order('fecha', { ascending: true })
       .limit(1)
       .returns<SeminarioRow[]>(),
+    supabase.from('solicitudes').select('*', { count: 'exact', head: true }).eq('estado', 'PENDIENTE'),
   ])
 
   const turnos = rawTurnos ?? []
@@ -175,6 +178,8 @@ export default async function DashboardPage() {
         {/* ── Columna lateral (4 cols) — Próximas Citas + Seminario ── */}
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-5">
           <ProximasCitasPanel turnos={turnos} />
+
+          <SolicitudesPendientesCard count={solicitudesPendientes ?? 0} />
 
           {proximoSeminario ? (
             <SeminarTicketCard

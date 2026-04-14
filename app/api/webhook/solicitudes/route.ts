@@ -146,6 +146,18 @@ export async function POST(req: NextRequest) {
       continue
     }
 
+    // Insertar notificación en tiempo real (fire-and-forget)
+    void supabase.from('notificaciones').upsert({
+      tipo: 'NUEVA_SOLICITUD',
+      titulo: `Nueva solicitud — ${mapped.nombre as string}`,
+      descripcion: `Formulario recibido${mapped.fecha_envio ? ` el ${mapped.fecha_envio as string}` : ''}`,
+      fecha_referencia: mapped.fecha_envio
+        ? (mapped.fecha_envio as string).split('T')[0]
+        : new Date().toISOString().split('T')[0],
+      metadata: { solicitud_id, nombre: mapped.nombre },
+      ref_id: `SOL:${solicitud_id}`,
+    }, { onConflict: 'ref_id', ignoreDuplicates: true })
+
     created++
   }
 
