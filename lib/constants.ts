@@ -35,6 +35,7 @@ export const CANAL_INGRESO = {
   INSTAGRAM: 'INSTAGRAM',
   REFERIDO: 'REFERIDO',
   CHARLA: 'CHARLA',
+  FORM: 'FORM',
   OTRO: 'OTRO',
 } as const
 

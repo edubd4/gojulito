@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -11,6 +11,7 @@ import NuevoClienteModal, { type GrupoFamiliarOption } from '@/components/client
 const navItems = [
   { href: '/', label: 'Dashboard', icon: 'dashboard', exact: true },
   { href: '/clientes', label: 'Clientes', icon: 'group', exact: false },
+  { href: '/solicitudes', label: 'Solicitudes', icon: 'description', exact: false },
   { href: '/tramites', label: 'Trámites', icon: 'folder_open', exact: false },
   { href: '/pagos', label: 'Pagos', icon: 'payments', exact: false },
   { href: '/financiamientos', label: 'Financiamientos', icon: 'account_balance', exact: false },
@@ -41,6 +42,17 @@ export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }:
   const router = useRouter()
   const [tramiteOpen, setTramiteOpen] = useState(false)
   const [clienteOpen, setClienteOpen] = useState(false)
+  const [solicitudesPendientes, setSolicitudesPendientes] = useState(0)
+
+  useEffect(() => {
+    if (rol !== 'admin') return
+    fetch('/api/solicitudes?estado=PENDIENTE&limit=1')
+      .then((r) => r.json())
+      .then((data: { total?: number }) => {
+        if (typeof data.total === 'number') setSolicitudesPendientes(data.total)
+      })
+      .catch(() => { /* silencioso */ })
+  }, [rol])
 
   async function handleLogout() {
     const supabase = createClient()
@@ -135,6 +147,11 @@ export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }:
                 filled={active}
               />
               {item.label}
+              {item.href === '/solicitudes' && solicitudesPendientes > 0 && (
+                <span className="ml-auto px-1.5 py-px rounded text-[10px] font-bold font-sans bg-gj-amber-hv/15 text-gj-amber-hv">
+                  {solicitudesPendientes}
+                </span>
+              )}
             </Link>
           )
         })}

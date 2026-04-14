@@ -185,6 +185,7 @@ function canalLabel(canal: CanalIngreso): string {
     INSTAGRAM: 'Instagram',
     REFERIDO: 'Referido',
     CHARLA: 'Charla',
+    FORM: 'Formulario',
     OTRO: 'Otro',
   }
   return labels[canal] ?? canal
