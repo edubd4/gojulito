@@ -47,6 +47,8 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
   const [cargandoClientes, setCargandoClientes] = useState(false)
 
   // Visa
+  const [paisCodigo, setPaisCodigo] = useState('')
+  const [paises, setPaises] = useState<{ id: string; codigo_iso: string; nombre: string; emoji: string }[]>([])
   const [estadoVisa, setEstadoVisa] = useState<EstadoVisa>('EN_PROCESO')
   const [ds160, setDs160] = useState('')
   const [emailPortal, setEmailPortal] = useState('')
@@ -62,7 +64,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
   const [clienteDuplicado, setClienteDuplicado] = useState<ClienteDuplicado | null>(null)
   const [duplicadoMsg, setDuplicadoMsg] = useState('')
 
-  // Reset al abrir/cerrar
+  // Reset al abrir/cerrar + cargar países
   useEffect(() => {
     if (open) {
       setModo('nuevo')
@@ -72,6 +74,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
       setClientes([])
       setBusqueda('')
       setClienteId('')
+      setPaisCodigo('')
       setEstadoVisa('EN_PROCESO')
       setDs160('')
       setEmailPortal('')
@@ -83,6 +86,13 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
       setSaved(false)
       setClienteDuplicado(null)
       setDuplicadoMsg('')
+
+      fetch('/api/paises')
+        .then((r) => r.json())
+        .then((json: { paises?: { id: string; codigo_iso: string; nombre: string; emoji: string }[] }) => {
+          setPaises(json.paises ?? [])
+        })
+        .catch(() => setPaises([]))
     }
   }, [open])
 
@@ -121,6 +131,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
     } else {
       if (!clienteId) next.clienteId = 'Seleccioná un cliente'
     }
+    if (!paisCodigo) next.paisCodigo = 'El país es requerido'
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -167,6 +178,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
       // 2. Crear visa
       const bodyVisa: Record<string, unknown> = {
         cliente_id: resolvedClienteId,
+        pais_codigo: paisCodigo,
         estado: estadoVisa,
       }
       if (ds160.trim()) bodyVisa.ds160 = ds160.trim()
@@ -270,6 +282,7 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                       try {
                         const bodyVisa: Record<string, unknown> = {
                           cliente_id: clienteDuplicado.id,
+                          pais_codigo: paisCodigo,
                           estado: estadoVisa,
                         }
                         if (ds160.trim()) bodyVisa.ds160 = ds160.trim()
@@ -405,6 +418,25 @@ export default function NuevoTramiteModal({ open, onOpenChange, onSuccess }: Pro
                 <div className="text-xs font-semibold text-gj-secondary uppercase tracking-[0.06em] mb-3 font-sans">
                   Datos del trámite
                 </div>
+              </div>
+
+              {/* País */}
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                  País<span className="text-gj-amber ml-0.5">*</span>
+                </label>
+                <select
+                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.paisCodigo ? 'border-gj-red' : 'border-white/10'}`}
+                  style={{ colorScheme: 'dark' }}
+                  value={paisCodigo}
+                  onChange={(e) => { setPaisCodigo(e.target.value); if (errors.paisCodigo) setErrors((p) => ({ ...p, paisCodigo: '' })) }}
+                >
+                  <option value="">Seleccionar país...</option>
+                  {paises.map((p) => (
+                    <option key={p.id} value={p.codigo_iso}>{p.emoji} {p.nombre}</option>
+                  ))}
+                </select>
+                {errors.paisCodigo && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.paisCodigo}</span>}
               </div>
 
               {/* Estado visa */}
