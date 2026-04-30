@@ -24,7 +24,7 @@ export default async function TramitesPage({ searchParams }: { searchParams: { q
   const [{ data: rawVisas }, { data: rawGrupos }] = await Promise.all([
     supabase
       .from('visas')
-      .select('id, visa_id, estado, ds160, fecha_turno, fecha_aprobacion, fecha_vencimiento, cliente_id, clientes(id, nombre, gj_id, grupo_familiar_id, grupos_familiares(id, nombre))')
+      .select('id, visa_id, estado, ds160, fecha_turno, fecha_aprobacion, fecha_vencimiento, cliente_id, clientes(id, nombre, gj_id, grupo_familiar_id, grupos_familiares(id, nombre)), paises(codigo_iso, nombre, emoji)')
       .order('created_at', { ascending: false }),
     supabase
       .from('grupos_familiares')
@@ -33,12 +33,15 @@ export default async function TramitesPage({ searchParams }: { searchParams: { q
   ])
 
   type ClienteWithGrupo = { id: string; nombre: string; gj_id: string; grupo_familiar_id: string | null; grupos_familiares: { id: string; nombre: string }[] | null }
+  type PaisRow = { codigo_iso: string; nombre: string; emoji: string }
 
   const tramites: TramiteRow[] = (rawVisas ?? []).map((row) => {
     const rawCliente = Array.isArray(row.clientes) ? row.clientes[0] : row.clientes
     const cliente = rawCliente as ClienteWithGrupo | null | undefined
     const gruposArr = Array.isArray(cliente?.grupos_familiares) ? cliente.grupos_familiares : null
     const grupoFamiliar = gruposArr && gruposArr.length > 0 ? gruposArr[0] : null
+    const rawPais = Array.isArray(row.paises) ? row.paises[0] : row.paises
+    const pais = rawPais as PaisRow | null | undefined
 
     return {
       id: row.id as string,
@@ -53,6 +56,9 @@ export default async function TramitesPage({ searchParams }: { searchParams: { q
       cliente_gj_id: cliente?.gj_id ?? '—',
       grupo_familiar_id: grupoFamiliar?.id ?? null,
       grupo_familiar_nombre: grupoFamiliar?.nombre ?? null,
+      pais_codigo: pais?.codigo_iso ?? null,
+      pais_nombre: pais?.nombre ?? null,
+      pais_emoji: pais?.emoji ?? null,
     }
   })
 

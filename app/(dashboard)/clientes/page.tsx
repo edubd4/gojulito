@@ -37,11 +37,12 @@ export default async function ClientesPage() {
   // Query 2: all visas with estado and created_at, ordered by created_at desc
   const { data: allVisas } = await supabase
     .from('visas')
-    .select('id, estado, cliente_id, created_at')
+    .select('id, estado, cliente_id, created_at, paises(codigo_iso, nombre, emoji)')
     .order('created_at', { ascending: false })
 
   // Build visa ID map: cliente_id -> visa_id of the most relevant visa (same priority as estado map)
   const visaIdMap = new Map<string, string>()
+  const paisMap = new Map<string, { codigo_iso: string; nombre: string; emoji: string }>()
 
   // Query 3: all pagos with estado
   const { data: allPagos } = await supabase
@@ -54,28 +55,32 @@ export default async function ClientesPage() {
   // null if no visas
   const ESTADOS_ACTIVOS_VISA = ['EN_PROCESO', 'TURNO_ASIGNADO', 'PAUSADA']
 
+  type VisaRow = { id: string; estado: string; cliente_id: string; created_at: string; paises: { codigo_iso: string; nombre: string; emoji: string } | { codigo_iso: string; nombre: string; emoji: string }[] | null }
+
   const visaEstadoMap = new Map<string, string | null>()
   for (const v of (allVisas ?? [])) {
-    const visa = v as { id: string; estado: string; cliente_id: string; created_at: string }
+    const visa = v as VisaRow
     if (!visaEstadoMap.has(visa.cliente_id)) {
-      // First visa seen = most recent (query ordered by created_at desc)
-      // Mark it as fallback
       visaEstadoMap.set(visa.cliente_id, visa.estado)
       visaIdMap.set(visa.cliente_id, visa.id)
+      const rawPais = Array.isArray(visa.paises) ? visa.paises[0] : visa.paises
+      if (rawPais) paisMap.set(visa.cliente_id, rawPais)
     }
   }
   // Second pass: override with most recent ACTIVE visa if exists
-  const visaActivaMap = new Map<string, { estado: string; id: string }>()
+  const visaActivaMap = new Map<string, { estado: string; id: string; pais: { codigo_iso: string; nombre: string; emoji: string } | null }>()
   for (const v of (allVisas ?? [])) {
-    const visa = v as { id: string; estado: string; cliente_id: string }
+    const visa = v as VisaRow
     if (ESTADOS_ACTIVOS_VISA.includes(visa.estado) && !visaActivaMap.has(visa.cliente_id)) {
-      visaActivaMap.set(visa.cliente_id, { estado: visa.estado, id: visa.id })
+      const rawPais = Array.isArray(visa.paises) ? visa.paises[0] : visa.paises
+      visaActivaMap.set(visa.cliente_id, { estado: visa.estado, id: visa.id, pais: rawPais ?? null })
     }
   }
   // Merge: active visa takes priority
-  Array.from(visaActivaMap.entries()).forEach(([clienteId, { estado: estadoActivo, id: visaId }]) => {
+  Array.from(visaActivaMap.entries()).forEach(([clienteId, { estado: estadoActivo, id: visaId, pais }]) => {
     visaEstadoMap.set(clienteId, estadoActivo)
     visaIdMap.set(clienteId, visaId)
+    if (pais) paisMap.set(clienteId, pais)
   })
 
   // Build pago map: cliente_id -> aggregated pago estado
@@ -97,6 +102,7 @@ export default async function ClientesPage() {
   const clientes: ClienteRow[] = (data ?? []).map((row) => {
     const clienteId = row.id as string
 
+    const pais = paisMap.get(clienteId) ?? null
     return {
       id: clienteId,
       gj_id: row.gj_id as string,
@@ -108,6 +114,9 @@ export default async function ClientesPage() {
       visa_id: visaIdMap.get(clienteId) ?? null,
       estado_visa: (visaEstadoMap.get(clienteId) ?? null) as ClienteRow['estado_visa'],
       estado_pago: (pagoEstadoMap.get(clienteId) ?? null) as ClienteRow['estado_pago'],
+      pais_codigo: pais?.codigo_iso ?? null,
+      pais_nombre: pais?.nombre ?? null,
+      pais_emoji: pais?.emoji ?? null,
     }
   })
 

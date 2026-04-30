@@ -21,6 +21,9 @@ export interface TramiteRow {
   cliente_gj_id: string
   grupo_familiar_id: string | null
   grupo_familiar_nombre: string | null
+  pais_codigo: string | null
+  pais_nombre: string | null
+  pais_emoji: string | null
 }
 
 interface Props {
@@ -55,6 +58,7 @@ export default function TramitesTable({ tramites, grupos, isAdmin = false, initi
   const [rows, setRows] = useState<TramiteRow[]>(tramites)
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoVisa | ''>('')
   const [grupoFiltro, setGrupoFiltro] = useState('')
+  const [paisFiltro, setPaisFiltro] = useState('')
   const [busqueda, setBusqueda] = useState(initialQuery ?? '')
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
@@ -88,6 +92,7 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
       if (quickFilter === 'completados' && !COMPLETADOS.includes(t.estado)) return false
       if (estadoFiltro && t.estado !== estadoFiltro) return false
       if (grupoFiltro && t.grupo_familiar_id !== grupoFiltro) return false
+      if (paisFiltro && t.pais_codigo !== paisFiltro) return false
       // Metric filter from header cards
       if (metricFilter === 'en_proceso') {
         if (t.estado !== 'EN_PROCESO' && t.estado !== 'TURNO_ASIGNADO') return false
@@ -109,7 +114,17 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
       }
       return true
     })
-  }, [rows, estadoFiltro, grupoFiltro, busqueda, quickFilter, metricFilter])
+  }, [rows, estadoFiltro, grupoFiltro, paisFiltro, busqueda, quickFilter, metricFilter])
+
+  const paisesDisponibles = useMemo(() => {
+    const seen = new Map<string, { codigo: string; nombre: string; emoji: string }>()
+    for (const t of rows) {
+      if (t.pais_codigo && !seen.has(t.pais_codigo)) {
+        seen.set(t.pais_codigo, { codigo: t.pais_codigo, nombre: t.pais_nombre ?? t.pais_codigo, emoji: t.pais_emoji ?? '' })
+      }
+    }
+    return Array.from(seen.values()).sort((a, b) => a.nombre.localeCompare(b.nombre))
+  }, [rows])
 
   const totalPages = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE))
   const paginated = filtrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -334,6 +349,19 @@ const [fechaTurnoEdits, setFechaTurnoEdits] = useState<Record<string, string>>({
               <option value="">Todos los grupos</option>
               {grupos.map((g) => (
                 <option key={g.id} value={g.id}>{g.nombre}</option>
+              ))}
+            </select>
+          )}
+          {paisesDisponibles.length > 1 && (
+            <select
+              className="bg-gj-surface-mid text-gj-text border border-gj-outline/20 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber-hv focus:outline-none cursor-pointer"
+              style={{ colorScheme: 'dark' }}
+              value={paisFiltro}
+              onChange={(e) => setPaisFiltro(e.target.value)}
+            >
+              <option value="">Todos los países</option>
+              {paisesDisponibles.map((p) => (
+                <option key={p.codigo} value={p.codigo}>{p.emoji} {p.nombre}</option>
               ))}
             </select>
           )}

@@ -21,6 +21,9 @@ export interface ClienteRow {
   visa_id: string | null
   estado_visa: EstadoVisa | null
   estado_pago: EstadoPago | null
+  pais_codigo: string | null
+  pais_nombre: string | null
+  pais_emoji: string | null
 }
 
 export interface SeminarioOption {
@@ -40,6 +43,7 @@ type FiltroEstadoCliente = EstadoCliente | 'TODOS'
 type FiltroEstadoVisa = EstadoVisa | 'TODOS'
 type FiltroEstadoPago = EstadoPago | 'TODOS'
 type FiltroCanal = CanalIngreso | 'TODOS'
+type FiltroPais = string | 'TODOS'
 
 type PendingAction =
   | { type: 'cambiar-estado'; valor: EstadoCliente; label: string }
@@ -242,6 +246,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
   const [filtroEstadoVisa, setFiltroEstadoVisa] = useState<FiltroEstadoVisa>('TODOS')
   const [filtroEstadoPago, setFiltroEstadoPago] = useState<FiltroEstadoPago>('TODOS')
   const [filtroCanal, setFiltroCanal] = useState<FiltroCanal>('TODOS')
+  const [filtroPais, setFiltroPais] = useState<FiltroPais>('TODOS')
 
   // Selección
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -268,7 +273,18 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
     filtroEstadoCliente !== 'TODOS' ||
     filtroEstadoVisa !== 'TODOS' ||
     filtroEstadoPago !== 'TODOS' ||
-    filtroCanal !== 'TODOS'
+    filtroCanal !== 'TODOS' ||
+    filtroPais !== 'TODOS'
+
+  const paisesDisponibles = useMemo(() => {
+    const seen = new Map<string, { codigo: string; nombre: string; emoji: string }>()
+    for (const c of localRows) {
+      if (c.pais_codigo && !seen.has(c.pais_codigo)) {
+        seen.set(c.pais_codigo, { codigo: c.pais_codigo, nombre: c.pais_nombre ?? c.pais_codigo, emoji: c.pais_emoji ?? '' })
+      }
+    }
+    return Array.from(seen.values()).sort((a, b) => a.nombre.localeCompare(b.nombre))
+  }, [localRows])
 
   const clientesFiltrados = useMemo(() => {
     setCurrentPage(1)
@@ -281,9 +297,10 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
       if (filtroEstadoVisa !== 'TODOS' && c.estado_visa !== filtroEstadoVisa) return false
       if (filtroEstadoPago !== 'TODOS' && c.estado_pago !== filtroEstadoPago) return false
       if (filtroCanal !== 'TODOS' && c.canal !== filtroCanal) return false
+      if (filtroPais !== 'TODOS' && c.pais_codigo !== filtroPais) return false
       return true
     })
-  }, [localRows, busqueda, filtroEstadoCliente, filtroEstadoVisa, filtroEstadoPago, filtroCanal])
+  }, [localRows, busqueda, filtroEstadoCliente, filtroEstadoVisa, filtroEstadoPago, filtroCanal, filtroPais])
 
   const totalPages = Math.max(1, Math.ceil(clientesFiltrados.length / PAGE_SIZE))
   const clientesPaginados = clientesFiltrados.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -304,6 +321,7 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
     setFiltroEstadoVisa('TODOS')
     setFiltroEstadoPago('TODOS')
     setFiltroCanal('TODOS')
+    setFiltroPais('TODOS')
   }
 
   // ─── Selection handlers ───────────────────────────────────────────────────
@@ -502,6 +520,20 @@ export default function ClientesTable({ clientes, isAdmin, seminarios, gruposFam
           <option value="CHARLA">Charla</option>
           <option value="OTRO">Otro</option>
         </select>
+
+        {paisesDisponibles.length > 1 && (
+          <select
+            value={filtroPais}
+            onChange={(e) => setFiltroPais(e.target.value as FiltroPais)}
+            className="bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-1.5 text-sm font-sans focus:outline-none cursor-pointer"
+            style={{ colorScheme: 'dark' }}
+          >
+            <option value="TODOS">País de visa</option>
+            {paisesDisponibles.map((p) => (
+              <option key={p.codigo} value={p.codigo}>{p.emoji} {p.nombre}</option>
+            ))}
+          </select>
+        )}
 
         {hayFiltros && (
           <button
