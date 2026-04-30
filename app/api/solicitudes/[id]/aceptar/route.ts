@@ -45,6 +45,7 @@ export async function POST(
     telefono: string | null
     dni: string | null
     provincia: string | null
+    pais_id: string | null
     estado: string
   }
 
@@ -55,7 +56,51 @@ export async function POST(
     )
   }
 
-  // Generar gj_id para el nuevo cliente
+  // Mode: agregar visa to existing client
+  const clienteExistenteId = req.nextUrl.searchParams.get('cliente_existente')
+
+  if (clienteExistenteId) {
+    // Verify the existing client exists and is active
+    const { data: clienteExistente, error: clienteFetchError } = await supabase
+      .from('clientes')
+      .select('id, gj_id')
+      .eq('id', clienteExistenteId)
+      .neq('estado', 'INACTIVO')
+      .single()
+
+    if (clienteFetchError || !clienteExistente) {
+      return NextResponse.json({ error: 'Cliente existente no encontrado' }, { status: 404 })
+    }
+
+    const ce = clienteExistente as { id: string; gj_id: string }
+
+    // Actualizar solicitud
+    await supabase
+      .from('solicitudes')
+      .update({
+        estado: 'ACEPTADA',
+        cliente_id: ce.id,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+
+    // Historial
+    await supabase.from('historial').insert({
+      cliente_id: ce.id,
+      tipo: 'NOTA',
+      descripcion: `Solicitud de Google Form (${sol.solicitud_id}) vinculada al cliente existente`,
+      origen: 'dashboard',
+      usuario_id: user.id,
+    })
+
+    return NextResponse.json({
+      success: true,
+      cliente_id: ce.id,
+      cliente_gj_id: ce.gj_id,
+    })
+  }
+
+  // Mode: create new client (default)
   const { data: newId, error: idError } = await supabase.rpc('generate_readable_id', {
     prefix: 'GJ',
     table_name: 'clientes',

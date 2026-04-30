@@ -2,39 +2,102 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { validateApiKey } from '@/lib/auth-m2m'
 
-// Mapeo de columnas Google Form → campos de la tabla solicitudes
-const FIELD_MAP: Record<string, string> = {
-  'Nombre y Apellido Completos': 'nombre',
-  'Correo Electrónico de uso Principal': 'email',
-  'Numeros de telefono Primario': 'telefono',
-  'DNI': 'dni',
-  'Tu fecha de nacimiento': 'fecha_nacimiento',
-  'Provincia': 'provincia',
-  'Municipio': 'municipio',
-  'Codigo Postal': 'codigo_postal',
-  'Tu nacionalidad': 'nacionalidad',
-  'Estado Civil': 'estado_civil',
-  'Numero de pasaporte': 'numero_pasaporte',
-  'Marca temporal': 'fecha_envio',
+export async function GET(req: NextRequest) {
+  if (!validateApiKey(req)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  try {
+    const supabase = await createServiceRoleClient()
+    const { searchParams } = req.nextUrl
+    const estado = searchParams.get('estado')
+
+    let query = supabase
+      .from('solicitudes')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(20)
+
+    if (estado && estado !== 'TODOS') {
+      query = query.eq('estado', estado)
+    } else if (!estado) {
+      query = query.eq('estado', 'PENDIENTE')
+    }
+
+    const { data, error } = await query
+    if (error) throw error
+
+    return NextResponse.json({ solicitudes: data || [] })
+  } catch {
+    return NextResponse.json({ solicitudes: [], nota: 'Tabla de solicitudes no disponible en este entorno' })
+  }
+}
+
+// Mapeo de columnas Google Form → campos de la tabla solicitudes, por país
+const FIELD_MAPS: Record<string, Record<string, string>> = {
+  USA: {
+    'Nombre y Apellido Completos': 'nombre',
+    'Correo Electrónico de uso Principal': 'email',
+    'Numeros de telefono Primario': 'telefono',
+    'DNI': 'dni',
+    'Tu fecha de nacimiento': 'fecha_nacimiento',
+    'Provincia': 'provincia',
+    'Municipio': 'municipio',
+    'Codigo Postal': 'codigo_postal',
+    'Tu nacionalidad': 'nacionalidad',
+    'Estado Civil': 'estado_civil',
+    'Numero de pasaporte': 'numero_pasaporte',
+    'Marca temporal': 'fecha_envio',
+  },
+  DEU: {
+    'Nombre y Apellido Completos': 'nombre',
+    'Correo Electrónico de uso Principal': 'email',
+    'Numeros de telefono Primario': 'telefono',
+    'DNI': 'dni',
+    'Tu fecha de nacimiento': 'fecha_nacimiento',
+    'Provincia': 'provincia',
+    'Municipio': 'municipio',
+    'Codigo Postal': 'codigo_postal',
+    'Tu nacionalidad': 'nacionalidad',
+    'Estado Civil': 'estado_civil',
+    'Numero de pasaporte': 'numero_pasaporte',
+    'Marca temporal': 'fecha_envio',
+  },
+  IRL: {
+    'Nombre y Apellido Completos': 'nombre',
+    'Correo Electrónico de uso Principal': 'email',
+    'Numeros de telefono Primario': 'telefono',
+    'DNI': 'dni',
+    'Tu fecha de nacimiento': 'fecha_nacimiento',
+    'Provincia': 'provincia',
+    'Municipio': 'municipio',
+    'Codigo Postal': 'codigo_postal',
+    'Tu nacionalidad': 'nacionalidad',
+    'Estado Civil': 'estado_civil',
+    'Numero de pasaporte': 'numero_pasaporte',
+    'Marca temporal': 'fecha_envio',
+  },
+  JPN: {
+    'Nombre y Apellido Completos': 'nombre',
+    'Correo Electrónico de uso Principal': 'email',
+    'Numeros de telefono Primario': 'telefono',
+    'DNI': 'dni',
+    'Tu fecha de nacimiento': 'fecha_nacimiento',
+    'Provincia': 'provincia',
+    'Municipio': 'municipio',
+    'Codigo Postal': 'codigo_postal',
+    'Tu nacionalidad': 'nacionalidad',
+    'Estado Civil': 'estado_civil',
+    'Numero de pasaporte': 'numero_pasaporte',
+    'Marca temporal': 'fecha_envio',
+  },
 }
 
 interface GoogleFormRow {
-  'Nombre y Apellido Completos'?: string
-  'Correo Electrónico de uso Principal'?: string
-  'Numeros de telefono Primario'?: string
-  'DNI'?: string
-  'Tu fecha de nacimiento'?: string
-  'Provincia'?: string
-  'Municipio'?: string
-  'Codigo Postal'?: string
-  'Tu nacionalidad'?: string
-  'Estado Civil'?: string
-  'Numero de pasaporte'?: string
-  'Marca temporal'?: string
   [key: string]: unknown
 }
 
-function mapRow(row: GoogleFormRow): {
+function mapRow(row: GoogleFormRow, fieldMap: Record<string, string>): {
   mapped: Record<string, unknown>
   datos_raw: Record<string, unknown>
 } {
@@ -42,7 +105,7 @@ function mapRow(row: GoogleFormRow): {
   const datos_raw: Record<string, unknown> = {}
 
   for (const [key, value] of Object.entries(row)) {
-    const dbField = FIELD_MAP[key]
+    const dbField = fieldMap[key]
     if (dbField) {
       const strVal = typeof value === 'string' ? value.trim() : value
       if (strVal !== undefined && strVal !== null && strVal !== '') {
@@ -61,6 +124,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 401 })
   }
 
+  // Resolver país desde query param obligatorio
+  const { searchParams } = req.nextUrl
+  const paisCodigo = searchParams.get('pais')?.toUpperCase()
+
+  if (!paisCodigo) {
+    return NextResponse.json(
+      { success: false, error: 'Query param ?pais= es requerido (ej: ?pais=USA)' },
+      { status: 400 }
+    )
+  }
+
+  const fieldMap = FIELD_MAPS[paisCodigo]
+  if (!fieldMap) {
+    return NextResponse.json(
+      { success: false, error: `País '${paisCodigo}' no tiene mapeo configurado. Valores válidos: ${Object.keys(FIELD_MAPS).join(', ')}` },
+      { status: 400 }
+    )
+  }
+
   let raw: unknown
   try {
     raw = await req.json()
@@ -77,12 +159,29 @@ export async function POST(req: NextRequest) {
 
   const supabase = createServiceRoleClient()
 
+  // Resolver pais_id desde codigo_iso
+  const { data: pais } = await supabase
+    .from('paises')
+    .select('id')
+    .eq('codigo_iso', paisCodigo)
+    .eq('activo', true)
+    .single()
+
+  if (!pais) {
+    return NextResponse.json(
+      { success: false, error: `País '${paisCodigo}' no encontrado o inactivo en la base de datos` },
+      { status: 404 }
+    )
+  }
+
+  const pais_id = (pais as { id: string }).id
+
   let created = 0
   let skipped = 0
   const errors: string[] = []
 
   for (const row of rows) {
-    const { mapped, datos_raw } = mapRow(row)
+    const { mapped, datos_raw } = mapRow(row, fieldMap)
 
     if (!mapped.nombre) {
       errors.push(`Fila sin nombre — skipped`)
@@ -90,13 +189,15 @@ export async function POST(req: NextRequest) {
       continue
     }
 
-    // Deduplicación por dni + fecha_envio
+    // Deduplicación por dni + fecha_envio + pais_id
+    // (misma persona puede aplicar a dos países distintos)
     if (mapped.dni && mapped.fecha_envio) {
       const { data: existing } = await supabase
         .from('solicitudes')
         .select('id')
         .eq('dni', mapped.dni as string)
         .eq('fecha_envio', mapped.fecha_envio as string)
+        .eq('pais_id', pais_id)
         .limit(1)
 
       if (existing && existing.length > 0) {
@@ -135,6 +236,8 @@ export async function POST(req: NextRequest) {
       fecha_envio: mapped.fecha_envio || null,
       estado: 'PENDIENTE',
       datos_raw,
+      pais_id,
+      origen_detalle: `google-forms-${paisCodigo}`,
     }
 
     const { error: insertError } = await supabase
@@ -154,7 +257,7 @@ export async function POST(req: NextRequest) {
       fecha_referencia: mapped.fecha_envio
         ? (mapped.fecha_envio as string).split('T')[0]
         : new Date().toISOString().split('T')[0],
-      metadata: { solicitud_id, nombre: mapped.nombre },
+      metadata: { solicitud_id, nombre: mapped.nombre, pais: paisCodigo },
       ref_id: `SOL:${solicitud_id}`,
     }, { onConflict: 'ref_id', ignoreDuplicates: true })
 

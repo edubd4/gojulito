@@ -45,6 +45,7 @@ interface VisaDetalle {
   fecha_aprobacion: string | null
   fecha_vencimiento: string | null
   notas: string | null
+  pais: { codigo_iso: string; nombre: string; emoji: string } | null
 }
 
 type PagoDetalle = ClientePagoRow
@@ -233,7 +234,7 @@ export default async function ClienteDetallePage({
   // Visa activa (not CANCELADA, most recent)
   const { data: rawVisa } = await supabase
     .from('visas')
-    .select('id, visa_id, estado, ds160, email_portal, orden_atencion, fecha_turno, fecha_aprobacion, fecha_vencimiento, notas')
+    .select('id, visa_id, estado, ds160, email_portal, orden_atencion, fecha_turno, fecha_aprobacion, fecha_vencimiento, notas, paises(codigo_iso, nombre, emoji)')
     .eq('cliente_id', params.id)
     .neq('estado', 'CANCELADA')
     .order('created_at', { ascending: false })
@@ -411,6 +412,7 @@ export default async function ClienteDetallePage({
                   gap: '18px 28px',
                 }}
               >
+                <GridField label="País" value={visa.pais ? `${visa.pais.emoji} ${visa.pais.nombre}` : null} />
                 <GridField label="DS-160" value={visa.ds160} />
                 <GridField label="Email portal consular" value={visa.email_portal} />
                 <GridField

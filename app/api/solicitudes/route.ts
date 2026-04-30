@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
   const query = supabase
     .from('solicitudes')
-    .select('*', { count: 'exact' })
+    .select('*, paises(codigo_iso, nombre, emoji)', { count: 'exact' })
     .eq('estado', estado)
     .order('fecha_envio', { ascending: false })
     .range(offset, offset + limit - 1)

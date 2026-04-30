@@ -9,16 +9,17 @@ import NuevoTramiteModal from '@/components/visas/NuevoTramiteModal'
 import NuevoClienteModal, { type GrupoFamiliarOption } from '@/components/clientes/NuevoClienteModal'
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: 'dashboard', exact: true },
-  { href: '/clientes', label: 'Clientes', icon: 'group', exact: false },
-  { href: '/solicitudes', label: 'Solicitudes', icon: 'description', exact: false },
-  { href: '/notificaciones', label: 'Notificaciones', icon: 'notifications', exact: false },
-  { href: '/tramites', label: 'Trámites', icon: 'folder_open', exact: false },
-  { href: '/pagos', label: 'Pagos', icon: 'payments', exact: false },
-  { href: '/financiamientos', label: 'Financiamientos', icon: 'account_balance', exact: false },
-  { href: '/seminarios', label: 'Seminarios', icon: 'school', exact: false },
-  { href: '/calendario', label: 'Calendario', icon: 'calendar_month', exact: false },
-  { href: '/configuracion', label: 'Configuración', icon: 'settings', exact: false },
+  { href: '/', label: 'Dashboard', icon: 'dashboard', exact: true, adminOnly: false },
+  { href: '/clientes', label: 'Clientes', icon: 'group', exact: false, adminOnly: false },
+  { href: '/solicitudes', label: 'Solicitudes', icon: 'description', exact: false, adminOnly: false },
+  { href: '/notificaciones', label: 'Notificaciones', icon: 'notifications', exact: false, adminOnly: false },
+  { href: '/tramites', label: 'Trámites', icon: 'folder_open', exact: false, adminOnly: false },
+  { href: '/pagos', label: 'Pagos', icon: 'payments', exact: false, adminOnly: false },
+  { href: '/financiamientos', label: 'Financiamientos', icon: 'account_balance', exact: false, adminOnly: false },
+  { href: '/seminarios', label: 'Seminarios', icon: 'school', exact: false, adminOnly: false },
+  { href: '/calendario', label: 'Calendario', icon: 'calendar_month', exact: false, adminOnly: false },
+  { href: '/paises', label: 'Países', icon: 'public', exact: false, adminOnly: true },
+  { href: '/configuracion', label: 'Configuración', icon: 'settings', exact: false, adminOnly: false },
 ]
 
 interface SidebarProps {
@@ -68,14 +69,12 @@ export function Sidebar({ displayName, rol, isOpen, onClose, gruposFamiliares }:
     router.push('/login')
   }
 
-  function isActive(item: typeof navItems[number]) {
+  function isActive(item: { href: string; exact: boolean }) {
     if (item.exact) return pathname === item.href
     return pathname.startsWith(item.href)
   }
 
-  const visibleNavItems = rol === 'admin'
-    ? navItems
-    : navItems.filter((item) => item.href !== '/configuracion')
+  const visibleNavItems = navItems.filter((item) => !item.adminOnly || rol === 'admin')
 
   const sidebarContent = (
     <div className="flex flex-col h-full">

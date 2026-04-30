@@ -14,6 +14,7 @@ interface Solicitud {
   estado: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA'
   cliente_id: string | null
   notas: string | null
+  paises?: { codigo_iso: string; nombre: string; emoji: string } | null
 }
 
 export default async function SolicitudesPage() {
@@ -35,7 +36,7 @@ export default async function SolicitudesPage() {
 
   const { data, count } = await supabase
     .from('solicitudes')
-    .select('*', { count: 'exact' })
+    .select('*, paises(codigo_iso, nombre, emoji)', { count: 'exact' })
     .eq('estado', 'PENDIENTE')
     .order('fecha_envio', { ascending: false })
     .range(0, 19)

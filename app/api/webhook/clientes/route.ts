@@ -123,3 +123,70 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ data: cliente, error: null })
 }
+
+export async function PATCH(req: NextRequest) {
+  if (!validateApiKey(req)) {
+    return NextResponse.json({ data: null, error: 'No autorizado' }, { status: 401 })
+  }
+
+  let raw: unknown
+  try {
+    raw = await req.json()
+  } catch {
+    return NextResponse.json({ data: null, error: 'Body inválido' }, { status: 400 })
+  }
+
+  const body = raw as Record<string, unknown>
+  const gj_id = body.gj_id as string | undefined
+
+  if (!gj_id) {
+    return NextResponse.json({ data: null, error: 'gj_id es requerido' }, { status: 400 })
+  }
+
+  const supabase = await createServiceRoleClient()
+
+  const { data: clienteActual } = await supabase
+    .from('clientes')
+    .select('*')
+    .eq('gj_id', gj_id)
+    .single()
+
+  if (!clienteActual) {
+    return NextResponse.json({ data: null, error: `Cliente ${gj_id} no encontrado` }, { status: 404 })
+  }
+
+  const estadoAnterior = (clienteActual as Record<string, unknown>).estado as string
+  const updateData: Record<string, unknown> = {}
+  const camposPermitidos = ['estado', 'nombre', 'telefono', 'email', 'dni', 'observaciones', 'provincia', 'canal']
+  for (const campo of camposPermitidos) {
+    if (body[campo] !== undefined) updateData[campo] = body[campo]
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ data: null, error: 'No se enviaron campos para actualizar' }, { status: 400 })
+  }
+
+  const { data: clienteActualizado, error } = await supabase
+    .from('clientes')
+    .update(updateData)
+    .eq('gj_id', gj_id)
+    .select()
+    .single()
+
+  if (error) {
+    return NextResponse.json({ data: null, error: error.message }, { status: 500 })
+  }
+
+  if (body.estado && body.estado !== estadoAnterior) {
+    await supabase.from('historial').insert({
+      cliente_id: (clienteActual as Record<string, unknown>).id,
+      tipo: 'CAMBIO_ESTADO',
+      descripcion: `Estado actualizado: ${estadoAnterior} → ${body.estado}`,
+      metadata: { estado_anterior: estadoAnterior, estado_nuevo: body.estado },
+      origen: 'telegram',
+      usuario_id: null,
+    })
+  }
+
+  return NextResponse.json({ data: clienteActualizado, error: null })
+}

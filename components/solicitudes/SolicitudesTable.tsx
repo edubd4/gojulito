@@ -19,6 +19,7 @@ interface Solicitud {
   estado: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA'
   cliente_id: string | null
   notas: string | null
+  paises?: { codigo_iso: string; nombre: string; emoji: string } | null
 }
 
 interface Props {
@@ -86,10 +87,13 @@ export default function SolicitudesTable({ initialData, initialTotal, initialEst
     void fetchTab(activeTab, page)
   }
 
-  async function handleAccept(solicitud: Solicitud) {
+  async function handleAccept(solicitud: Solicitud, mode?: 'nuevo' | 'agregar', existingClienteId?: string) {
     setAcceptTarget(null)
     try {
-      const res = await fetch(`/api/solicitudes/${solicitud.id}/aceptar`, { method: 'POST' })
+      const url = existingClienteId && mode === 'agregar'
+        ? `/api/solicitudes/${solicitud.id}/aceptar?cliente_existente=${existingClienteId}`
+        : `/api/solicitudes/${solicitud.id}/aceptar`
+      const res = await fetch(url, { method: 'POST' })
       const data = await res.json() as { success?: boolean; cliente_id?: string; error?: string }
       if (!res.ok || data.error) {
         setErrorMsg(data.error ?? 'Error al aceptar')
@@ -130,7 +134,8 @@ export default function SolicitudesTable({ initialData, initialTotal, initialEst
           open={true}
           nombre={acceptTarget.nombre}
           solicitudId={acceptTarget.solicitud_id}
-          onConfirm={() => void handleAccept(acceptTarget)}
+          dni={acceptTarget.dni}
+          onConfirm={(mode, existingClienteId) => void handleAccept(acceptTarget, mode, existingClienteId)}
           onCancel={() => setAcceptTarget(null)}
         />
       )}
@@ -211,6 +216,11 @@ export default function SolicitudesTable({ initialData, initialTotal, initialEst
                           {s.nombre}
                         </Link>
                         <div className="text-xs text-gj-secondary">{s.solicitud_id}</div>
+                        {s.paises && (
+                          <div className="text-xs text-gj-secondary mt-0.5">
+                            {s.paises.emoji} {s.paises.nombre}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-sm text-gj-text whitespace-nowrap">{s.dni ?? '—'}</td>
                       <td className="px-4 py-3 text-sm text-gj-secondary whitespace-nowrap">{s.email ?? '—'}</td>

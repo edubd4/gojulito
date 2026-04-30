@@ -80,6 +80,14 @@ export async function POST(req: NextRequest) {
 
   const supabase = await createServiceRoleClient()
 
+  const { data: pais } = await supabase
+    .from('paises')
+    .select('id')
+    .eq('codigo_iso', body.pais_codigo.toUpperCase())
+    .eq('activo', true)
+    .single()
+  if (!pais) return NextResponse.json({ data: null, error: `País '${body.pais_codigo}' no encontrado o inactivo` }, { status: 404 })
+
   // Validar que el cliente no tenga ya una visa activa (no-terminal)
   const { data: visaActiva } = await supabase
     .from('visas')
@@ -111,6 +119,7 @@ export async function POST(req: NextRequest) {
     visa_id,
     cliente_id: body.cliente_id,
     estado: body.estado,
+    pais_id: (pais as { id: string }).id,
   }
 
   if (body.ds160?.trim()) insert.ds160 = body.ds160.trim()
