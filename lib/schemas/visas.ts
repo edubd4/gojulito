@@ -17,6 +17,7 @@ const estadoPagoVisaValues = [
 
 export const createVisaSchema = z.object({
   cliente_id: z.string().uuid('cliente_id inválido'),
+  pais_codigo: z.string().min(2, 'País es requerido'),
   ds160: z.string().nullable().optional(),
   email_portal: z.string().email('Email de portal inválido').nullable().optional(),
   estado: z.enum(estadoVisaValues, 'Estado es requerido'),

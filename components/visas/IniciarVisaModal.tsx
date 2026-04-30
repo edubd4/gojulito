@@ -10,6 +10,7 @@ interface Props {
 }
 
 interface FormState {
+  pais_codigo: string
   estado: EstadoVisa
   ds160: string
   email_portal: string
@@ -21,6 +22,7 @@ interface FormState {
 type OpcionPago = 'pagado' | 'deuda' | 'ninguno'
 
 const INITIAL_FORM: FormState = {
+  pais_codigo: '',
   estado: 'EN_PROCESO',
   ds160: '',
   email_portal: '',
@@ -47,6 +49,7 @@ export default function IniciarVisaModal({ clienteId }: Props) {
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<FormState>(INITIAL_FORM)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
+  const [paises, setPaises] = useState<{ id: string; codigo_iso: string; nombre: string; emoji: string }[]>([])
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -68,11 +71,16 @@ export default function IniciarVisaModal({ clienteId }: Props) {
       setFechaVencimiento('')
 
       try {
-        const res = await fetch('/api/configuracion')
-        const json = await res.json() as { configuracion?: { clave: string; valor: string }[] }
-        const config = json.configuracion ?? []
+        const [configRes, paisesRes] = await Promise.all([
+          fetch('/api/configuracion'),
+          fetch('/api/paises'),
+        ])
+        const configJson = await configRes.json() as { configuracion?: { clave: string; valor: string }[] }
+        const config = configJson.configuracion ?? []
         const precio = config.find((c) => c.clave === 'precio_visa')?.valor ?? '0'
         setMonto(precio)
+        const paisesJson = await paisesRes.json() as { paises?: { id: string; codigo_iso: string; nombre: string; emoji: string }[] }
+        setPaises(paisesJson.paises ?? [])
       } catch {
         setMonto('0')
       }
@@ -88,6 +96,9 @@ export default function IniciarVisaModal({ clienteId }: Props) {
 
   function validate(): boolean {
     const next: Partial<Record<keyof FormState, string>> = {}
+    if (!form.pais_codigo) {
+      next.pais_codigo = 'País es requerido'
+    }
     if (form.estado === 'TURNO_ASIGNADO' && !form.fecha_turno) {
       next.fecha_turno = 'La fecha de turno es requerida'
     }
@@ -103,6 +114,7 @@ export default function IniciarVisaModal({ clienteId }: Props) {
     try {
       const body: Record<string, unknown> = {
         cliente_id: clienteId,
+        pais_codigo: form.pais_codigo,
         estado: form.estado,
       }
       if (form.ds160.trim()) body.ds160 = form.ds160.trim()
@@ -193,6 +205,23 @@ export default function IniciarVisaModal({ clienteId }: Props) {
               )}
 
               <div className="grid gap-3.5" style={{ gridTemplateColumns: '1fr 1fr', columnGap: 20 }}>
+
+                {/* País */}
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">País *</label>
+                  <select
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
+                    value={form.pais_codigo}
+                    onChange={(e) => setField('pais_codigo', e.target.value)}
+                  >
+                    <option value="">Seleccionar país...</option>
+                    {paises.map((p) => (
+                      <option key={p.id} value={p.codigo_iso}>{p.emoji} {p.nombre}</option>
+                    ))}
+                  </select>
+                  {errors.pais_codigo && <span className="text-[11px] text-gj-red mt-0.5 block">{errors.pais_codigo}</span>}
+                </div>
 
                 {/* Estado */}
                 <div style={{ gridColumn: '1 / -1' }}>
