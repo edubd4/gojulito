@@ -1,0 +1,440 @@
+{
+  "name": "ingesta_leads_gojulito",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        },
+        "timezone": "America/Argentina/Buenos_Aires"
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "aa000001-0000-0000-0000-000000000001",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "readAllRows",
+        "documentId": {
+          "__rl": true,
+          "value": "PLACEHOLDER_USA_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {
+          "headerRow": 1
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -160,
+        -200
+      ],
+      "id": "aa000002-0000-0000-0000-000000000002",
+      "name": "Leer_USA",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PLACEHOLDER_SHEETS_CRED",
+          "name": "Google Sheets (GoJulito)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "readAllRows",
+        "documentId": {
+          "__rl": true,
+          "value": "PLACEHOLDER_DEU_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {
+          "headerRow": 1
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -160,
+        -40
+      ],
+      "id": "aa000003-0000-0000-0000-000000000003",
+      "name": "Leer_DEU",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PLACEHOLDER_SHEETS_CRED",
+          "name": "Google Sheets (GoJulito)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "readAllRows",
+        "documentId": {
+          "__rl": true,
+          "value": "PLACEHOLDER_IRL_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {
+          "headerRow": 1
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -160,
+        120
+      ],
+      "id": "aa000004-0000-0000-0000-000000000004",
+      "name": "Leer_IRL",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PLACEHOLDER_SHEETS_CRED",
+          "name": "Google Sheets (GoJulito)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "readAllRows",
+        "documentId": {
+          "__rl": true,
+          "value": "PLACEHOLDER_JPN_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {
+          "headerRow": 1
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -160,
+        280
+      ],
+      "id": "aa000005-0000-0000-0000-000000000005",
+      "name": "Leer_JPN",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PLACEHOLDER_SHEETS_CRED",
+          "name": "Google Sheets (GoJulito)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/solicitudes?pais=USA",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        -200
+      ],
+      "id": "aa000006-0000-0000-0000-000000000006",
+      "name": "Enviar_USA"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/solicitudes?pais=DEU",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        -40
+      ],
+      "id": "aa000007-0000-0000-0000-000000000007",
+      "name": "Enviar_DEU"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/solicitudes?pais=IRL",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        120
+      ],
+      "id": "aa000008-0000-0000-0000-000000000008",
+      "name": "Enviar_IRL"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/solicitudes?pais=JPN",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        280
+      ],
+      "id": "aa000009-0000-0000-0000-000000000009",
+      "name": "Enviar_JPN"
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "inputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        320,
+        40
+      ],
+      "id": "aa000010-0000-0000-0000-000000000010",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.JULIO_TELEGRAM_CHAT_ID }}",
+        "text": "=✅ Ingesta de leads completada ({{ $now.format('DD/MM/YYYY HH:mm') }} AR)\n\nSe procesaron las solicitudes de Google Forms para: USA, DEU, IRL, JPN.\n\nRevisar el dashboard para ver los nuevos registros.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        40
+      ],
+      "id": "aa000011-0000-0000-0000-000000000011",
+      "name": "Notificar",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTEDuD7XBXTLIZrY",
+          "name": "gojulito_bot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Leer_USA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Leer_DEU",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Leer_IRL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Leer_JPN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer_USA": {
+      "main": [
+        [
+          {
+            "node": "Enviar_USA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer_DEU": {
+      "main": [
+        [
+          {
+            "node": "Enviar_DEU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer_IRL": {
+      "main": [
+        [
+          {
+            "node": "Enviar_IRL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer_JPN": {
+      "main": [
+        [
+          {
+            "node": "Enviar_JPN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar_USA": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar_DEU": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Enviar_IRL": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Enviar_JPN": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Notificar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "d82f4a1b-49de-5efb-c9f9-1cec21f3851e",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "6af9cd62f5f297fdfae12c219c00a208aa9d4320581f83b92d5d11f0cd0cdc07"
+  },
+  "id": "ingesta-leads-gojulito",
+  "tags": []
+}

@@ -29,7 +29,7 @@
         "promptType": "define",
         "text": "=Responderás a esto:\n{{ $json.message.text }}  {{ $json.text }}\n\n{{ $now.format('yyyy-MM-dd') }}",
         "options": {
-          "systemMessage": "=IDENTIDAD\nSos Alfred, el asistente operativo de GoJulito. Trabajás exclusivamente para Julio Correa, que gestiona trámites de visa norteamericana y seminarios de viaje.\n\nTu función es ser la memoria operativa del negocio: consultás datos reales, registrás operaciones con confirmación, y generás resúmenes claros. No inventás datos. Si no encontrás algo en la base de datos, lo decís.\n\nDIRECTIVAS OPERATIVAS\n1. Nunca inventes IDs, nombres ni estados. Siempre consultá la base de datos primero.\n2. Antes de crear o modificar cualquier dato, confirmá con Julio lo que vas a hacer.\n3. Si Julio menciona un cliente por nombre, buscalo primero con buscar_cliente antes de cualquier otra acción.\n4. Para cambiar el estado de una visa, primero buscá al cliente, obtené el visa_id, y recién entonces actualizá.\n5. Siempre respondé en español, de forma concisa y directa.\n6. Nunca menciones credenciales del portal consular ni contraseñas.\n\nFLUJO DE CONFIRMACIÓN\nAnte operaciones de escritura (crear cliente, registrar pago, cambiar estado):\n1. Mostrá un resumen de lo que vas a hacer\n2. Pedí confirmación: \"¿Confirmo?\"\n3. Solo ejecutá después de recibir \"sí\", \"dale\", \"confirmá\" o equivalente\n\nESTADOS VÁLIDOS\n- Cliente: PROSPECTO | ACTIVO | FINALIZADO | INACTIVO\n- Visa: EN_PROCESO | TURNO_ASIGNADO | APROBADA | RECHAZADA | PAUSADA | CANCELADA\n- Pago: PAGADO | DEUDA | PENDIENTE\n\nFORMATO DE RESPUESTA\n- Sin markdown, sin asteriscos, sin listas largas\n- Respuestas cortas por defecto\n- Para resúmenes: usar emojis simples como separadores visuales\n- Fechas siempre en formato DD/MM/YYYY\n\nEJEMPLOS DE RESPUESTA\nConsulta rápida: \"Rolando (GJ-0003) — Visa TURNO_ASIGNADO para el 19/03. Deuda pendiente: $400.\"\nConfirmación: \"Voy a registrar pago de $500 PAGADO para Rolando (GJ-0003). ¿Confirmo?\"\nResumen: \" Hoy 17/03: 4 clientes activos | 2 turnos esta semana | 1 deuda próxima\"\n\nHERRAMIENTAS DISPONIBLES Y CUÁNDO USARLAS\n\nresumen_operativo\n→ Usar cuando Julio pida el resumen del día, métricas generales, \n  turnos de la semana o deudas próximas.\n→ Ejemplo: \"resumen\", \"cómo está el negocio\", \"qué turnos hay esta semana\"\n\nbuscar_cliente\n→ Usar SIEMPRE antes de cualquier operación sobre un cliente.\n→ Parámetros: nombre= | telefono= | gj_id=\n→ Ejemplo: \"cómo está Rolando\", \"busca a Juan\", \"qué tiene GJ-0003\"\n\ncrear_cliente\n→ Usar solo cuando Julio quiera registrar un cliente nuevo.\n→ Requiere confirmación antes de ejecutar.\n→ Campos mínimos: nombre, telefono, canal (WHATSAPP|INSTAGRAM|SEMINARIO|REFERIDO|CHARLA|OTRO)\n\nbuscar_visa\n→ Usar para consultar el trámite de visa de un cliente específico.\n→ Parámetros: cliente_id= (UUID interno, obtenido de buscar_cliente)\n→ Siempre llamar a buscar_cliente primero para obtener el cliente_id\n\nactualizar_visa\n→ Usar para cambiar el estado de una visa o cargar fecha de turno.\n→ Requiere visa_id legible (VISA-0001), obtenido de buscar_cliente o buscar_visa.\n→ Requiere confirmación antes de ejecutar.\n→ Ejemplo: \"se aprobó la visa de Rolando\", \"cargar turno para el 25/03\"\n\nregistrar_pago\n→ Usar para registrar un cobro nuevo.\n→ Requiere: cliente_id, tipo (VISA|SEMINARIO), monto, estado (PAGADO|DEUDA)\n→ Requiere confirmación antes de ejecutar.\n→ Ejemplo: \"Rolando pagó $500\", \"anotar deuda de $300 para Juan\"\n\nSECUENCIA OBLIGATORIA PARA OPERACIONES\n1. Si mencionan un nombre → buscar_cliente primero\n2. Si necesitás el visa_id → viene del resultado de buscar_cliente (campo visas[0].visa_id)\n3. Si necesitás el cliente_id para un pago → viene del resultado de buscar_cliente (campo id)\n4. Nunca uses IDs inventados o asumidos"
+          "systemMessage": "=IDENTIDAD\nSos Alfred, el asistente operativo de GoJulito. Trabajas exclusivamente para Julio Correa, que gestiona tramites de visa de multiples paises (Estados Unidos, Alemania, Irlanda, Japon, y otros que se agreguen) y seminarios de viaje.\n\nTu funcion es ser la memoria operativa del negocio: consultas datos reales, registras operaciones con confirmacion, y generas resumenes claros. No inventas datos. Si no encontras algo en la base de datos, lo decis.\n\nDIRECTIVAS OPERATIVAS\n1. Nunca inventes IDs, nombres ni estados. Siempre consulta la base de datos primero.\n2. Antes de crear o modificar cualquier dato, confirma con Julio lo que vas a hacer.\n3. Si Julio menciona un cliente por nombre, buscalo primero con buscar_cliente antes de cualquier otra accion.\n4. Para cambiar el estado de una visa, primero busca al cliente, obtene el visa_id, y recien entonces actualiza.\n5. Siempre responde en espanol, de forma concisa y directa.\n6. Nunca menciones credenciales del portal consular ni contrasenas.\n7. Nunca uses IDs inventados o asumidos.\n8. Antes de crear una visa, SIEMPRE pregunta a Julio de que pais es el tramite si no lo menciona. Si dudas de los paises disponibles, usa consultar_paises.\n\nFLUJO DE CONFIRMACION\nAnte operaciones de escritura (crear, registrar, cambiar estado, pagar cuota):\n1. Mostra un resumen de lo que vas a hacer\n2. Pedi confirmacion: \"Confirmo?\"\n3. Solo ejecuta despues de recibir \"si\", \"dale\", \"confirma\" o equivalente\n\nESTADOS VALIDOS\n- Cliente: PROSPECTO | ACTIVO | FINALIZADO | INACTIVO\n- Visa: EN_PROCESO | TURNO_ASIGNADO | APROBADA | RECHAZADA | PAUSADA | CANCELADA\n- Pago: PAGADO | DEUDA | PENDIENTE | FINANCIADO\n- Cuota: PAGADO | PENDIENTE | VENCIDO\n- Financiamiento: ACTIVO | COMPLETADO | CANCELADO\n\nFORMATO DE RESPUESTA\n- Sin markdown, sin asteriscos, sin listas largas\n- Respuestas cortas por defecto\n- Para resumenes: usar emojis simples como separadores visuales\n- Fechas siempre en formato DD/MM/YYYY\n- Montos siempre con $ y formato argentino\n\nHERRAMIENTAS DISPONIBLES Y CUANDO USARLAS\n\nresumen_operativo → Resumen del dia, metricas, turnos de la semana, deudas proximas\nbuscar_cliente → SIEMPRE antes de cualquier operacion sobre un cliente\ncrear_cliente → Registrar un cliente nuevo\neditar_cliente → Cambiar estado, telefono, email u otros datos de un cliente existente\nbuscar_visa → Consultar tramite de visa de un cliente\ncrear_visa → Iniciar un nuevo tramite de visa para un cliente\nactualizar_visa → Cambiar estado de visa, cargar fecha de turno\nregistrar_pago → Registrar un cobro nuevo\nactualizar_pago → Saldar una deuda existente o cambiar estado de un pago\nconsultar_financiamiento → Ver financiamientos activos y estado de cuotas de un cliente\npagar_cuota → Registrar el pago de una cuota de financiamiento\nconsultar_seminarios → Ver seminarios activos, asistentes y recaudacion\nregistrar_asistente → Agregar una persona como asistente a un seminario\nconsultar_precios → Ver precios actuales de visa y seminario\nconsultar_paises → Ver los paises disponibles para tramitar visa (USA, DEU, IRL, JPN, etc.)\n\nSECUENCIA OBLIGATORIA PARA OPERACIONES\n1. Si mencionan un nombre → buscar_cliente primero\n2. Si necesitas el visa_id → viene del resultado de buscar_cliente (campo visas[0].visa_id)\n3. Si necesitas el cliente_id para un pago → viene del resultado de buscar_cliente (campo id)\n4. Si necesitas el gj_id → viene del resultado de buscar_cliente (campo gj_id)\n5. Para financiamientos → primero buscar_cliente para obtener gj_id, luego consultar_financiamiento\n6. Para seminarios → consultar_seminarios primero para obtener sem_id\n7. Nunca uses IDs inventados o asumidos\nPara crear una visa nueva → consultar_paises si no sabes el codigo; luego crear_visa con pais_codigo obligatorio."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -483,6 +483,383 @@
           "name": "gojulitotestev1"
         }
       }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Inicia un nuevo trámite de visa para un cliente existente. Requiere gj_id del cliente (GJ-0001).",
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/visas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "gj_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID legible del cliente, formato GJ-0001`, 'string') }}"
+            },
+            {
+              "name": "ds160",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Número de formulario DS-160 (opcional)`, 'string') }}"
+            },
+            {
+              "name": "email_portal",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Email del portal consular (opcional)`, 'string') }}"
+            },
+            {
+              "name": "notas",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Notas opcionales sobre el trámite`, 'string') }}"
+            },
+            {
+              "name": "pais_codigo",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', 'Código ISO del país de la visa. Valores válidos: USA | DEU | IRL | JPN (o el que devuelva consultar_paises). OBLIGATORIO.', 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1648,
+        272
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "crear_visa"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Actualiza el estado de un pago existente (ej: saldar una deuda). Requiere pago_id legible (PAG-0001).",
+        "method": "PATCH",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/pagos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pago_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID legible del pago a actualizar, formato PAG-0001`, 'string') }}"
+            },
+            {
+              "name": "estado",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Nuevo estado del pago. Valores válidos: PAGADO | DEUDA | PENDIENTE`, 'string') }}"
+            },
+            {
+              "name": "fecha_pago",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Fecha de pago en formato YYYY-MM-DD (opcional)`, 'string') }}"
+            },
+            {
+              "name": "notas",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Notas opcionales`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1776,
+        272
+      ],
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "actualizar_pago"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Edita datos de un cliente existente: estado, teléfono, email, DNI, observaciones, provincia o canal. Requiere gj_id.",
+        "method": "PATCH",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/clientes",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "gj_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID legible del cliente, formato GJ-0001`, 'string') }}"
+            },
+            {
+              "name": "estado",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Nuevo estado. Valores válidos: PROSPECTO | ACTIVO | FINALIZADO | INACTIVO`, 'string') }}"
+            },
+            {
+              "name": "nombre",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Nombre completo del cliente (opcional)`, 'string') }}"
+            },
+            {
+              "name": "telefono",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Número de teléfono (opcional)`, 'string') }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Email del cliente (opcional)`, 'string') }}"
+            },
+            {
+              "name": "dni",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters5_Value', `DNI del cliente (opcional)`, 'string') }}"
+            },
+            {
+              "name": "observaciones",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters6_Value', `Notas u observaciones (opcional)`, 'string') }}"
+            },
+            {
+              "name": "provincia",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters7_Value', `Provincia del cliente (opcional)`, 'string') }}"
+            },
+            {
+              "name": "canal",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters8_Value', `Canal de ingreso. Valores válidos: WHATSAPP | INSTAGRAM | SEMINARIO | REFERIDO | CHARLA | OTRO (opcional)`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1904,
+        272
+      ],
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "editar_cliente"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Consulta los financiamientos activos y estado de cuotas de un cliente. Requiere gj_id del cliente.",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/financiamientos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "gj_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID legible del cliente, formato GJ-0001`, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2032,
+        272
+      ],
+      "id": "d4e5f6a7-b8c9-0123-def0-234567890123",
+      "name": "consultar_financiamiento"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Registra el pago de una cuota de financiamiento. Requiere financiamiento_id, numero_cuota y estado.",
+        "method": "PATCH",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/financiamientos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "financiamiento_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID del financiamiento, obtenido de consultar_financiamiento (campo financiamiento_id)`, 'string') }}"
+            },
+            {
+              "name": "numero_cuota",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Número de la cuota a actualizar (entero, ej: 1, 2, 3)`, 'number') }}"
+            },
+            {
+              "name": "estado",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Estado de la cuota. Valores válidos: PAGADO | PENDIENTE | VENCIDO`, 'string') }}"
+            },
+            {
+              "name": "fecha_pago",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Fecha de pago en formato YYYY-MM-DD. Si no se especifica y estado=PAGADO, usa la fecha de hoy`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2160,
+        272
+      ],
+      "id": "e5f6a7b8-c9d0-1234-ef01-345678901234",
+      "name": "pagar_cuota"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Lista los seminarios activos con asistentes y recaudación. Opcionalmente filtra por sem_id para ver detalle de uno.",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/seminarios",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "sem_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID del seminario, formato SEM-2026-01 (opcional, si se omite devuelve todos los activos)`, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2288,
+        272
+      ],
+      "id": "f6a7b8c9-d0e1-2345-f012-456789012345",
+      "name": "consultar_seminarios"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Agrega una persona como asistente a un seminario. Requiere sem_id y nombre. gj_id vincula al cliente si ya existe en el sistema.",
+        "method": "POST",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/seminarios",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sem_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `ID del seminario, formato SEM-2026-01. Obtenerlo de consultar_seminarios`, 'string') }}"
+            },
+            {
+              "name": "nombre",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Nombre completo del asistente`, 'string') }}"
+            },
+            {
+              "name": "gj_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `ID del cliente si ya existe en el sistema, formato GJ-0001 (opcional)`, 'string') }}"
+            },
+            {
+              "name": "telefono",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Teléfono del asistente (opcional)`, 'string') }}"
+            },
+            {
+              "name": "provincia",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Provincia del asistente (opcional)`, 'string') }}"
+            },
+            {
+              "name": "modalidad",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters5_Value', `Modalidad de asistencia. Valores válidos: PRESENCIAL | VIRTUAL (opcional)`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2416,
+        272
+      ],
+      "id": "a7b8c9d0-e1f2-3456-0123-567890123456",
+      "name": "registrar_asistente"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve los precios actuales configurados en el sistema: precio_visa y precio_seminario.",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/configuracion",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2544,
+        272
+      ],
+      "id": "b8c9d0e1-f2a3-4567-1234-678901234567",
+      "name": "consultar_precios"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve la lista de países disponibles para tramitar visa, con su código ISO (USA, DEU, IRL, JPN, etc.), nombre y emoji. Usar SIEMPRE antes de crear una visa si Julio no especificó el país, o cuando pregunte qué países están disponibles.",
+        "method": "GET",
+        "url": "https://gojulito.automatizacionestuc.online/api/webhook/paises",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTk0NzRlOS00OGJmLTQ2Y2EtODFiNi03ZjNjNDA3NjllZDAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzczNzY1OTY2fQ.F3-lBXxMJmYipy-XYizUMbdDn5C_-gORDBnpGyMBY_o"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2672,
+        272
+      ],
+      "id": "c9d0e1f2-a3b4-5678-2345-789012345678",
+      "name": "consultar_paises"
     }
   ],
   "pinData": {},
@@ -632,6 +1009,105 @@
           {
             "node": "AI Agent1",
             "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_visa": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar_pago": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "editar_cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_financiamiento": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pagar_cuota": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_seminarios": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "registrar_asistente": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_precios": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_paises": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
             "index": 0
           }
         ]
