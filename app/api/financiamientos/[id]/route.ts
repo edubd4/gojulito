@@ -95,14 +95,19 @@ export async function PATCH(
   }
 
   const update: Record<string, unknown> = {
-    estado: body.estado,
     updated_at: new Date().toISOString(),
   }
 
-  // Si se cancela, marcar como inactivo (soft delete)
-  if (body.estado === 'CANCELADO') {
-    update.activo = false
+  if (body.estado !== undefined) {
+    update.estado = body.estado
+    if (body.estado === 'CANCELADO') {
+      update.activo = false
+    }
   }
+
+  if (body.concepto !== undefined) update.concepto = body.concepto
+  if (body.descripcion !== undefined) update.descripcion = body.descripcion
+  if (body.monto_total !== undefined) update.monto_total = body.monto_total
 
   const { data: updated, error: updateError } = await supabase
     .from('financiamientos')
@@ -115,8 +120,8 @@ export async function PATCH(
     return NextResponse.json({ data: null, error: 'Error al actualizar' }, { status: 500 })
   }
 
-  // Historial
-  if (body.estado !== (actual as { estado: string }).estado) {
+  // Historial solo para cambios de estado
+  if (body.estado !== undefined && body.estado !== (actual as { estado: string }).estado) {
     await supabase.from('historial').insert({
       cliente_id: (actual as { cliente_id: string }).cliente_id,
       tipo: 'NOTA',

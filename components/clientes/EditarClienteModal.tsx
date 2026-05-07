@@ -21,7 +21,7 @@ export interface ClienteEditableData {
   dni: string | null
   fecha_nac: string | null
   provincia: string | null
-  canal: CanalIngreso
+  canal: CanalIngreso | null
   estado: EstadoCliente
   grupo_familiar_id: string | null
   observaciones: string | null
@@ -58,7 +58,7 @@ function buildInitialForm(c: ClienteEditableData): FormState {
     dni: c.dni ?? '',
     fecha_nac: c.fecha_nac ?? '',
     provincia: c.provincia ?? '',
-    canal: c.canal,
+    canal: c.canal ?? '',
     estado: c.estado,
     grupo_familiar_id: c.grupo_familiar_id ?? '',
     observaciones: c.observaciones ?? '',
@@ -137,7 +137,6 @@ export default function EditarClienteModal({
   function validate(): boolean {
     const next: Partial<Record<keyof FormState, string>> = {}
     if (!form.nombre.trim()) next.nombre = 'El nombre es requerido'
-    if (!form.canal) next.canal = 'El canal es requerido'
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -157,7 +156,7 @@ export default function EditarClienteModal({
         dni: form.dni.trim() || null,
         fecha_nac: form.fecha_nac || null,
         provincia: form.provincia.trim() || null,
-        canal: form.canal as CanalIngreso,
+        canal: form.canal || null,
         estado: form.estado,
         grupo_familiar_id: form.grupo_familiar_id || null,
         observaciones: form.observaciones.trim() || null,
@@ -382,9 +381,9 @@ export default function EditarClienteModal({
 
                 {/* Canal */}
                 <div>
-                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Canal *</label>
+                  <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">Canal</label>
                   <select
-                    className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
+                    className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                     style={{ colorScheme: 'dark' }}
                     value={form.canal}
                     onChange={(e) => setField('canal', e.target.value as CanalIngreso | '')}
@@ -397,11 +396,6 @@ export default function EditarClienteModal({
                     <option value="CHARLA">Charla</option>
                     <option value="OTRO">Otro</option>
                   </select>
-                  {errors.canal && (
-                    <span className="text-[11px] text-gj-red mt-0.5 block">
-                      {errors.canal}
-                    </span>
-                  )}
                 </div>
 
                 {/* Estado */}

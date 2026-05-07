@@ -17,6 +17,7 @@ export interface CuotaRow {
 interface Props {
   cuotas: CuotaRow[]
   financiamientoId: string
+  isAdmin?: boolean
 }
 
 const BADGE_CUOTA: Record<string, { classes: string; label: string }> = {
@@ -27,13 +28,16 @@ const BADGE_CUOTA: Record<string, { classes: string; label: string }> = {
 
 const inputClass = "w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none"
 
-export default function CuotasTable({ cuotas, financiamientoId }: Props) {
+export default function CuotasTable({ cuotas, financiamientoId, isAdmin = false }: Props) {
   const router = useRouter()
   const [pagoModal, setPagoModal] = useState<CuotaRow | null>(null)
   const [fechaPago, setFechaPago] = useState(new Date().toISOString().slice(0, 10))
   const [notas, setNotas] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [editModal, setEditModal] = useState<CuotaRow | null>(null)
+  const [editMonto, setEditMonto] = useState('')
+  const [editFecha, setEditFecha] = useState('')
 
   useEffect(() => {
     if (errorMsg) {
@@ -46,6 +50,41 @@ export default function CuotasTable({ cuotas, financiamientoId }: Props) {
     setPagoModal(cuota)
     setFechaPago(new Date().toISOString().slice(0, 10))
     setNotas('')
+  }
+
+  function openEditModal(cuota: CuotaRow) {
+    setEditModal(cuota)
+    setEditMonto(String(cuota.monto))
+    setEditFecha(cuota.fecha_vencimiento)
+  }
+
+  async function handleEditCuota() {
+    if (!editModal) return
+    const m = parseFloat(editMonto)
+    if (isNaN(m) || m <= 0) { setErrorMsg('Monto inválido'); return }
+    if (!editFecha) { setErrorMsg('Fecha de vencimiento requerida'); return }
+
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/financiamientos/${financiamientoId}/cuotas/${editModal.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ monto: m, fecha_vencimiento: editFecha }),
+      })
+      const json = await res.json() as { data?: unknown; error?: string }
+      if (!res.ok || json.error) {
+        setErrorMsg(json.error ?? 'Error al editar cuota')
+        setEditModal(null)
+        return
+      }
+      setEditModal(null)
+      router.refresh()
+    } catch {
+      setErrorMsg('Error de conexión')
+      setEditModal(null)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleRegistrarPago() {
@@ -118,14 +157,24 @@ export default function CuotasTable({ cuotas, financiamientoId }: Props) {
                     <td className="px-3 py-2.5 text-gj-text">{c.fecha_pago ? formatFecha(c.fecha_pago) : '—'}</td>
                     <td className="px-3 py-2.5 text-gj-secondary text-xs max-w-[150px] truncate">{c.notas ?? '—'}</td>
                     <td className="px-3 py-2.5 text-center">
-                      {canPay && (
-                        <button
-                          onClick={() => openPagoModal(c)}
-                          className="text-xs text-gj-green font-semibold cursor-pointer bg-transparent border-none font-sans hover:opacity-80 whitespace-nowrap"
-                        >
-                          Registrar pago
-                        </button>
-                      )}
+                      <div className="flex items-center justify-center gap-3">
+                        {canPay && (
+                          <button
+                            onClick={() => openPagoModal(c)}
+                            className="text-xs text-gj-green font-semibold cursor-pointer bg-transparent border-none font-sans hover:opacity-80 whitespace-nowrap"
+                          >
+                            Registrar pago
+                          </button>
+                        )}
+                        {isAdmin && (
+                          <button
+                            onClick={() => openEditModal(c)}
+                            className="text-xs text-gj-secondary cursor-pointer bg-transparent border-none font-sans hover:text-gj-amber whitespace-nowrap transition-colors"
+                          >
+                            Editar
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
@@ -133,6 +182,74 @@ export default function CuotasTable({ cuotas, financiamientoId }: Props) {
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* Mini-modal editar cuota */}
+      {editModal && (
+        <>
+          <div className="fixed inset-0 z-[60] bg-black/55" onClick={() => setEditModal(null)} />
+          <div
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-gj-surface-low border border-white/10 rounded-2xl w-[90%] max-w-[380px] font-sans"
+            style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.7)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-5 py-4 border-b border-white/[8%] flex items-center justify-between">
+              <span className="text-sm font-bold text-gj-text font-display">
+                Editar cuota {editModal.numero}
+              </span>
+              <button
+                onClick={() => setEditModal(null)}
+                className="bg-transparent border-none cursor-pointer text-gj-secondary p-1"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div className="px-5 py-4 flex flex-col gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                  Monto ($)
+                </label>
+                <input
+                  type="number"
+                  className={inputClass}
+                  value={editMonto}
+                  onChange={(e) => setEditMonto(e.target.value)}
+                  min="1"
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
+                  Fecha de vencimiento
+                </label>
+                <input
+                  type="date"
+                  className={inputClass}
+                  style={{ colorScheme: 'dark' }}
+                  value={editFecha}
+                  onChange={(e) => setEditFecha(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-2.5 justify-end mt-1">
+                <button
+                  onClick={() => setEditModal(null)}
+                  className="px-4 py-2 rounded-lg border border-white/[12%] bg-transparent text-gj-secondary text-[13px] font-semibold cursor-pointer font-sans"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => void handleEditCuota()}
+                  disabled={loading}
+                  className={`px-4 py-2 rounded-lg border-none bg-gj-amber text-gj-bg text-[13px] font-bold font-sans ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
+                >
+                  {loading ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Mini-modal registrar pago de cuota */}

@@ -70,6 +70,8 @@ export default function NuevoClienteModal({
   const [clienteDuplicado, setClienteDuplicado] = useState<ClienteDuplicado | null>(null)
   const [duplicadoMsg, setDuplicadoMsg] = useState('')
   const [provinciaSelect, setProvinciaSelect] = useState('')
+  const [showObsConfirm, setShowObsConfirm] = useState(false)
+  const [obsConfirmed, setObsConfirmed] = useState(false)
 
   // Reset form when modal opens
   useEffect(() => {
@@ -80,6 +82,8 @@ export default function NuevoClienteModal({
       setClienteDuplicado(null)
       setDuplicadoMsg('')
       setProvinciaSelect('')
+      setShowObsConfirm(false)
+      setObsConfirmed(false)
     }
   }, [open])
 
@@ -92,7 +96,6 @@ export default function NuevoClienteModal({
     const next: Partial<Record<keyof FormState, string>> = {}
     if (!form.nombre.trim()) next.nombre = 'El nombre es requerido'
     if (!form.telefono.trim()) next.telefono = 'El teléfono es requerido'
-    if (!form.canal) next.canal = 'El canal es requerido'
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -101,16 +104,22 @@ export default function NuevoClienteModal({
     e.preventDefault()
     if (!validate()) return
 
+    if (!form.observaciones.trim() && !obsConfirmed) {
+      setShowObsConfirm(true)
+      return
+    }
+
     setLoading(true)
     setServerError('')
+    setShowObsConfirm(false)
 
     try {
       const body: Record<string, string> = {
         nombre: form.nombre.trim(),
         telefono: form.telefono.trim(),
-        canal: form.canal as CanalIngreso,
         // estado no se envía — el server siempre crea como ACTIVO (FIX-01)
       }
+      if (form.canal) body.canal = form.canal
       if (form.email.trim()) body.email = form.email.trim()
       if (form.dni.trim()) body.dni = form.dni.trim()
       if (form.fecha_nac) body.fecha_nac = form.fecha_nac
@@ -307,10 +316,10 @@ export default function NuevoClienteModal({
               {/* Canal */}
               <div>
                 <label className="block text-xs font-semibold text-gj-secondary uppercase tracking-wide mb-1 font-sans">
-                  Canal<span className="text-gj-amber ml-0.5">*</span>
+                  Canal
                 </label>
                 <select
-                  className={`w-full bg-gj-surface-mid text-gj-text border rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer ${errors.canal ? 'border-gj-red' : 'border-white/10'}`}
+                  className="w-full bg-gj-surface-mid text-gj-text border border-white/10 rounded-lg px-3 py-2 text-sm font-sans focus:ring-2 focus:ring-gj-amber focus:outline-none cursor-pointer"
                   style={{ colorScheme: 'dark' }}
                   value={form.canal}
                   onChange={(e) => set('canal', e.target.value as CanalIngreso | '')}
@@ -323,11 +332,6 @@ export default function NuevoClienteModal({
                   <option value="CHARLA">Charla</option>
                   <option value="OTRO">Otro</option>
                 </select>
-                {errors.canal && (
-                  <span className="text-[11px] text-gj-red mt-0.5 block">
-                    {errors.canal}
-                  </span>
-                )}
               </div>
 
               {/* Grupo familiar */}
@@ -360,6 +364,43 @@ export default function NuevoClienteModal({
               </div>
             </div>
           </div>
+
+          {/* Confirmación observaciones vacías */}
+          {showObsConfirm && (
+            <div className="mx-7 mb-0 mt-0 bg-gj-amber/[8%] border border-gj-amber/30 rounded-lg px-4 py-3">
+              <p className="text-gj-amber text-[13px] font-semibold mb-1">
+                No agregaste ninguna observación
+              </p>
+              <p className="text-gj-text text-[13px] mb-3">
+                ¿La información es correcta y no querés agregar nada más?
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowObsConfirm(false)
+                    const textarea = document.querySelector<HTMLTextAreaElement>('textarea[placeholder="Notas adicionales..."]')
+                    textarea?.focus()
+                  }}
+                  className="px-4 py-[7px] rounded-[7px] border border-white/[15%] bg-transparent text-gj-secondary text-[13px] cursor-pointer font-sans"
+                >
+                  Agregar observación
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setObsConfirmed(true)
+                    setShowObsConfirm(false)
+                    const form = document.querySelector<HTMLFormElement>('form')
+                    form?.requestSubmit()
+                  }}
+                  className="px-4 py-[7px] rounded-[7px] border-none bg-gj-amber text-gj-bg text-[13px] font-semibold cursor-pointer font-sans"
+                >
+                  Continuar sin observación →
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="px-7 py-4 border-t border-white/[7%] flex justify-end gap-2.5">

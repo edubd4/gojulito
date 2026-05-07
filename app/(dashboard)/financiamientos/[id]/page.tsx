@@ -4,6 +4,7 @@ import { createServerClient, createServiceRoleClient } from '@/lib/supabase/serv
 import { formatPesos } from '@/lib/utils'
 import CuotasTable from '@/components/financiamientos/CuotasTable'
 import type { CuotaRow } from '@/components/financiamientos/CuotasTable'
+import FinanciamientoAcciones from '@/components/financiamientos/FinanciamientoAcciones'
 
 const BADGE_CONCEPTO: Record<string, { classes: string; label: string }> = {
   VUELO: { classes: 'text-gj-blue bg-gj-blue/15', label: 'Vuelo' },
@@ -28,6 +29,13 @@ export default async function FinanciamientoDetallePage({
   if (!user) notFound()
 
   const supabase = await createServiceRoleClient()
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('rol')
+    .eq('id', user.id)
+    .single()
+  const isAdmin = profile?.rol === 'admin'
 
   const { data: financiamiento, error } = await supabase
     .from('financiamientos')
@@ -96,6 +104,14 @@ export default async function FinanciamientoDetallePage({
           <span className={`inline-block px-2.5 py-0.5 rounded-md text-xs font-semibold font-sans ${conceptoBadge.classes}`}>
             {conceptoBadge.label}
           </span>
+          <FinanciamientoAcciones
+            financiamientoId={params.id}
+            isAdmin={isAdmin}
+            estado={estado}
+            concepto={concepto as 'VUELO' | 'VISA' | 'VIAJE' | 'OTRO'}
+            descripcion={descripcion}
+            montoTotal={montoTotal}
+          />
         </div>
 
         {cliente && (
@@ -139,7 +155,7 @@ export default async function FinanciamientoDetallePage({
         <h2 className="font-sans text-[13px] font-semibold text-gj-secondary uppercase tracking-[0.06em] mb-5">
           Cuotas
         </h2>
-        <CuotasTable cuotas={cuotas} financiamientoId={params.id} />
+        <CuotasTable cuotas={cuotas} financiamientoId={params.id} isAdmin={isAdmin} />
       </div>
     </div>
   )

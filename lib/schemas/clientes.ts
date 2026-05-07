@@ -29,7 +29,7 @@ export const createClienteSchema = z.object({
   dni: z.string().optional().transform(v => v?.trim() || undefined),
   fecha_nac: z.string().optional(),
   provincia: z.string().optional().transform(v => v?.trim() || undefined),
-  canal: z.enum(canalIngresoValues, 'Canal es requerido'),
+  canal: z.enum(canalIngresoValues).optional(),
   estado: z.enum(estadoClienteValues).optional(), // siempre se fuerza a ACTIVO en el server — campo ignorado
   grupo_familiar_id: z.string().uuid('grupo_familiar_id inválido').optional(),
   observaciones: z.string().optional().transform(v => v?.trim() || undefined),

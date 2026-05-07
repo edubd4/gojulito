@@ -35,14 +35,22 @@ export const createFinanciamientoSchema = z.object({
 })
 
 export const patchFinanciamientoSchema = z.object({
-  estado: z.enum(estadoFinValues, { message: 'Estado inválido' }),
-})
+  estado: z.enum(estadoFinValues, { message: 'Estado inválido' }).optional(),
+  concepto: z.enum(conceptoValues, { message: 'Concepto inválido' }).optional(),
+  descripcion: z.string().nullable().optional(),
+  monto_total: z.number().positive('Monto total debe ser positivo').optional(),
+}).refine(
+  (data) => data.estado !== undefined || data.concepto !== undefined || data.descripcion !== undefined || data.monto_total !== undefined,
+  { message: 'Sin campos para actualizar' }
+)
 
 export const patchCuotaSchema = z
   .object({
     estado: z.enum(estadoCuotaValues, { message: 'Estado de cuota inválido' }).optional(),
     fecha_pago: z.string().nullable().optional(),
     notas: z.string().nullable().optional(),
+    monto: z.number().positive('Monto debe ser positivo').optional(),
+    fecha_vencimiento: z.string().min(1, 'Fecha de vencimiento es requerida').optional(),
   })
   .refine(data => Object.keys(data).length > 0, { message: 'Sin campos para actualizar' })
 

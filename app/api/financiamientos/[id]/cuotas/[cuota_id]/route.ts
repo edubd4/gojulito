@@ -78,6 +78,14 @@ export async function PATCH(
     update.notas = body.notas?.trim() || null
   }
 
+  if (body.monto !== undefined) {
+    update.monto = body.monto
+  }
+
+  if (body.fecha_vencimiento !== undefined) {
+    update.fecha_vencimiento = body.fecha_vencimiento
+  }
+
   const { data: cuotaActualizada, error: updateError } = await supabase
     .from('cuotas_financiamiento')
     .update(update)
